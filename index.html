@@ -159,6 +159,24 @@
     line-height: 1.7;
     color: rgba(245,245,245,0.2);
   }
+  .visit-counter {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: none;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: rgba(245,245,245,0.28);
+    line-height: 1;
+  }
+  .visit-counter svg {
+    width: 12px; height: 12px;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    fill: none;
+    flex-shrink: 0;
+  }
 
   /* ── Content ── */
   .content {
@@ -489,6 +507,10 @@
       Kevin Yicheng<br>
       保險 × 法律 × 投資<br>
       Powered by Keri · 2026
+      <div class="visit-counter" id="visit-counter">
+        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        累計 <span id="visit-count">–</span> 次瀏覽
+      </div>
     </div>
   </aside>
 
@@ -688,6 +710,27 @@
   document.querySelectorAll('.nav-item, .btab').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
+
+  // ── 累計到站計數器 ──
+  // 將下方 GAS_URL 換成 Apps Script 部署後的 Web App URL
+  const GAS_URL = ''; // <<< 貼上 Web App URL
+  if (GAS_URL) {
+    const params = new URLSearchParams({
+      ua: navigator.userAgent,
+      ref: document.referrer,
+      tab: document.querySelector('.nav-item.active')?.dataset.tab || 'policy'
+    });
+    fetch(GAS_URL + '?' + params)
+      .then(r => r.json())
+      .then(d => {
+        if (d.ok) {
+          document.getElementById('visit-count').textContent =
+            Number(d.count).toLocaleString('zh-TW');
+          document.getElementById('visit-counter').style.display = 'flex';
+        }
+      })
+      .catch(() => {});
+  }
 </script>
 
 </body>
