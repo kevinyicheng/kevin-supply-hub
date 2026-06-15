@@ -23,6 +23,7 @@
     --c1: #6366F1;   /* 保單規劃 indigo */
     --c2: #0EA5E9;   /* 理賠案例 sky */
     --c3: #10B981;   /* 人才招募 emerald */
+    --c4: #F59E0B;   /* 辦公效率 amber */
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -456,6 +457,11 @@
     <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
     <span>人才招募</span>
   </button>
+  <button class="btab" data-tab="office">
+    <!-- zap -->
+    <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <span>辦公效率</span>
+  </button>
 </div>
 
 <div class="layout">
@@ -484,6 +490,12 @@
         <!-- user-plus -->
         <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
         <span>人才招募</span>
+      </button>
+
+      <button class="nav-item" data-tab="office">
+        <!-- zap -->
+        <svg class="nav-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>辦公效率</span>
       </button>
 
     </nav>
@@ -680,6 +692,33 @@
       </div>
     </div>
 
+    <!-- ── 辦公效率 ── -->
+    <div class="tab-panel hidden" id="tab-office">
+      <div class="content-header">
+        <div class="content-title">辦公效率</div>
+        <div class="content-date" id="today-date-o"></div>
+      </div>
+
+      <div class="section-label">實用工具</div>
+      <div class="cards">
+
+        <a class="card" href="https://kevinyicheng.github.io/pdf-unlock/" target="_blank" style="--card-accent:var(--c4)">
+          <div class="card-icon" style="background:rgba(245,158,11,0.08)">
+            <!-- unlock -->
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          </div>
+          <div class="card-tag">PDF 工具</div>
+          <h2>PDF 解鎖列印</h2>
+          <p>公司加密 PDF 無法列印？輸入密碼一鍵解鎖，直接開啟列印視窗。全程瀏覽器處理，不上傳伺服器。</p>
+          <div class="card-footer">
+            <span class="card-date">更新 115/06/15</span>
+            <span class="card-arrow">→</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -691,7 +730,7 @@
   const day = String(d.getDate()).padStart(2, '0');
   const weekdays = ['日','一','二','三','四','五','六'];
   const dateStr = `${y}/${m}/${day}（週${weekdays[d.getDay()]}）`;
-  ['today-date','today-date-c','today-date-r','today-date-top'].forEach(id => {
+  ['today-date','today-date-c','today-date-r','today-date-o','today-date-top'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = dateStr;
   });
