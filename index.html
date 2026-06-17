@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kevin Supply Hub</title>
+  <meta name="description" content="Kevin 的小工具集散地・保單規劃 & 辦公效率" />
+  <meta name="theme-color" content="#6366F1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Supply Hub" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet" />
@@ -195,15 +202,135 @@
     }
     footer span { color: var(--brand); }
 
+    /* ── Install Banner ── */
+    .install-banner {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+    }
+    .install-banner-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .install-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .install-title::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+    .install-steps {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .install-col { flex: 1; min-width: 200px; }
+    .install-os {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .install-os svg {
+      width: 14px; height: 14px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    .install-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .install-list li {
+      font-size: 0.82rem;
+      color: var(--text-sub);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(99,102,241,0.1);
+      color: var(--brand);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .install-note {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #B0B7C3;
+    }
+
     /* ── Mobile ── */
     @media (max-width: 600px) {
       .wrapper { padding: 32px 16px 0; }
       .cards { grid-template-columns: 1fr; }
       .card { border-radius: 14px; padding: 20px; }
+      .install-steps { gap: 20px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Install Banner -->
+  <div class="install-banner">
+    <div class="install-banner-inner">
+      <div class="install-title">加入主畫面，像 App 一樣開啟</div>
+      <div class="install-steps">
+
+        <div class="install-col">
+          <div class="install-os">
+            <!-- Apple logo -->
+            <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663 0 541.8c0-207.8 135.4-317.9 268.5-317.9 70.6 0 129.5 46.4 173.1 46.4 42.8 0 109.6-49.5 190.5-49.5zm-101.4-109.5c31.7-38.5 54.3-91.7 54.3-144.9 0-7.4-.6-14.9-1.9-21.1-51.2 1.9-112.3 34.3-149.2 77.1-28.5 32.4-55.1 85.5-55.1 139.5 0 8.3 1.3 16.6 1.9 19.4 3.2.6 8.3 1.3 13.4 1.3 46.4 0 102.7-30.9 136.6-71.3z"/></svg>
+            iPhone / iPad
+          </div>
+          <ul class="install-list">
+            <li><span class="step-num">1</span>用 Safari 開啟本頁面</li>
+            <li><span class="step-num">2</span>點底部工具列的「分享」按鈕 <strong style="color:#111">⬆</strong></li>
+            <li><span class="step-num">3</span>向下滑，選「加入主畫面」</li>
+            <li><span class="step-num">4</span>確認名稱後點「新增」即完成</li>
+          </ul>
+        </div>
+
+        <div class="install-col">
+          <div class="install-os">
+            <!-- Android logo -->
+            <svg viewBox="0 0 24 24"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zm-2.5-1C2.67 17 2 17.67 2 18.5v-9C2 8.67 2.67 8 3.5 8S5 8.67 5 9.5v9c0 .83-.67 1.5-1.5 1.5zm17 0c-.83 0-1.5-.67-1.5-1.5v-9c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5zM15.53 2.16l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48A5.84 5.84 0 0 0 12 1c-.Open69 0-1.35.11-1.97.31L8.45.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.29 1.29C7.35 3.27 6 5.17 6 7.38V8h12v-.62c0-2.21-1.35-4.11-3.47-5.22z"/></svg>
+            Android
+          </div>
+          <ul class="install-list">
+            <li><span class="step-num">1</span>用 Chrome 開啟本頁面</li>
+            <li><span class="step-num">2</span>點右上角選單「⋮」</li>
+            <li><span class="step-num">3</span>選「新增至主畫面」或「安裝應用程式」</li>
+            <li><span class="step-num">4</span>點「新增」即完成</li>
+          </ul>
+        </div>
+
+      </div>
+      <p class="install-note">✦ 安裝後會出現在主畫面，全螢幕開啟，不顯示網址列</p>
+    </div>
+  </div>
 
   <header>
     <div class="eyebrow">Kevin Yicheng</div>
