@@ -396,6 +396,15 @@
       color: var(--text-sub);
       margin-bottom: 20px;
     }
+    .pw-hint {
+      font-size: 0.78rem;
+      color: #06C755;
+      background: rgba(6,199,85,0.07);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
     .pw-input {
       width: 100%;
       padding: 12px 16px;
@@ -626,6 +635,7 @@
       </div>
       <div class="pw-title">請輸入密碼</div>
       <div class="pw-sub">此工具需要驗證才能開啟</div>
+      <div class="pw-hint">密碼索取請至入口網頁最上方加入 LINE 完成身份驗證</div>
       <input class="pw-input" id="pwInput" type="password" placeholder="密碼" autocomplete="off"
              onkeydown="if(event.key==='Enter')checkPassword()" />
       <div class="pw-err-msg" id="pwErr"></div>
