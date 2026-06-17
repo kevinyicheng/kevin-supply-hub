@@ -67,6 +67,39 @@
       font-size: 0.875rem;
       color: var(--text-sub);
     }
+    .social-links {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .social-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .social-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .social-btn-line {
+      background: #06C755;
+      color: #fff;
+    }
+    .social-btn-ig {
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+    }
+    .social-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #B0B7C3;
+    }
 
     /* ── Layout ── */
     .wrapper {
@@ -441,6 +474,19 @@
     <div class="eyebrow">Kevin Yicheng</div>
     <h1>Supply <span>Hub</span></h1>
     <p class="tagline">小工具集散地 · 保單規劃 &amp; 辦公效率</p>
+    <div class="social-links">
+      <a class="social-btn social-btn-line" href="https://line.me/ti/p/Rxgjp5q5jf" target="_blank" rel="noopener">
+        <!-- LINE icon -->
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.145 2 11.243c0 3.043 1.61 5.741 4.126 7.49-.172.627-.627 2.282-.719 2.636-.113.435.16.43.336.313.138-.094 2.195-1.49 3.084-2.095.37.053.748.08 1.173.08 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2z"/></svg>
+        加我 LINE・索取密碼
+      </a>
+      <a class="social-btn social-btn-ig" href="https://www.instagram.com/kevinyicheng?igsh=MXI3ZGljbzd0eWdzag%3D%3D&utm_source=qr" target="_blank" rel="noopener">
+        <!-- Instagram icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+        Instagram
+      </a>
+    </div>
+    <p class="social-note">🔒 需要密碼？加 LINE 索取</p>
   </header>
 
   <div class="wrapper">
