@@ -194,10 +194,12 @@
 
     /* ── Install Card ── */
     .install-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: rgba(99, 102, 241, 0.07);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(99, 102, 241, 0.18);
       border-radius: 18px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 2px 16px rgba(99, 102, 241, 0.06);
       margin-bottom: 32px;
       overflow: hidden;
     }
@@ -256,7 +258,7 @@
     .install-body {
       display: none;
       padding: 0 24px 24px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid rgba(99, 102, 241, 0.12);
     }
     .install-card.open .install-body { display: block; }
 
