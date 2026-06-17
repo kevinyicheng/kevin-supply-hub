@@ -1,0 +1,23 @@
+{
+  "name": "Kevin Supply Hub",
+  "short_name": "Supply Hub",
+  "description": "Kevin 的小工具集散地・保單規劃 & 辦公效率",
+  "start_url": "/kevin-supply-hub/",
+  "display": "standalone",
+  "background_color": "#F1F0F9",
+  "theme_color": "#6366F1",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
