@@ -241,8 +241,11 @@ input[type="range"]::-webkit-slider-thumb:active{transform:scale(1.15);}
 
 /* ── Print ── */
 #print-area{display:none;}
-@page{size:A4;margin:8mm 10mm;}
+@page{size:A4 portrait;margin:8mm 10mm;}
 @media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:#fff!important;min-height:unset!important;}
+  body::before,body::after{display:none!important;}
   .page,.ks-watermark{display:none!important;}
   #print-area{display:block!important;}
   .ks-back{display:none!important;}
