@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>富邦 SDG 重大傷病終身險保費試算</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#FAF8FF;
+  --surface:#FFFFFF;
+  --border:rgba(109,40,217,0.08);
+  --border-hover:rgba(109,40,217,0.18);
+  --tx-main:#1E1432;
+  --tx-sub:#5B4B8A;
+  --tx-muted:#A394C8;
+
+  --brand-dark:#5B21B6;
+  --brand:#7C3AED;
+  --brand-light:#A78BFA;
+  --brand-bg:#F5F3FF;
+
+  --green:#059669;
+  --red:#E11D48;
+
+  --c10:#7C3AED; --c10-bg:#F5F3FF; --c10-border:rgba(124,58,237,0.15);
+  --c15:#2563EB; --c15-bg:#EFF6FF; --c15-border:rgba(37,99,235,0.15);
+  --c20:#0891B2; --c20-bg:#ECFEFF; --c20-border:rgba(8,145,178,0.15);
+  --c30:#059669; --c30-bg:#ECFDF5; --c30-border:rgba(5,150,105,0.15);
+
+  --shadow-sm:0 2px 4px rgba(109,40,217,0.04);
+  --shadow-md:0 4px 16px rgba(109,40,217,0.08),0 2px 4px rgba(109,40,217,0.04);
+  --shadow-lg:0 12px 36px rgba(109,40,217,0.12),0 4px 12px rgba(109,40,217,0.06);
+}
+html{font-size:15px;background:var(--bg);}
+body{
+  font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Noto Sans TC',sans-serif;
+  color:var(--tx-main);min-height:100vh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── Decorative BG ── */
+body::before{
+  content:'';position:fixed;top:-200px;right:-200px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(167,139,250,0.12) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;bottom:-200px;left:-200px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,58,237,0.08) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+.page{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:32px 20px 100px;}
+
+/* ── Header ── */
+header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:32px;}
+.sdg-hero-title{
+  font-family:'Montserrat',sans-serif;
+  font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:1;
+  background:linear-gradient(to right,var(--brand-dark),var(--brand));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  margin-bottom:4px;
+}
+.sdg-subtitle{font-size:12px;font-weight:500;color:var(--tx-muted);margin-top:6px;}
+.badge{
+  margin-top:6px;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.05em;
+  background:var(--brand-bg);color:var(--brand-dark);
+  border:1px solid var(--c10-border);white-space:nowrap;
+}
+
+/* ── Cards ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:24px;padding:32px;
+  box-shadow:var(--shadow-md);
+}
+.card+.card,.card+.results{margin-top:16px;}
+.section-label{
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tx-muted);margin-bottom:20px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Gender Toggle ── */
+.gender-row{display:flex;gap:12px;margin-bottom:28px;}
+.g-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 12px;border:2px solid var(--border);border-radius:16px;
+  cursor:pointer;transition:all .25s cubic-bezier(0.4,0,0.2,1);background:#FAFAFE;
+  font-size:15px;font-weight:600;color:var(--tx-sub);
+}
+.g-btn input{display:none;}
+.g-btn .g-icon{font-size:20px;line-height:1;transition:transform .2s;}
+.g-btn:hover{background:var(--surface);border-color:var(--border-hover);}
+.g-btn.male-on,.g-btn.female-on{
+  border-color:var(--brand);background:var(--brand-bg);color:var(--brand-dark);
+  box-shadow:0 4px 16px rgba(124,58,237,0.15);
+}
+.g-btn.male-on .g-icon,.g-btn.female-on .g-icon{transform:scale(1.1);}
+
+/* ── Date Inputs ── */
+.date-row{display:flex;gap:12px;margin-bottom:8px;}
+.date-row input,.date-row select{
+  background:#F8F5FF;border:1px solid var(--border);border-radius:14px;
+  color:var(--tx-main);font-size:15px;font-weight:500;padding:14px 16px;
+  outline:none;transition:all .2s;appearance:none;-webkit-appearance:none;width:100%;
+}
+.date-row input:focus,.date-row select:focus{
+  border-color:var(--brand-light);background:#fff;
+  box-shadow:0 0 0 4px var(--brand-bg);
+}
+.date-row input::placeholder{color:var(--tx-muted);font-weight:400;}
+.date-row input::-webkit-inner-spin-button{display:none;}
+.yr{flex:1.5}
+.mo,.dy{
+  flex:1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23A394C8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:16px;
+}
+#age-tag{
+  display:none;align-items:center;gap:8px;margin-top:12px;margin-bottom:28px;
+  font-size:14px;font-weight:600;color:var(--brand);padding:8px 14px;
+  background:var(--brand-bg);border-radius:10px;width:fit-content;
+  border:1px solid var(--c10-border);
+}
+#age-tag.on{display:flex;animation:fadeIn .3s ease;}
+
+/* ── Period Selector ── */
+.period-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.p-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  padding:14px 10px;border:2px solid var(--border);border-radius:16px;
+  cursor:pointer;transition:all .25s cubic-bezier(0.4,0,0.2,1);background:#FAFAFE;
+  font-size:15px;font-weight:700;color:var(--tx-sub);position:relative;overflow:hidden;
+}
+.p-btn input{display:none;}
+.p-btn .p-sub{font-size:11px;font-weight:600;color:var(--tx-muted);letter-spacing:.03em;}
+.p-btn:hover{background:var(--surface);border-color:var(--border-hover);}
+.p-btn.sel-10{border-color:var(--c10);background:var(--c10-bg);color:var(--c10);box-shadow:0 4px 16px rgba(124,58,237,0.15);}
+.p-btn.sel-15{border-color:var(--c15);background:var(--c15-bg);color:var(--c15);box-shadow:0 4px 16px rgba(37,99,235,0.12);}
+.p-btn.sel-20{border-color:var(--c20);background:var(--c20-bg);color:var(--c20);box-shadow:0 4px 16px rgba(8,145,178,0.12);}
+.p-btn.sel-30{border-color:var(--c30);background:var(--c30-bg);color:var(--c30);box-shadow:0 4px 16px rgba(5,150,105,0.12);}
+.p-btn.disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
+.p-lock{font-size:10px;position:absolute;top:6px;right:8px;color:var(--tx-muted);}
+
+/* ── Coverage ── */
+.coverage-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;}
+.coverage-input-wrap{display:flex;align-items:baseline;gap:4px;border-bottom:2px solid var(--border);transition:border-color .2s;}
+.coverage-input-wrap:focus-within{border-color:var(--brand);}
+.coverage-input{
+  background:transparent;border:none;outline:none;
+  font-size:42px;font-weight:900;letter-spacing:-.04em;color:var(--brand-dark);
+  width:100px;text-align:center;font-family:'Montserrat',sans-serif;
+}
+.coverage-input::-webkit-inner-spin-button{display:none;}
+input[type=range]{
+  width:100%;height:8px;appearance:none;-webkit-appearance:none;
+  border-radius:999px;outline:none;cursor:pointer;
+  background:linear-gradient(to right,var(--brand) 0%,var(--brand) var(--pct,20%),#EDE9FE var(--pct,20%));
+}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;
+  width:28px;height:28px;border-radius:50%;background:#fff;cursor:grab;
+  border:1px solid rgba(124,58,237,0.1);
+  box-shadow:0 2px 8px rgba(124,58,237,0.15),0 0 0 4px var(--surface),0 0 0 6px var(--brand-bg);
+  transition:transform .2s,box-shadow .2s;
+}
+input[type=range]::-webkit-slider-thumb:active{
+  cursor:grabbing;transform:scale(1.1);
+  box-shadow:0 4px 16px rgba(124,58,237,0.25),0 0 0 4px var(--surface),0 0 0 8px var(--brand-bg);
+}
+.slider-ticks{display:flex;justify-content:space-between;margin-top:12px;padding:0 4px;}
+.slider-tick{font-size:12px;color:var(--tx-muted);font-weight:600;}
+
+
+#err{display:none;margin-top:16px;font-size:14px;font-weight:600;color:var(--red);text-align:center;background:#FFF1F2;padding:10px;border-radius:10px;}
+#err.on{display:block;animation:shake .4s ease;}
+
+/* ── Results ── */
+.results{display:none;}
+.results.on{display:block;animation:fadeUp .5s cubic-bezier(0.4,0,0.2,1) forwards;}
+
+/* ── Hero ── */
+.hero{
+  background:var(--surface);border-radius:24px;padding:32px;margin-bottom:16px;
+  box-shadow:var(--shadow-lg);position:relative;overflow:hidden;
+  border:1px solid var(--border);
+}
+.hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,var(--brand-light),var(--brand),var(--brand-dark));
+}
+.hero-who{font-size:13px;font-weight:700;color:var(--tx-sub);margin-bottom:4px;}
+.hero-label{font-size:12px;font-weight:700;color:var(--tx-muted);margin:20px 0 4px;}
+.hero-big{
+  font-size:48px;font-weight:900;letter-spacing:-.04em;line-height:1.1;
+  background:linear-gradient(to right,var(--brand-dark),var(--brand));
+  -webkit-background-clip:text;color:transparent;margin-bottom:8px;
+}
+.hero-big .cur{font-size:24px;font-weight:700;margin-right:4px;color:var(--brand);}
+.hero-period-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;
+  margin-bottom:24px;
+}
+
+/* ── Freq Grid ── */
+.freq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;}
+.freq-card{
+  background:#F8F5FF;border:1px solid var(--border);border-radius:14px;
+  padding:12px 8px;text-align:center;
+}
+.freq-card .fc-label{font-size:11px;font-weight:700;color:var(--tx-muted);margin-bottom:6px;letter-spacing:.03em;}
+.freq-card .fc-val{font-size:16px;font-weight:800;color:var(--brand-dark);font-family:'Montserrat',sans-serif;}
+.freq-card .fc-unit{font-size:10px;font-weight:600;color:var(--tx-muted);margin-top:2px;}
+.freq-card.highlight{
+  background:linear-gradient(135deg,var(--brand-bg),#EDE9FE);
+  border-color:var(--c10-border);
+}
+.freq-card.highlight .fc-val{color:var(--brand);}
+
+/* ── Summary Rows ── */
+.summary-box{background:#F8F5FF;border-radius:16px;padding:20px;margin-top:8px;}
+.s-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:14px;}
+.s-row+.s-row{border-top:1px solid var(--border);}
+.s-label{color:var(--tx-sub);font-weight:600;}
+.s-val{font-weight:800;color:var(--tx-main);}
+.s-row.total{border-top:2px dashed rgba(124,58,237,0.2) !important;margin-top:4px;padding-top:16px;}
+.s-row.total .s-label{font-size:15px;font-weight:800;color:var(--tx-main);}
+.s-row.total .s-val{font-size:22px;color:var(--brand-dark);}
+
+/* ── Rate Info Card ── */
+.rate-info-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:24px;box-shadow:var(--shadow-sm);margin-top:16px;
+}
+.ri-head{font-size:13px;font-weight:800;color:var(--tx-main);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.ri-head .ri-badge{
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;
+  background:var(--brand-bg);color:var(--brand);
+}
+.ri-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.ri-item{background:#F8F5FF;border-radius:12px;padding:14px;}
+.ri-item .ri-label{font-size:11px;font-weight:700;color:var(--tx-muted);margin-bottom:4px;letter-spacing:.03em;}
+.ri-item .ri-val{font-size:18px;font-weight:800;color:var(--tx-main);font-family:'Montserrat',sans-serif;}
+
+
+
+/* ── Screen Benefits ── */
+.benefits-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:24px;box-shadow:var(--shadow-sm);margin-top:16px;
+}
+.bc-head{font-size:13px;font-weight:800;color:var(--tx-main);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.bc-head .bc-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--brand-bg);color:var(--brand);}
+.bc-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.bc-item:last-child{border-bottom:none;padding-bottom:0;}
+.bc-item:first-child{padding-top:0;}
+.bc-num{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--brand),var(--brand-light));
+  color:#fff;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.bc-item.hl .bc-num{background:linear-gradient(135deg,var(--brand-dark),var(--brand));}
+.bc-body{flex:1;min-width:0;}
+.bc-name{font-size:14px;font-weight:800;color:var(--tx-main);margin-bottom:3px;}
+.bc-trigger{font-size:12px;font-weight:500;color:var(--tx-sub);line-height:1.5;}
+.bc-right{text-align:right;flex-shrink:0;}
+.bc-amt{
+  font-family:'Montserrat',sans-serif;
+  font-size:20px;font-weight:900;letter-spacing:-.02em;line-height:1;
+  background:linear-gradient(to right,var(--brand-dark),var(--brand));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+}
+.bc-sub{font-size:11px;font-weight:600;color:var(--tx-muted);margin-top:3px;}
+
+
+/* ── Empty State (尚未計算) ── */
+.empty-state{
+  background:var(--surface);border:1px dashed rgba(124,58,237,0.18);
+  border-radius:24px;padding:48px 28px;text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.es-icon{
+  width:56px;height:56px;border-radius:18px;
+  background:linear-gradient(135deg,var(--brand-bg),#EDE9FE);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;font-size:26px;
+  border:1px solid var(--c10-border);
+}
+.es-title{
+  font-size:15px;font-weight:800;color:var(--tx-main);
+  letter-spacing:-.01em;margin-bottom:6px;
+}
+.es-sub{
+  font-size:12px;font-weight:500;color:var(--tx-muted);
+  line-height:1.7;margin-bottom:22px;
+}
+.es-checklist{
+  display:flex;flex-direction:column;gap:8px;
+  max-width:240px;margin:0 auto;text-align:left;
+}
+.es-check{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:600;color:var(--tx-sub);
+  padding:8px 14px;border-radius:10px;
+  background:#FAFAFE;border:1px solid var(--border);
+  transition:all .25s ease;
+}
+.es-check .es-dot{
+  width:16px;height:16px;border-radius:50%;
+  border:1.5px solid var(--tx-muted);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s ease;
+}
+.es-check.done{
+  background:var(--brand-bg);border-color:var(--c10-border);color:var(--brand-dark);
+}
+.es-check.done .es-dot{
+  background:var(--brand);border-color:var(--brand);
+}
+.es-check.done .es-dot::after{
+  content:'';width:6px;height:3px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;
+  transform:rotate(-45deg) translate(0.5px,-1px);
+}
+/* When has-data, hide empty state; when not, hide actual results */
+.empty-state{display:none;}
+.results:not(.has-data) .empty-state{display:block;}
+.results:not(.has-data) .hero,
+.results:not(.has-data) .rate-info-card,
+.results:not(.has-data) #screen-benefits,
+.results:not(.has-data) .disc,
+.results:not(.has-data) .print-btn{display:none;}
+
+/* ── Disclaimer ── */
+.disc{margin-top:20px;font-size:12px;line-height:1.9;color:var(--tx-muted);font-weight:500;}
+
+/* ── Print Button ── */
+.print-btn{
+  width:100%;padding:16px;margin-top:16px;background:transparent;
+  border:2px solid var(--border);border-radius:16px;
+  color:var(--tx-sub);font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.print-btn:hover{background:var(--brand-bg);color:var(--brand);border-color:var(--c10-border);}
+
+/* ── Watermark ── */
+.ks-watermark{
+  position:fixed;bottom:24px;right:24px;z-index:99;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 16px 8px 12px;border-radius:99px;
+  background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.9);
+  box-shadow:0 4px 16px rgba(109,40,217,0.08);
+  font-size:12px;font-weight:700;color:var(--tx-sub);opacity:.8;
+}
+.ks-dot{width:8px;height:8px;border-radius:50%;background:var(--brand);}
+@media print{.ks-watermark{display:none!important;}}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+
+/* ── Print Styles ── */
+@page{size:A4;margin:8mm 10mm;}
+@media print{
+  body,html{background:#fff!important;margin:0;padding:0;}
+  body::before,body::after{display:none!important;}
+  .page,.results,.card,.hero,.rate-info-card,.ks-watermark{display:none!important;}
+  #print-area{display:block!important;width:100%;padding:0;min-height:unset;}
+}
+
+/* ── Print Area ── */
+#print-area{
+  display:none;
+  font-family:'Noto Sans TC','Helvetica Neue',Arial,sans-serif;
+  color:#1E1432;
+  width:210mm;
+  min-height:297mm;
+  margin:0 auto;
+  padding:11mm 13mm 10mm 13mm;
+  box-sizing:border-box;
+  background:#fff;
+}
+.pa-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6mm;padding-bottom:4mm;border-bottom:2px solid #7C3AED;}
+.pa-logo-wrap{display:flex;align-items:flex-end;gap:12px;}
+.pa-logo-mark{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;letter-spacing:-.04em;line-height:1;color:#5B21B6;flex-shrink:0;}
+.pa-title{display:flex;flex-direction:column;justify-content:flex-end;}
+.pa-title h1{font-size:14px;font-weight:800;color:#1E1432;letter-spacing:-.01em;margin-bottom:2px;}
+.pa-title p{font-size:10px;color:#A394C8;font-weight:500;}
+.pa-date{text-align:right;font-size:10.5px;color:#5B4B8A;font-weight:600;}
+.pa-date span{display:block;font-size:12px;font-weight:800;color:#1E1432;margin-top:2px;}
+
+.pa-info-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:5mm;}
+.pa-info-box{background:#F8F5FF;border-radius:7px;padding:8px 11px;border:1px solid rgba(124,58,237,0.1);}
+.pa-info-label{font-size:9.5px;font-weight:700;color:#A394C8;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;}
+.pa-info-val{font-size:15px;font-weight:800;color:#1E1432;}
+
+.pa-section-title{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7C6BAF;margin-bottom:3mm;display:flex;align-items:center;gap:8px;}
+.pa-section-title::after{content:'';flex:1;height:1px;background:rgba(124,58,237,0.12);}
+
+/* Premium section */
+.pa-premium-card{background:#F8F5FF;border-radius:8px;padding:8px 12px;margin-bottom:4mm;border:1px solid rgba(124,58,237,0.1);}
+.pa-annual-label{font-size:9px;font-weight:700;color:#7C6BAF;margin-bottom:2px;letter-spacing:.05em;text-transform:uppercase;}
+.pa-annual-num{font-size:22px;font-weight:800;color:#5B4B8A;letter-spacing:-.02em;line-height:1.1;font-family:'Montserrat',sans-serif;margin-bottom:4px;}
+.pa-annual-num .pa-cur{font-size:13px;font-weight:700;color:#A394C8;margin-right:2px;}
+.pa-monthly-tagline{font-size:10px;font-weight:600;color:#7C6BAF;padding:3px 0;display:inline-block;margin-bottom:5px;}
+.pa-freq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.pa-freq-box{background:#fff;border-radius:7px;padding:7px 9px;border:1px solid rgba(124,58,237,0.12);text-align:center;}
+.pa-freq-label{font-size:9.5px;font-weight:700;color:#A394C8;margin-bottom:2px;letter-spacing:.03em;}
+.pa-freq-val{font-size:12px;font-weight:700;color:#5B4B8A;font-family:'Montserrat',sans-serif;}
+.pa-freq-unit{font-size:9.5px;color:#A394C8;font-weight:600;margin-top:1px;}
+
+/* Benefits section */
+.pa-benefits{display:flex;flex-direction:column;gap:5px;margin-bottom:4mm;}
+.pa-benefit-item{
+  background:#fff;border:1px solid rgba(124,58,237,0.15);border-radius:9px;
+  padding:11px 14px;display:flex;align-items:center;gap:13px;
+}
+.pa-benefit-num{
+  width:26px;height:26px;border-radius:50%;background:#7C3AED;color:#fff;
+  font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.pa-benefit-body{flex:1;min-width:0;}
+.pa-benefit-name{font-size:14.5px;font-weight:800;color:#1E1432;margin-bottom:2px;letter-spacing:-.005em;}
+.pa-benefit-trigger{font-size:10.5px;color:#5B4B8A;font-weight:500;line-height:1.45;}
+.pa-benefit-right{text-align:right;flex-shrink:0;}
+.pa-benefit-amt{
+  font-size:24px;font-weight:900;color:#5B21B6;
+  font-family:'Montserrat','Noto Sans TC',sans-serif;
+  letter-spacing:-.03em;line-height:1;white-space:nowrap;
+}
+.pa-benefit-amt-sub{font-size:10px;color:#7C6BAF;font-weight:600;margin-top:3px;white-space:nowrap;}
+.pa-benefit-item.highlight{background:#F5F3FF;border-color:rgba(124,58,237,0.25);}
+.pa-benefit-item.highlight .pa-benefit-num{background:linear-gradient(135deg,#5B21B6,#7C3AED);}
+
+/* Notice section */
+.pa-notice{background:#F8F5FF;border-radius:7px;padding:8px 11px;margin-bottom:4mm;font-size:9.5px;color:#5B4B8A;font-weight:500;line-height:1.75;}
+.pa-notice strong{color:#1E1432;}
+
+/* Footer */
+.pa-footer{border-top:1px solid rgba(124,58,237,0.12);padding-top:3mm;font-size:9px;color:#A394C8;line-height:1.75;font-weight:500;}
+
+/* ══════════════════════════════════════
+   RWD — Mobile First
+   ══════════════════════════════════════ */
+
+/* ─── 手機 (預設, ≤ 480px) ─── */
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+  .page { padding: 20px 16px 100px; max-width: 100%; }
+  header { padding-bottom: 20px; }
+  .badge { display: none; }
+  .sdg-hero-title { font-size: 32px; }
+  .sdg-subtitle { font-size: 11px; }
+  .card { padding: 20px; border-radius: 20px; }
+  .card + .card, .card + .results { margin-top: 12px; }
+  .gender-row { gap: 8px; margin-bottom: 20px; }
+  .g-btn { padding: 14px 8px; font-size: 14px; border-radius: 14px; min-height: 52px; }
+  .date-row { gap: 8px; }
+  .date-row input, .date-row select { font-size: 14px; padding: 12px 12px; border-radius: 12px; }
+  .period-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .p-btn { padding: 12px 8px; border-radius: 14px; min-height: 52px; font-size: 14px; }
+  .coverage-input { font-size: 36px; width: 88px; }
+  .hero-big { font-size: 36px; }
+  .hero-big .cur { font-size: 20px; }
+  .freq-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .freq-card .fc-val { font-size: 15px; }
+  .summary-box { padding: 16px; }
+  .s-row.total .s-val { font-size: 20px; }
+  .bc-amt { font-size: 17px; }
+  .bc-name { font-size: 13px; }
+  .bc-trigger { font-size: 11px; }
+  .rate-info-card, .benefits-card { padding: 18px; border-radius: 16px; }
+  .ri-grid { grid-template-columns: 1fr 1fr; }
+  .hero { padding: 24px 20px; }
+  .ks-watermark { bottom: 72px; right: 16px; font-size: 11px; }
+  body::before { width: 300px; height: 300px; top: -100px; right: -100px; }
+  body::after { width: 250px; height: 250px; bottom: -100px; left: -100px; }
+}
+
+/* ─── 平板 (481–1023px) ─── */
+@media (min-width: 481px) and (max-width: 1023px) {
+  html { font-size: 14.5px; }
+  .page { padding: 28px 24px 80px; max-width: 720px; }
+  .sdg-hero-title { font-size: 40px; }
+  .card { padding: 26px; }
+  .period-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .p-btn { font-size: 14px; padding: 12px 8px; }
+  .freq-grid { grid-template-columns: repeat(4, 1fr); }
+  .hero-big { font-size: 42px; }
+  .coverage-input { font-size: 40px; }
+  .ri-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── 電腦 (≥ 1024px) ─── */
+@media (min-width: 1024px) {
+  html { font-size: 15px; }
+  .page {
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: 28px;
+    padding: 36px 32px 60px;
+    align-items: start;
+  }
+  header { grid-column: 1 / -1; padding-bottom: 28px; }
+  .card:first-of-type { grid-column: 1; grid-row: 2; }
+  #err { grid-column: 1; grid-row: 3; margin-top: 0; }
+  .results {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    display: block !important;
+    position: sticky;
+    top: 28px;
+  }
+  .hero { padding: 28px; }
+  .hero-big { font-size: 52px; }
+  .hero-big .cur { font-size: 26px; }
+  .freq-grid { grid-template-columns: repeat(4, 1fr); }
+  .ri-grid { grid-template-columns: repeat(4, 1fr); }
+  .summary-box { padding: 20px; }
+  .s-row.total .s-val { font-size: 24px; }
+  .bc-amt { font-size: 22px; }
+  .ks-watermark { bottom: 28px; left: 28px; right: auto; }
+  .period-grid { grid-template-columns: repeat(4, 1fr); }
+  .sdg-hero-title { font-size: 48px; }
+}
+
+
+.mo-input,.dy-input{
+  background:#F8F5FF;border:1px solid var(--border);border-radius:14px;
+  color:var(--tx-main);font-size:15px;font-weight:500;padding:14px 16px;
+  outline:none;transition:all .2s;width:100%;text-align:center;
+  font-family:'Montserrat',sans-serif;
+}
+.mo-input:focus,.dy-input:focus{
+  border-color:var(--brand-light);background:#fff;
+  box-shadow:0 0 0 4px var(--brand-bg);
+}
+.mo-input::placeholder,.dy-input::placeholder{color:var(--tx-muted);font-weight:400;}
+.mo-input{flex:1;}
+.dy-input{flex:1;}
+
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div>
+      <div class="sdg-hero-title">SDG</div>
+      <div class="sdg-subtitle">醫保安心 重大傷病終身健康保險 · 1140602 費率</div>
+    </div>
+    <div class="badge">保費試算</div>
+  </header>
+
+  <!-- Input Card -->
+  <div class="card">
+    <div class="section-label">保戶基本資料</div>
+
+    <div class="gender-row">
+      <label class="g-btn" id="lb-m" onclick="setGender('male')">
+        <input type="radio" name="gender" value="male">
+        <span class="g-icon">👨🏻</span><span>男性</span>
+      </label>
+      <label class="g-btn" id="lb-f" onclick="setGender('female')">
+        <input type="radio" name="gender" value="female">
+        <span class="g-icon">👩🏻</span><span>女性</span>
+      </label>
+    </div>
+
+    <div class="date-row">
+      <input class="yr" type="text" id="by" placeholder="西元年 (e.g. 1990)" inputmode="numeric" maxlength="4" oninput="onYearInput(this)">
+      <input class="mo-input" type="text" id="bm" placeholder="月" inputmode="numeric" maxlength="2" oninput="onMonthInput(this)">
+      <input class="dy-input" type="text" id="bd" placeholder="日" inputmode="numeric" maxlength="2" oninput="onDayInput(this)">
+    </div>
+    <div id="age-tag"><span id="age-txt"></span></div>
+
+    <div class="section-label" style="margin-top:4px;">繳費年期</div>
+    <div class="period-grid" id="period-grid">
+      <label class="p-btn" id="pb-10" onclick="setPeriod(10)">
+        <input type="radio" name="period" value="10">
+        <span>10 年期</span>
+        <span class="p-sub">最高 60 歲投保</span>
+      </label>
+      <label class="p-btn" id="pb-15" onclick="setPeriod(15)">
+        <input type="radio" name="period" value="15">
+        <span>15 年期</span>
+        <span class="p-sub">最高 55 歲投保</span>
+      </label>
+      <label class="p-btn" id="pb-20" onclick="setPeriod(20)">
+        <input type="radio" name="period" value="20">
+        <span>20 年期</span>
+        <span class="p-sub">最高 50 歲投保</span>
+      </label>
+      <label class="p-btn" id="pb-30" onclick="setPeriod(30)">
+        <input type="radio" name="period" value="30">
+        <span>30 年期</span>
+        <span class="p-sub">最高 40 歲投保</span>
+      </label>
+    </div>
+
+    <div class="section-label">規劃保額</div>
+    <div class="coverage-top">
+      <div class="coverage-input-wrap">
+        <input type="number" class="coverage-input" id="cov-num" value="0" min="0" max="500" step="10"
+          oninput="syncSlider(this.value);tryLiveCalculate()">
+        <span style="font-size:18px;font-weight:700;color:var(--tx-sub);">萬元</span>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;font-weight:600;color:var(--tx-muted);margin-bottom:4px;">年繳保費預估</div>
+        <div id="preview-annual" style="font-size:20px;font-weight:800;color:var(--brand-dark);font-family:'Montserrat',sans-serif;">—</div>
+      </div>
+    </div>
+    <div style="margin-bottom:8px">
+      <input type="range" id="cov-slider" min="0" max="500" step="10" value="0" style="--pct:0%"
+        oninput="syncNum(this.value)">
+      <div class="slider-ticks">
+        <span class="slider-tick">0</span>
+        <span class="slider-tick">100</span>
+        <span class="slider-tick">200</span>
+        <span class="slider-tick">300</span>
+        <span class="slider-tick">500萬</span>
+      </div>
+    </div>
+
+    <div id="err"></div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <!-- Empty State -->
+    <div class="empty-state" id="empty-state">
+      <div class="es-icon">📋</div>
+      <div class="es-title">即時試算保費</div>
+      <div class="es-sub">完成左方四項資料<br>結果將自動顯示於此</div>
+      <div class="es-checklist">
+        <div class="es-check" id="es-1"><span class="es-dot"></span>選擇要保人性別</div>
+        <div class="es-check" id="es-2"><span class="es-dot"></span>填寫出生年月日</div>
+        <div class="es-check" id="es-3"><span class="es-dot"></span>選擇繳費年期</div>
+        <div class="es-check" id="es-4"><span class="es-dot"></span>設定規劃保額</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-who" id="hero-who"></div>
+      <div class="hero-label">年繳保費</div>
+      <div class="hero-big"><span class="cur">$</span><span id="hero-annual">—</span></div>
+      <div id="hero-period-tag" class="hero-period-tag"></div>
+
+      <!-- Frequency Breakdown -->
+      <div style="font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--tx-muted);margin-bottom:12px;text-transform:uppercase;">各繳費頻率對照</div>
+      <div class="freq-grid">
+        <div class="freq-card highlight">
+          <div class="fc-label">年繳</div>
+          <div class="fc-val" id="f-annual">—</div>
+          <div class="fc-unit">元 / 年</div>
+        </div>
+        <div class="freq-card">
+          <div class="fc-label">半年繳</div>
+          <div class="fc-val" id="f-semi">—</div>
+          <div class="fc-unit">元 / 期</div>
+        </div>
+        <div class="freq-card">
+          <div class="fc-label">季繳</div>
+          <div class="fc-val" id="f-quarter">—</div>
+          <div class="fc-unit">元 / 期</div>
+        </div>
+        <div class="freq-card">
+          <div class="fc-label">月繳</div>
+          <div class="fc-val" id="f-month">—</div>
+          <div class="fc-unit">元 / 期</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Summary Card -->
+    <div class="rate-info-card">
+      <div class="ri-head">
+        保費明細
+        <span class="ri-badge" id="ri-period-tag">—</span>
+      </div>
+      <div class="ri-grid">
+        <div class="ri-item">
+          <div class="ri-label">費率 (元/萬元保額)</div>
+          <div class="ri-val" id="ri-rate">—</div>
+        </div>
+        <div class="ri-item">
+          <div class="ri-label">投保年齡</div>
+          <div class="ri-val" id="ri-age">—</div>
+        </div>
+        <div class="ri-item">
+          <div class="ri-label">規劃保額</div>
+          <div class="ri-val" id="ri-cov">—</div>
+        </div>
+        <div class="ri-item">
+          <div class="ri-label">繳費年期</div>
+          <div class="ri-val" id="ri-period">—</div>
+        </div>
+      </div>
+
+      <div class="summary-box" style="margin-top:16px;">
+        <div class="s-row">
+          <span class="s-label">首年年繳保費</span>
+          <span class="s-val" id="s-annual">—</span>
+        </div>
+        <div class="s-row">
+          <span class="s-label">繳費期間結束年齡</span>
+          <span class="s-val" id="s-end-age">—</span>
+        </div>
+        <div class="s-row total">
+          <span class="s-label">繳費期間總保費</span>
+          <span class="s-val" id="s-total">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen Benefits -->
+    <div id="screen-benefits" class="benefits-card" style="display:none;"></div>
+
+    <div class="disc">
+      ※ 本試算以費率表資料為基礎，僅供提案參考，實際保費依富邦人壽核保結果為準。<br>
+      ※ SDG 為終身健康保險，保障終身，繳費年期可選 10 / 15 / 20 / 30 年。<br>
+      ※ 半年繳 ×0.52 ｜ 季繳 ×0.262 ｜ 月繳 ×0.088（以年繳為基準換算）。<br>
+      ※ 費率表適用日期：1140602 起。
+    </div>
+
+    <button class="print-btn" onclick="printReport()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      輸出 A4 建議書
+    </button>
+  </div>
+</div>
+
+<div class="ks-watermark">
+  <div class="ks-dot"></div>
+  Keri · SDG 試算
+</div>
+
+<!-- A4 Print Area -->
+<div id="print-area"></div>
+
+<script>
+// ── SDG Rate Tables (元/每萬元保額, 年繳) ──
+const SDG = {
+  10: {
+    male:   {0:462,1:467,2:467,3:472,4:479,5:484,6:489,7:496,8:512,9:517,10:528,11:533,12:543,13:554,14:564,15:574,16:585,17:595,18:611,19:621,20:632,21:642,22:647,23:662,24:668,25:678,26:683,27:693,28:704,29:716,30:727,31:737,32:747,33:753,34:758,35:770,36:780,37:790,38:813,39:823,40:840,41:850,42:866,43:881,44:892,45:903,46:914,47:930,48:946,49:983,50:1019,51:1114,52:1238,53:1306,54:1440,55:1547,56:1716,57:1941,58:2231,59:2538,60:2862},
+    female: {0:442,1:447,2:452,3:458,4:463,5:473,6:478,7:483,8:489,9:499,10:510,11:516,12:526,13:536,14:546,15:557,16:563,17:573,18:578,19:587,20:597,21:603,22:614,23:624,24:629,25:635,26:645,27:656,28:672,29:682,30:688,31:693,32:704,33:720,34:731,35:742,36:757,37:768,38:783,39:799,40:813,41:826,42:851,43:855,44:865,45:876,46:880,47:885,48:896,49:907,50:913,51:965,52:993,53:1077,54:1230,55:1322,56:1399,57:1455,58:1548,59:1628,60:1776}
+  },
+  15: {
+    male:   {0:311,1:316,2:316,3:316,4:322,5:328,6:328,7:333,8:343,9:349,10:354,11:359,12:364,13:375,14:380,15:395,16:400,17:411,18:416,19:421,20:426,21:431,22:436,23:442,24:447,25:457,26:467,27:478,28:489,29:499,30:505,31:521,32:531,33:537,34:548,35:554,36:559,37:564,38:575,39:580,40:591,41:608,42:613,43:634,44:665,45:711,46:762,47:791,48:834,49:898,50:966,51:1049,52:1196,53:1282,54:1370,55:1457},
+    female: {0:298,1:298,2:309,3:314,4:314,5:324,6:324,7:329,8:335,9:335,10:345,11:350,12:355,13:365,14:371,15:381,16:391,17:396,18:401,19:407,20:411,21:417,22:422,23:433,24:438,25:444,26:454,27:464,28:469,29:481,30:491,31:496,32:508,33:518,34:524,35:530,36:545,37:555,38:565,39:570,40:581,41:596,42:601,43:617,44:632,45:636,46:652,47:662,48:758,49:817,50:868,51:932,52:963,53:992,54:1017,55:1047}
+  },
+  20: {
+    male:   {0:243,1:248,2:248,3:254,4:255,5:260,6:260,7:265,8:271,9:276,10:276,11:281,12:291,13:297,14:302,15:313,16:318,17:318,18:318,19:323,20:328,21:339,22:344,23:349,24:349,25:354,26:364,27:370,28:375,29:380,30:391,31:401,32:407,33:417,34:423,35:434,36:444,37:454,38:465,39:475,40:493,41:517,42:545,43:564,44:591,45:614,46:670,47:713,48:755,49:836,50:901},
+    female: {0:235,1:240,2:240,3:245,4:245,5:249,6:256,7:255,8:261,9:265,10:265,11:270,12:281,13:286,14:291,15:301,16:301,17:308,18:313,19:318,20:323,21:328,22:334,23:339,24:344,25:349,26:360,27:365,28:371,29:376,30:386,31:391,32:402,33:409,34:414,35:424,36:434,37:445,38:456,39:466,40:476,41:491,42:495,43:504,44:534,45:557,46:583,47:595,48:605,49:632,50:675}
+  },
+  30: {
+    male:   {0:172,1:173,2:176,3:178,4:180,5:183,6:183,7:186,8:190,9:195,10:199,11:202,12:208,13:213,14:218,15:222,16:222,17:227,18:231,19:236,20:240,21:242,22:247,23:252,24:258,25:264,26:270,27:277,28:285,29:292,30:300,31:302,32:312,33:322,34:339,35:358,36:373,37:394,38:419,39:445,40:473},
+    female: {0:160,1:162,2:165,3:167,4:170,5:173,6:176,7:179,8:183,9:188,10:192,11:195,12:200,13:205,14:210,15:215,16:216,17:221,18:226,19:231,20:235,21:237,22:243,23:248,24:254,25:259,26:266,27:272,28:278,29:285,30:292,31:297,32:305,33:313,34:321,35:336,36:357,37:374,38:393,39:414,40:435}
+  }
+};
+
+const MAX_AGE = {10:60, 15:55, 20:50, 30:40};
+const PERIOD_COLORS = {
+  10:{tag:'sel-10',fill:'var(--c10)',bg:'var(--c10-bg)',text:'var(--c10)'},
+  15:{tag:'sel-15',fill:'var(--c15)',bg:'var(--c15-bg)',text:'var(--c15)'},
+  20:{tag:'sel-20',fill:'var(--c20)',bg:'var(--c20-bg)',text:'var(--c20)'},
+  30:{tag:'sel-30',fill:'var(--c30)',bg:'var(--c30-bg)',text:'var(--c30)'}
+};
+
+let selectedPeriod = null;
+let currentAge = null;
+let currentGender = null;
+
+// ── Print State ──
+let _pr = {}; // stores last calculation for print
+
+// Init empty state on load
+document.addEventListener("DOMContentLoaded", updateEmptyState);
+
+function fmt(n){return Math.round(n).toLocaleString('zh-TW');}
+
+function insAge(bDate, ref = new Date()){
+  const b = new Date(bDate);
+  let yr = ref.getFullYear() - b.getFullYear();
+  const bt = new Date(ref.getFullYear(), b.getMonth(), b.getDate());
+  const bn = new Date(ref.getFullYear()+1, b.getMonth(), b.getDate());
+  const bl = new Date(ref.getFullYear()-1, b.getMonth(), b.getDate());
+  let lo, hi;
+  if(ref >= bt){lo=bt; hi=bn;} else {yr--; lo=bl; hi=bt;}
+  return Math.floor(yr + (ref - lo)/(hi - lo) + 0.5);
+}
+
+function setGender(g){
+  document.querySelector(`input[value="${g}"]`).checked = true;
+  document.getElementById('lb-m').className = 'g-btn' + (g==='male'?' male-on':'');
+  document.getElementById('lb-f').className = 'g-btn' + (g==='female'?' female-on':'');
+  currentGender = g;
+  updatePeriodButtons();
+  clearResults();
+  updatePreview();
+  tryLiveCalculate();
+}
+
+function setPeriod(p){
+  const pb = document.getElementById(`pb-${p}`);
+  if(pb.classList.contains('disabled')) return;
+  selectedPeriod = p;
+  document.querySelector(`input[value="${p}"]`).checked = true;
+  [10,15,20,30].forEach(n => {
+    const el = document.getElementById(`pb-${n}`);
+    el.classList.remove('sel-10','sel-15','sel-20','sel-30');
+  });
+  pb.classList.add(PERIOD_COLORS[p].tag);
+  clearResults();
+  updatePreview();
+  tryLiveCalculate();
+}
+
+function updatePeriodButtons(){
+  const age = currentAge;
+  [10,15,20,30].forEach(n => {
+    const el = document.getElementById(`pb-${n}`);
+    const lock = el.querySelector('.p-lock') || document.createElement('span');
+    if(!el.querySelector('.p-lock')){lock.className='p-lock'; el.appendChild(lock);}
+    if(age !== null && age > MAX_AGE[n]){
+      el.classList.add('disabled');
+      lock.textContent = '🔒';
+      if(selectedPeriod === n){selectedPeriod=null; el.classList.remove(`sel-${n}`);}
+    } else {
+      el.classList.remove('disabled');
+      lock.textContent = '';
+    }
+  });
+}
+
+function onMonthInput(el){
+  // 過濾非數字
+  const v = el.value.replace(/[^0-9]/g, '');
+  if(v !== el.value) el.value = v;
+  if(v === '') { _triggerDateChange(); return; }
+  const n = parseInt(v, 10);
+  // 限制 1-12
+  if(n < 1){ return; }
+  if(n > 12){ el.value = '12'; }
+  // 滿 2 碼或數字大於 1 就觸發
+  _triggerDateChange();
+}
+
+function onDayInput(el){
+  const v = el.value.replace(/[^0-9]/g, '');
+  if(v !== el.value) el.value = v;
+  if(v === ''){ _triggerDateChange(); return; }
+  const n = parseInt(v, 10);
+  if(n < 1) return;
+  // 動態取得當月最大日
+  const y = +document.getElementById('by').value || 2000;
+  const m = +document.getElementById('bm').value || 1;
+  const maxD = new Date(y, m, 0).getDate();
+  if(n > maxD){ el.value = String(maxD); }
+  _triggerDateChange();
+}
+
+// 保留 onMonthChange/onDayChange 給其他地方呼叫用（如 onYearInput）
+function onMonthChange(){ /* no-op, 月份不再是 select */ }
+function onDayChange(){ _triggerDateChange(); }
+
+
+function onYearInput(el){
+  // 完全不修改使用者輸入，只在滿 4 碼且為有效年份時觸發計算
+  const v = el.value;
+  if(v.length !== 4) return;
+  const n = parseInt(v, 10);
+  if(!isNaN(n) && n >= 1900 && n <= 2099){
+    onMonthChange();
+    _triggerDateChange();
+  }
+}
+
+function _triggerDateChange(){
+  clearResults();
+  const y = document.getElementById('by').value;
+  const m = document.getElementById('bm').value;
+  const d = document.getElementById('bd').value;
+  if(!y||!m||!d){
+    document.getElementById('age-tag').className='';
+    currentAge=null;
+    updatePeriodButtons();
+    return;
+  }
+  const age = insAge(new Date(+y,+m-1,+d));
+  currentAge = age;
+  document.getElementById('age-txt').textContent = `投保年齡 ${age} 歲`;
+  document.getElementById('age-tag').className = 'on';
+  updatePeriodButtons();
+  updatePreview();
+  tryLiveCalculate();
+}
+
+function onDateChange(){
+
+  clearResults();
+  const y = document.getElementById('by').value;
+  const m = document.getElementById('bm').value;
+  const d = document.getElementById('bd').value;
+  if(!y||!m||!d){
+    document.getElementById('age-tag').className='';
+    currentAge=null;
+    updatePeriodButtons();
+    return;
+  }
+  const age = insAge(new Date(+y,+m-1,+d));
+  currentAge = age;
+  document.getElementById('age-txt').textContent = `投保年齡 ${age} 歲`;
+  document.getElementById('age-tag').className = 'on';
+  updatePeriodButtons();
+  updatePreview();
+  tryLiveCalculate();
+}
+
+function updatePreview(){
+  const g = document.querySelector('input[name="gender"]:checked')?.value;
+  const cov = +document.getElementById('cov-num').value;
+  const p = selectedPeriod;
+  if(!g||!currentAge||!cov||!p){
+    document.getElementById('preview-annual').textContent='—';
+    return;
+  }
+  const rate = SDG[p]?.[g]?.[currentAge];
+  document.getElementById('preview-annual').textContent = rate ? fmt(rate * cov / 10000 * 10000) + ' 元' : '—';
+}
+
+function syncSlider(v){
+  const sl = document.getElementById('cov-slider');
+  const val = Math.min(Math.max(+v||0), 500);
+  sl.value = val;
+  sl.style.setProperty('--pct', (val/500*100).toFixed(2)+'%');
+  updatePreview();
+  tryLiveCalculate();
+}
+function syncNum(v){
+  const val = Math.min(Math.max(+v||0), 500);
+  document.getElementById('cov-num').value = val;
+  document.getElementById('cov-slider').style.setProperty('--pct', (val/500*100).toFixed(2)+'%');
+  if(navigator.vibrate) navigator.vibrate(5);
+  updatePreview();
+  tryLiveCalculate();
+}
+
+function clearResults(){
+  document.getElementById('results').className='results';
+  document.getElementById('err').className='';
+  const sb = document.getElementById('screen-benefits');
+  if(sb) sb.style.display='none';
+  updateEmptyState();
+}
+
+let countTimers = [];
+function countUp(el, target, dur=800){
+  countTimers.forEach(clearInterval); countTimers=[];
+  const start = Date.now();
+  const t = setInterval(()=>{
+    const p = Math.min((Date.now()-start)/dur, 1);
+    const ease = 1 - Math.pow(1-p, 4);
+    el.textContent = fmt(Math.round(target*ease));
+    if(p>=1){clearInterval(t); el.textContent=fmt(target);}
+  }, 16);
+  countTimers.push(t);
+}
+
+
+function updateEmptyState(){
+  const g = document.querySelector('input[name="gender"]:checked')?.value;
+  const y = document.getElementById('by').value;
+  const m = document.getElementById('bm').value;
+  const d = document.getElementById('bd').value;
+  const cov = +document.getElementById('cov-num').value;
+  const es1 = document.getElementById('es-1');
+  const es2 = document.getElementById('es-2');
+  const es3 = document.getElementById('es-3');
+  const es4 = document.getElementById('es-4');
+  if(es1) es1.classList.toggle('done', !!g);
+  if(es2) es2.classList.toggle('done', !!(y && m && d));
+  if(es3) es3.classList.toggle('done', !!selectedPeriod);
+  if(es4) es4.classList.toggle('done', !!(cov > 0));
+}
+
+function tryLiveCalculate(){
+  updateEmptyState();
+  const g = document.querySelector('input[name="gender"]:checked')?.value;
+  const y = document.getElementById('by').value;
+  const m = document.getElementById('bm').value;
+  const d = document.getElementById('bd').value;
+  const cov = +document.getElementById('cov-num').value;
+  // 四項都齊全才執行 silent calc
+  if(g && y && m && d && selectedPeriod && cov > 0){
+    calculate({silent:true});
+  } else {
+    // 任何一項缺失，回到 empty state
+    const r = document.getElementById('results');
+    r.classList.remove('has-data');
+  }
+}
+
+function calculate(opts){
+  const silent = opts && opts.silent;
+  const g = document.querySelector('input[name="gender"]:checked')?.value;
+  const y = document.getElementById('by').value;
+  const m = document.getElementById('bm').value;
+  const d = document.getElementById('bd').value;
+  const cov = parseFloat(document.getElementById('cov-num').value);
+
+  if(!g){(silent? null : showErr('請選擇要保人性別'));return;}
+  if(!y||!m||!d){(silent? null : showErr('請完整填寫出生年月日'));return;}
+  if(!selectedPeriod){(silent? null : showErr('請選擇繳費年期'));return;}
+  if(!cov||cov<=0){(silent? null : showErr('請輸入規劃保額'));return;}
+
+  const age = insAge(new Date(+y,+m-1,+d));
+  const maxAge = MAX_AGE[selectedPeriod];
+
+  if(age < 0){(silent? null : showErr('出生日期有誤，請重新確認'));return;}
+  if(age > maxAge){(silent? null : showErr(`投保年齡 ${age} 歲超過 ${selectedPeriod} 年期上限（${maxAge} 歲）`));return;}
+
+  const rate = SDG[selectedPeriod]?.[g]?.[age];
+  if(!rate){(silent? null : showErr(`年齡 ${age} 歲無對應費率，請確認資料`));return;}
+
+  const annual = rate * (cov * 10000 / 10000);  // rate per 萬元, cov in 萬
+  const annualAmt = Math.round(rate * cov);  // cov already in 萬
+  const semi = Math.round(annualAmt * 0.52);
+  const quarter = Math.round(annualAmt * 0.262);
+  const monthly = Math.round(annualAmt * 0.088);
+  const total = annualAmt * selectedPeriod;
+  const endAge = age + selectedPeriod;
+  const pc = PERIOD_COLORS[selectedPeriod];
+  const periodLabel = `${selectedPeriod} 年期`;
+  const gLabel = g==='male'?'👨🏻 男性':'👩🏻 女性';
+
+  // Hero
+  document.getElementById('hero-who').innerHTML =
+    `<span style="display:inline-block;padding:4px 10px;background:var(--surface);border-radius:6px;border:1px solid var(--border);margin-right:8px;">${gLabel}</span>` +
+    `保險年齡 <strong style="color:var(--tx-main)">${age}</strong> 歲 · 規劃 <strong style="color:var(--tx-main)">${fmt(cov)}</strong> 萬元`;
+
+  const ptag = document.getElementById('hero-period-tag');
+  ptag.textContent = `繳費 ${selectedPeriod} 年 · 保障終身`;
+  ptag.style.background = `var(--c${selectedPeriod}-bg,var(--brand-bg))`;
+  ptag.style.color = `var(--c${selectedPeriod},var(--brand))`;
+  ptag.style.border = `1px solid var(--c${selectedPeriod}-border,var(--c10-border))`;
+
+  // Freq
+  document.getElementById('f-annual').textContent = fmt(annualAmt);
+  document.getElementById('f-semi').textContent = fmt(semi);
+  document.getElementById('f-quarter').textContent = fmt(quarter);
+  document.getElementById('f-month').textContent = fmt(monthly);
+
+  // Rate Info
+  document.getElementById('ri-period-tag').textContent = periodLabel;
+  document.getElementById('ri-rate').textContent = fmt(rate);
+  document.getElementById('ri-age').textContent = `${age} 歲`;
+  document.getElementById('ri-cov').textContent = `${fmt(cov)} 萬`;
+  document.getElementById('ri-period').textContent = periodLabel;
+
+  // Summary
+  document.getElementById('s-annual').textContent = fmt(annualAmt) + ' 元';
+  document.getElementById('s-end-age').textContent = `${endAge} 歲`;
+  document.getElementById('s-total').textContent = fmt(total) + ' 元';
+
+  // Show results
+  const r = document.getElementById('results');
+  r.style.display = 'block';
+  if(silent){
+    r.className = 'results on has-data';
+  } else {
+    requestAnimationFrame(()=>{
+      r.className = 'results on has-data';
+      r.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  }
+
+  // Number rolling animation
+  if(silent){
+    document.getElementById('hero-annual').textContent = fmt(annualAmt);
+  } else {
+    countUp(document.getElementById('hero-annual'), annualAmt);
+  }
+
+  // Screen Benefits
+  const _claimAmt2 = Math.max(cov * 10000, Math.round(annualAmt * 1.06));
+  const _claimWan = Math.round(_claimAmt2 / 10000);
+  const _deathAmt = Math.round(annualAmt * 2);
+  const _benefits = [
+    {name:'重大傷病保險金',trigger:'等待期滿後首次罹患健保重大傷病（第1年：年繳保費×1.06倍）',amt:`${fmt(_claimWan)} 萬元`,sub:'第2保單年度起',hl:true},
+    {name:'特定重大疾病保險金',trigger:'第2保單年度起｜急性心肌梗塞重度、冠狀動脈繞道手術等',amt:`${fmt(_claimWan)} 萬元`,sub:'最高給付',hl:false},
+    {name:'特定傷病保險金',trigger:'等待期滿後罹患特定傷病',amt:`${fmt(_claimWan)} 萬元`,sub:'最高給付',hl:false},
+    {name:'身故 / 喪葬費用保險金',trigger:'被保險人身故',amt:`${fmt(_deathAmt)} 元`,sub:'年繳保費 ×2.0倍',hl:false},
+    {name:'完全失能保險金',trigger:'達完全失能程度（附表二七項之一）',amt:`${fmt(_deathAmt)} 元`,sub:'年繳保費 ×2.0倍',hl:false},
+    {name:'二至六級意外失能豁免保費',trigger:'因意外事故致二至六級失能',amt:'豁免',sub:'後續所有保費',hl:false},
+    {name:'祝壽保險金',trigger:'保險年齡屆滿 100 歲仍生存',amt:`${fmt(_claimWan)} 萬元`,sub:'最高給付',hl:false},
+  ];
+  const sbEl = document.getElementById('screen-benefits');
+  sbEl.style.display = 'block';
+  sbEl.innerHTML = `<div class="bc-head">給付保障 <span class="bc-badge">7 項</span></div>` +
+    _benefits.map((b,i)=>`
+      <div class="bc-item${b.hl?' hl':''}">
+        <div class="bc-num">${i+1}</div>
+        <div class="bc-body">
+          <div class="bc-name">${b.name}</div>
+          <div class="bc-trigger">${b.trigger}</div>
+        </div>
+        <div class="bc-right">
+          <div class="bc-amt">${b.amt}</div>
+          <div class="bc-sub">${b.sub}</div>
+        </div>
+      </div>`).join('');
+
+  // Store for print
+  _pr = {g, y, m, d, age, cov, annualAmt, semi, quarter, monthly, total, endAge, selectedPeriod, rate};
+}
+
+function showErr(msg){
+  const el = document.getElementById('err');
+  el.textContent = msg; el.className='on'; el.style.display='block';
+}
+
+function printReport(){
+  if(!_pr.annualAmt){showErr('請先完成試算再輸出建議書');return;}
+  const p = _pr;
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
+  const gLabel = p.g==='male'?'男性':'女性';
+  const monthlyAvg = Math.round(p.annualAmt / 12);
+  // 重大傷病第2年起 = Max(保險金額, 年繳×1.06)，通常 = 保險金額
+  const claimAmt2 = Math.max(p.cov * 10000, Math.round(p.annualAmt * 1.06));
+  const claimAmtWan = Math.round(claimAmt2 / 10000);
+
+  const deathAmt = Math.round(p.annualAmt * 2);
+  const benefits = [
+    {
+      name:'重大傷病保險金',
+      trigger:'等待期滿後首次罹患健保重大傷病（第1年：年繳保費×1.06倍）',
+      amt:`${fmt(claimAmtWan)} 萬元`,
+      sub:'第2保單年度起',
+      hi:true
+    },
+    {
+      name:'特定重大疾病保險金',
+      trigger:'第2保單年度起｜急性心肌梗塞重度、冠狀動脈繞道手術等',
+      amt:`${fmt(claimAmtWan)} 萬元`,
+      sub:'最高給付',
+      hi:false
+    },
+    {
+      name:'特定傷病保險金',
+      trigger:'等待期滿後罹患特定傷病',
+      amt:`${fmt(claimAmtWan)} 萬元`,
+      sub:'最高給付',
+      hi:false
+    },
+    {
+      name:'身故 / 喪葬費用保險金',
+      trigger:'被保險人身故',
+      amt:`${fmt(deathAmt)} 元`,
+      sub:'年繳保費 ×2.0倍',
+      hi:false
+    },
+    {
+      name:'完全失能保險金',
+      trigger:'達完全失能程度（附表二七項之一）',
+      amt:`${fmt(deathAmt)} 元`,
+      sub:'年繳保費 ×2.0倍',
+      hi:false
+    },
+    {
+      name:'二至六級意外失能豁免保費',
+      trigger:'因意外事故致二至六級失能',
+      amt:'豁免',
+      sub:'後續所有保費',
+      hi:false
+    },
+    {
+      name:'祝壽保險金',
+      trigger:'保險年齡屆滿 100 歲仍生存',
+      amt:`${fmt(claimAmtWan)} 萬元`,
+      sub:'最高給付',
+      hi:false
+    },
+  ];
+
+  const benefitHTML = benefits.map((b,i)=>`
+    <div class="pa-benefit-item${b.hi?' highlight':''}">
+      <div class="pa-benefit-num">${i+1}</div>
+      <div class="pa-benefit-body">
+        <div class="pa-benefit-name">${b.name}</div>
+        <div class="pa-benefit-trigger">${b.trigger}</div>
+      </div>
+      <div class="pa-benefit-right">
+        <div class="pa-benefit-amt">${b.amt}</div>
+        <div class="pa-benefit-amt-sub">${b.sub}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('print-area').innerHTML = `
+    <div class="pa-header">
+      <div class="pa-logo-wrap">
+        <div class="pa-logo-mark">SDG</div>
+        <div class="pa-title">
+          <h1>醫保安心 重大傷病終身健康保險</h1>
+          <p>富邦人壽 SDG · 保障終身 · 繳費 ${p.selectedPeriod} 年</p>
+        </div>
+      </div>
+      <div class="pa-date">提案日期<span>${dateStr}</span></div>
+    </div>
+
+    <div class="pa-info-row">
+      <div class="pa-info-box"><div class="pa-info-label">被保人</div><div class="pa-info-val">${gLabel}</div></div>
+      <div class="pa-info-box"><div class="pa-info-label">出生日</div><div class="pa-info-val" style="font-size:13px">${p.y}/${p.m}/${p.d}</div></div>
+      <div class="pa-info-box"><div class="pa-info-label">保險年齡</div><div class="pa-info-val">${p.age} 歲</div></div>
+      <div class="pa-info-box"><div class="pa-info-label">規劃保額</div><div class="pa-info-val">${fmt(p.cov)} 萬</div></div>
+    </div>
+
+    <div class="pa-section-title">保費方案</div>
+    <div class="pa-premium-card">
+      <div class="pa-annual-label">年繳保費</div>
+      <div class="pa-annual-row">
+        <div class="pa-annual-num"><span class="pa-cur">$</span>${fmt(p.annualAmt)}<span style="font-size:16px;font-weight:700;color:#5B4B8A;margin-left:4px">元</span></div>
+      </div>
+      <div class="pa-monthly-tagline">▸ 平均每月提撥 $${fmt(monthlyAvg)} 元，享有 ${fmt(claimAmtWan)} 萬重大傷病保障</div>
+      <div class="pa-freq-grid">
+        <div class="pa-freq-box">
+          <div class="pa-freq-label">半年繳</div>
+          <div class="pa-freq-val">${fmt(p.semi)}</div>
+          <div class="pa-freq-unit">元 / 期</div>
+        </div>
+        <div class="pa-freq-box">
+          <div class="pa-freq-label">季繳</div>
+          <div class="pa-freq-val">${fmt(p.quarter)}</div>
+          <div class="pa-freq-unit">元 / 期</div>
+        </div>
+        <div class="pa-freq-box">
+          <div class="pa-freq-label">月繳</div>
+          <div class="pa-freq-val">${fmt(p.monthly)}</div>
+          <div class="pa-freq-unit">元 / 期</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pa-section-title">八大給付保障</div>
+    <div class="pa-benefits">${benefitHTML}</div>
+
+    <div class="pa-notice">
+      <strong>等待期：</strong>疾病類 30 天 ｜癌症類 90 天（等待期間內發病不予給付）。<br>
+      <strong>保障範圍：</strong>依全民健保重大傷病認定（30 大類），投保時已罹患或已取得重大傷病證明者不在承保範圍。<br>
+      <strong>繳費年期：</strong>${p.selectedPeriod} 年期，繳費至 ${p.endAge} 歲，保障延續終身至 100 歲。
+    </div>
+
+    <div class="pa-footer">
+      ※ 本建議書由系統依費率表試算產出（費率適用日期：1140602 起），僅供提案參考，實際承保條件以富邦人壽核保結果及保單條款為準。<br>
+      ※ 保費換算：半年繳 ×0.52 ｜季繳 ×0.262 ｜月繳 ×0.088。平均每月 = 年繳 ÷ 12（實際月繳金額以月繳費率為準）。<br>
+      ※「重大傷病保險金（第2保單年度起）」給付金額為 Max(保險金額, 年繳保費×1.06)，以規劃保額較大者為準。
+    </div>
+  `;
+  window.print();
+}
+</script>
+</body>
+</html>
