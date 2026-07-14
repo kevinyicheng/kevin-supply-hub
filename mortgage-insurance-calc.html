@@ -232,6 +232,33 @@ tr.milestone-row{background:var(--green-bg);}
 .badge-grace{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(217,119,6,0.2);}
 .badge-milestone{background:var(--green-bg);color:var(--green);border:1px solid rgba(5,150,105,0.2);}
 .badge-fx{background:var(--brand-bg);color:var(--brand);}
+.badge-topup{background:var(--brand-bg);color:var(--brand-dark);border:1px solid var(--brand-border);}
+
+/* ── 年度加碼 ── */
+.td-year{white-space:nowrap;}
+.row-add{
+  width:26px;height:26px;border-radius:50%;border:1.5px solid var(--brand-border);
+  background:var(--brand-bg);color:var(--brand-dark);
+  font-size:15px;font-weight:800;line-height:1;cursor:pointer;
+  vertical-align:middle;margin-right:8px;transition:all .15s;font-family:inherit;
+}
+.row-add:hover{background:var(--brand);border-color:var(--brand);color:#fff;transform:scale(1.08);}
+.row-add.has-topup{background:var(--brand);border-color:var(--brand);color:#fff;}
+tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
+.te-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.te-label{font-size:13px;font-weight:700;color:var(--tx-sub);white-space:nowrap;}
+.te-row input{
+  flex:1;min-width:140px;max-width:220px;padding:10px 14px!important;
+  font-size:15px!important;text-align:right;
+}
+.te-btn{
+  padding:10px 18px;border:1.5px solid var(--border);border-radius:999px;
+  background:var(--surface);font-size:13px;font-weight:700;color:var(--tx-sub);
+  cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.te-btn:hover{border-color:var(--border-hover);}
+.te-btn.te-ok{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border-color:transparent;}
+.te-btn.te-del{color:var(--red);border-color:rgba(225,29,72,0.3);}
 
 /* ── Notes ── */
 .notice{
@@ -389,12 +416,11 @@ tr.milestone-row{background:var(--green-bg);}
           <span class="input-hint">0 = 無寬限期，只繳利息</span>
         </div>
       </div>
-      <button class="btn-primary" onclick="calcMortgage()">計算還款表</button>
     </div>
 
     <div id="m-placeholder" class="placeholder card">
       <div class="pi">🏠</div>
-      <p>輸入貸款條件後點擊「計算還款表」</p>
+      <p>輸入貸款條件後即時計算</p>
     </div>
 
     <div id="m-results" style="display:none">
@@ -1057,6 +1083,10 @@ function getFundDiscountRate(amount) {
   return FUND_DISCOUNT_RATES.find(({min, max}) => amount >= min && amount < max).rate;
 }
 
+// 年度加碼：{ 年度: 加碼金額(台幣) }，於該年度第 1 個月投入
+state.fundTopups = {};
+let topupEditorYear = null;   // 目前展開加碼編輯器的年度
+
 function calcFund() {
   const investment = parseComma(document.getElementById('f-investment').value);
   const netValue   = parseFloat(document.getElementById('f-netvalue').value)   || 0;
@@ -1064,38 +1094,54 @@ function calcFund() {
   const fxRate     = parseFloat(document.getElementById('f-fx-rate').value)    || 32;
   if (!investment || !netValue) return;
 
-  // DSP5 核心邏輯
-  const discountRate    = getFundDiscountRate(investment);
-  const adjustedInvest  = investment * discountRate;
-  const units           = adjustedInvest / netValue / fxRate;
-  const monthlyPayoutUSD = units * unitPayout;
-  const monthlyPayoutTWD = Math.round(monthlyPayoutUSD * fxRate);
+  // DSP5 核心邏輯：每筆投入（首筆＋加碼）各自按級距扣手續費後換算單位數
+  const trancheUnits = amt => amt * getFundDiscountRate(amt) / netValue / fxRate;
+  const baseAdjusted = investment * getFundDiscountRate(investment);
+  const baseUnits    = trancheUnits(investment);
+  const payoutOfUnits = u => Math.round(u * unitPayout * fxRate);
 
-  state.fundData = { investment, netValue, unitPayout, fxRate, discountRate,
-                     adjustedInvest, units, monthlyPayoutUSD, monthlyPayoutTWD };
+  const topupYears  = Object.keys(state.fundTopups).map(Number).sort((a,b)=>a-b);
+  const totalTopup  = topupYears.reduce((s,y)=>s+state.fundTopups[y], 0);
+
+  // 逐年累計單位數（加碼於該年度第 1 個月生效）
+  const unitsAtYear = y => baseUnits +
+    topupYears.filter(ty=>ty<=y).reduce((s,ty)=>s+trancheUnits(state.fundTopups[ty]), 0);
+
+  const monthlyPayoutTWD = payoutOfUnits(baseUnits);       // 首年（未加碼前）
+  const finalUnits       = unitsAtYear(Infinity);
+  const finalPayoutTWD   = payoutOfUnits(finalUnits);
+
+  state.fundData = { investment, netValue, unitPayout, fxRate,
+                     baseAdjusted, baseUnits, monthlyPayoutTWD, finalUnits, finalPayoutTWD };
 
   const m = state.mortgageData;
+  const hasTopup = topupYears.length > 0;
 
   // Summary cards（現金流 = 配息 − 還款，正值 = 有剩）
   const hasGrace  = m && m.grace > 0;
-  const graceCF   = m ? Math.round(monthlyPayoutTWD - m.gracePayment)  : null;
-  const normalCF  = m ? Math.round(monthlyPayoutTWD - m.normalPayment) : null;
+  const graceCF   = m ? Math.round(payoutOfUnits(unitsAtYear(1)) - m.gracePayment) : null;
+  const normalCF  = m ? Math.round(payoutOfUnits(unitsAtYear(m.grace + 1)) - m.normalPayment) : null;
   document.getElementById('f-summary').innerHTML = `
     <div class="sc">
       <div class="sc-label">實際入帳</div>
-      <div class="sc-value">${fmt(adjustedInvest)}</div>
-      <div class="sc-sub">元（手續費率 ${((1-discountRate)*100).toFixed(0)}%）</div>
+      <div class="sc-value">${fmt(baseAdjusted)}</div>
+      <div class="sc-sub">元（手續費已扣）${hasTopup?`・另加碼 ${topupYears.length} 筆`:''}</div>
     </div>
     <div class="sc">
       <div class="sc-label">可得單位數</div>
-      <div class="sc-value">${units.toFixed(2)}</div>
-      <div class="sc-sub">淨值 ${netValue}・匯率 ${fxRate}</div>
+      <div class="sc-value">${(hasTopup?finalUnits:baseUnits).toFixed(2)}</div>
+      <div class="sc-sub">淨值 ${netValue}・匯率 ${fxRate}${hasTopup?'・含加碼':''}</div>
     </div>
     <div class="sc green">
-      <div class="sc-label">月配息</div>
+      <div class="sc-label">${hasTopup?'首年月配息':'月配息'}</div>
       <div class="sc-value">${fmt(monthlyPayoutTWD)}</div>
-      <div class="sc-sub">元 / 月（${monthlyPayoutUSD.toFixed(2)} USD）</div>
+      <div class="sc-sub">元 / 月</div>
     </div>
+    ${hasTopup ? `<div class="sc green">
+      <div class="sc-label">加碼後月配息</div>
+      <div class="sc-value">${fmt(finalPayoutTWD)}</div>
+      <div class="sc-sub">元 / 月（全部加碼生效後）</div>
+    </div>` : ''}
     ${hasGrace ? `<div class="sc ${graceCF>=0?'green':'orange'}">
       <div class="sc-label">寬限期月現金流</div>
       <div class="sc-value">${fmtSign(graceCF)}</div>
@@ -1109,7 +1155,7 @@ function calcFund() {
   `;
 
   document.getElementById('f-fee-note').innerHTML = m
-    ? `📌 配息以每單位 <strong>${unitPayout} USD/月</strong>、匯率 <strong>1 USD = ${fxRate} TWD</strong> 估算；現金流 = 月配息 − 房貸月還款，正值 = 配息覆蓋還款後仍有剩餘。配息非保證，實際依市場波動。`
+    ? `📌 配息以每單位 <strong>${unitPayout} USD/月</strong>、匯率 <strong>1 USD = ${fxRate} TWD</strong> 估算；現金流 = 月配息 − 房貸月還款。點年度旁的 <strong>＋</strong> 可於該年度第 1 個月加碼${hasTopup?`（目前加碼合計 <strong>${fmt(totalTopup)}</strong> 元，以相同淨值/匯率假設）`:''}。配息非保證，實際依市場波動。`
     : `📌 尚未計算房貸，僅顯示配息試算。至「房貸試算」計算後即可對比。`;
 
   // 年度對比表：月現金流 = 月配息 − 房貸月還款
@@ -1123,17 +1169,39 @@ function calcFund() {
     </tr>`;
     tbody.innerHTML = m.yearly.map(y => {
       const monthlyPay = y.payment / 12;
-      const cashflow   = monthlyPayoutTWD - monthlyPay;
+      const yPayout    = payoutOfUnits(unitsAtYear(y.year));
+      const cashflow   = yPayout - monthlyPay;
       const covered    = cashflow >= 0;
-      return `<tr class="${covered?'milestone-row':''}">
-        <td>${y.year}${y.allGrace?'<span class="badge badge-grace">寬限</span>':''}${covered?'<span class="badge badge-milestone">配息覆蓋</span>':''}</td>
+      const topup      = state.fundTopups[y.year];
+      const row = `<tr class="${covered?'milestone-row':''}">
+        <td class="td-year">
+          <button type="button" class="row-add ${topup?'has-topup':''}" title="第 ${y.year} 年第 1 個月加碼"
+            onclick="toggleTopupEditor(${y.year})">${topup?'✎':'＋'}</button>
+          ${y.year}${y.allGrace?'<span class="badge badge-grace">寬限</span>':''}${topup?`<span class="badge badge-topup">加碼 ${fmt(topup)}</span>`:''}${covered?'<span class="badge badge-milestone">配息覆蓋</span>':''}
+        </td>
         <td class="tc">${y.age} 歲</td>
         <td class="tr">-${fmt(monthlyPay)}</td>
-        <td class="tg">${fmt(monthlyPayoutTWD)}</td>
+        <td class="tg">${fmt(yPayout)}</td>
         <td class="${covered?'tg':'tr'}">${fmtSign(cashflow)}</td>
         <td class="${covered?'tg':'tr'}">${fmtSign(cashflow*12)}</td>
       </tr>`;
+      const editor = topupEditorYear === y.year ? `<tr class="topup-editor"><td colspan="6">
+        <div class="te-row">
+          <span class="te-label">第 ${y.year} 年第 1 個月加碼金額（台幣）</span>
+          <input type="text" inputmode="numeric" id="topup-input" value="${topup?topup.toLocaleString('en-US'):''}"
+            placeholder="例：3,000,000"
+            oninput="this.value=this.value.replace(/[^\\d]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,',')">
+          <button type="button" class="te-btn te-ok" onclick="confirmTopup(${y.year})">確認</button>
+          ${topup?`<button type="button" class="te-btn te-del" onclick="removeTopup(${y.year})">移除</button>`:''}
+          <button type="button" class="te-btn" onclick="toggleTopupEditor(null)">取消</button>
+        </div>
+      </td></tr>` : '';
+      return row + editor;
     }).join('');
+    if (topupEditorYear != null) {
+      const inp = document.getElementById('topup-input');
+      if (inp) inp.focus();
+    }
   } else {
     thead.innerHTML = '';
     tbody.innerHTML = '';
@@ -1141,6 +1209,25 @@ function calcFund() {
 
   document.getElementById('f-placeholder').style.display = 'none';
   document.getElementById('f-results').style.display = 'block';
+}
+
+function toggleTopupEditor(year) {
+  topupEditorYear = (topupEditorYear === year) ? null : year;
+  calcFund();
+}
+
+function confirmTopup(year) {
+  const amt = parseComma(document.getElementById('topup-input').value);
+  if (amt > 0) state.fundTopups[year] = amt;
+  else delete state.fundTopups[year];
+  topupEditorYear = null;
+  calcFund();
+}
+
+function removeTopup(year) {
+  delete state.fundTopups[year];
+  topupEditorYear = null;
+  calcFund();
 }
 
 // ══════════════════════════════════════════════════════════════════
