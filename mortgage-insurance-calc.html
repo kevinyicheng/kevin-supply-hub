@@ -1473,7 +1473,7 @@ async function fetchUsdRate() {
       if (el) el.value = rate;
     });
     const today = new Date().toLocaleDateString('zh-TW');
-    const hint  = `即時匯率 1 USD ≈ ${rate} TWD（${today} 更新，可手動調整）`;
+    const hint  = `當日參考匯率 1 USD ≈ ${rate} TWD（${today}，每日更新，可手動調整）`;
     ['f-fx-hint', 'i-fx-hint'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = hint;
