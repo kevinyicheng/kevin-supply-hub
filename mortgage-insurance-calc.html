@@ -202,13 +202,13 @@ input[type="number"]::-webkit-inner-spin-button{display:none;}
 .toggle-btn.active{background:var(--brand-bg);border-color:var(--brand);color:var(--brand-dark);}
 
 /* ── Tables ── */
-.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.table-wrap{overflow-x:auto;overflow-y:auto;max-height:540px;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;font-size:16px;font-variant-numeric:tabular-nums;}
 thead th{
   background:var(--brand-bg);padding:13px 12px;
   text-align:right;font-size:12.5px;font-weight:800;
   color:var(--tx-sub);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;
-  position:sticky;top:0;
+  position:sticky;top:0;z-index:2;
 }
 thead th:first-child{text-align:center;}
 thead th.th-center{text-align:center;}
@@ -1409,14 +1409,14 @@ function renderReport() {
     const bal  = my ? my.balance : 0;
     const svTWD = iy ? iy.svTWD : null;
     const dbTWD = iy ? iy.dbTWD : null;
-    const diff  = svTWD != null ? svTWD - bal : null;
-    if (diff!=null && diff>=0 && !coverYear) coverYear = y;
     const fundInv = state.fundData ? (
       state.fundData.investment +
       Object.entries(state.fundTopups || {})
         .filter(([ty]) => Number(ty) <= y)
         .reduce((s, [,v]) => s + v, 0)
     ) : null;
+    const diff  = svTWD != null ? svTWD + (fundInv ?? 0) - bal : null;
+    if (diff!=null && diff>=0 && !coverYear) coverYear = y;
     return {y, age, bal, svTWD, dbTWD, diff, fundInv};
   });
 
@@ -1429,7 +1429,7 @@ function renderReport() {
       <div class="sc-sub">借款人 ${m.age+m.years-1} 歲</div>
     </div>
     <div class="sc green">
-      <div class="sc-label">現金價值超越房貸</div>
+      <div class="sc-label">${state.fundData?'保單+基金超越房貸':'現金價值超越房貸'}</div>
       <div class="sc-value">${coverYear?`第 ${coverYear} 年`:'超出範圍'}</div>
       <div class="sc-sub">${coverYear?`借款人 ${m.age+coverYear-1} 歲`:''}</div>
     </div>
