@@ -460,7 +460,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
         <div class="form-group">
           <label>假設匯率（台幣 / USD）</label>
           <input type="number" id="f-fx-rate" value="32" min="1" step="0.1">
-          <span class="input-hint" id="f-fx-hint">例：32 = 1 USD ≈ 32 TWD</span>
+          <span class="input-hint" id="f-fx-hint">載入即時匯率中…</span>
         </div>
       </div>
       <button class="btn-primary" onclick="calcFund()">試算配息</button>
@@ -535,7 +535,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
             <label>假設匯率（台幣 / 外幣）</label>
             <input type="number" id="i-fx-rate" value="32" min="1" step="0.1"
               oninput="updatePremiumDisplay()">
-            <span class="input-hint">例：32 = 1 USD ≈ 32 TWD</span>
+            <span class="input-hint" id="i-fx-hint">載入即時匯率中…</span>
           </div>
           <div class="form-group">
             <label>顯示年數</label>
@@ -613,6 +613,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
                 <th>借款人年齡</th>
                 <th>房貸餘額（台幣）</th>
                 <th>保單現金價值</th>
+                <th>基金累計投入</th>
                 <th>貸款與現價差額</th>
                 <th>身故保額（台幣）</th>
               </tr>
@@ -1410,7 +1411,13 @@ function renderReport() {
     const dbTWD = iy ? iy.dbTWD : null;
     const diff  = svTWD != null ? svTWD - bal : null;
     if (diff!=null && diff>=0 && !coverYear) coverYear = y;
-    return {y, age, bal, svTWD, dbTWD, diff};
+    const fundInv = state.fundData ? (
+      state.fundData.investment +
+      Object.entries(state.fundTopups || {})
+        .filter(([ty]) => Number(ty) <= y)
+        .reduce((s, [,v]) => s + v, 0)
+    ) : null;
+    return {y, age, bal, svTWD, dbTWD, diff, fundInv};
   });
 
   // Summary
@@ -1446,10 +1453,40 @@ function renderReport() {
       <td class="tc">${r.age} 歲</td>
       <td>${fmt(r.bal)}</td>
       <td class="${r.svTWD!=null&&pos?'tg':''}">${fmt(r.svTWD)}</td>
+      <td>${r.fundInv!=null?fmt(r.fundInv):'—'}</td>
       <td class="${r.diff!=null?(pos?'tg':'tr'):''}">${r.diff!=null?fmtSign(r.diff):'—'}</td>
       <td>${fmt(r.dbTWD)}</td>
     </tr>`;
   }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  即時匯率（USD/TWD）
+// ══════════════════════════════════════════════════════════════════
+async function fetchUsdRate() {
+  try {
+    const res  = await fetch('https://open.er-api.com/v6/latest/USD');
+    const json = await res.json();
+    const rate = Math.round(json.rates.TWD * 10) / 10;
+    ['f-fx-rate', 'i-fx-rate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = rate;
+    });
+    const today = new Date().toLocaleDateString('zh-TW');
+    const hint  = `即時匯率 1 USD ≈ ${rate} TWD（${today} 更新，可手動調整）`;
+    ['f-fx-hint', 'i-fx-hint'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = hint;
+    });
+    calcFund();
+    calcInsurance();
+  } catch {
+    const hint = '匯率載入失敗，請手動輸入（例：32）';
+    ['f-fx-hint', 'i-fx-hint'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = hint;
+    });
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1460,6 +1497,7 @@ document.addEventListener('DOMContentLoaded', () => {
   onProductChange();   // 初始化商品選項
   calcMortgage();      // 預設計算
   calcInsurance();     // 預設計算
+  fetchUsdRate();      // 撈即時 USD/TWD 匯率
 
   // 房貸試算：任一欄位變動即時重算
   ['m-age','m-principal','m-rate','m-years','m-grace'].forEach(id => {
