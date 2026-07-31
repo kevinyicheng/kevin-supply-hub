@@ -291,6 +291,13 @@ input[type=range]::-webkit-slider-thumb:active{
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
 }
 .bc-sub{font-size:11px;font-weight:600;color:var(--tx-muted);margin-top:3px;}
+.bc-spec{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+.bc-spec .sp{
+  font-size:10.5px;font-weight:600;color:var(--brand-dark);
+  background:var(--brand-bg);border:1px solid color-mix(in srgb,var(--brand) 18%,transparent);
+  border-radius:7px;padding:3px 8px;white-space:nowrap;line-height:1.3;
+}
+.bc-spec .sp .code{font-family:'Montserrat',sans-serif;font-weight:800;margin-right:4px;color:var(--brand);letter-spacing:-.01em;}
 
 /* ── Empty State ── */
 .empty-state{
@@ -418,6 +425,9 @@ input[type=range]::-webkit-slider-thumb:active{
 .pa-benefit-right{text-align:right;flex-shrink:0;}
 .pa-benefit-amt{font-size:22px;font-weight:900;color:var(--pa-brand-dark,#1E3A8A);font-family:'Montserrat','Noto Sans TC',sans-serif;letter-spacing:-.03em;line-height:1;white-space:nowrap;}
 .pa-benefit-amt-sub{font-size:9.5px;color:var(--pa-brand,#1D4ED8);font-weight:600;margin-top:3px;white-space:nowrap;}
+.pa-spec{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.pa-spec .sp{font-size:8.5px;font-weight:500;color:var(--pa-brand-dark,#1E3A8A);background:var(--pa-brand-bg,#EFF6FF);border:1px solid color-mix(in srgb,var(--pa-brand,#1D4ED8) 15%,transparent);border-radius:4px;padding:1px 5px;line-height:1.35;white-space:nowrap;}
+.pa-spec .sp b{font-weight:800;color:var(--pa-brand,#1D4ED8);}
 .pa-benefit-item.highlight{background:var(--pa-brand-bg,#EFF6FF);border-color:color-mix(in srgb,var(--pa-brand,#1D4ED8) 25%,transparent);}
 .pa-benefit-item.highlight .pa-benefit-num{background:linear-gradient(135deg,var(--pa-brand-dark,#1E3A8A),var(--pa-brand,#1D4ED8));}
 
@@ -712,9 +722,13 @@ const CLX = {
 
 const PRODUCTS = {
   clz:{code:'CLZ',full:'豪愛無憂 防癌定期健康保險',gender:'男性',icon:'👨🏻',rateDate:'1150429',rates:CLZ,
-       theme:{brand:'#1D4ED8',dark:'#1E3A8A',bg:'#EFF6FF'}},
+       theme:{brand:'#1D4ED8',dark:'#1E3A8A',bg:'#EFF6FF'},
+       // 條款附表一：特定癌症（重度）— 男性專屬 9 項
+       spec:[{c:'C18',n:'結腸'},{c:'C19',n:'直腸乙狀結腸連接處'},{c:'C20',n:'直腸'},{c:'C21',n:'肛門及肛門管'},{c:'C60',n:'陰莖'},{c:'C61',n:'攝護腺'},{c:'C62',n:'睪丸'},{c:'C63',n:'其他男性生殖器官'},{c:'C67',n:'膀胱'}]},
   clx:{code:'CLX',full:'真馨相守 防癌定期健康保險',gender:'女性',icon:'👩🏻',rateDate:'115.02.10',rates:CLX,
-       theme:{brand:'#E11D48',dark:'#9F1239',bg:'#FFF1F3'}}
+       theme:{brand:'#E11D48',dark:'#9F1239',bg:'#FFF1F3'},
+       // 條款附表一：特定癌症（重度）— 女性專屬 11 項
+       spec:[{c:'C43',n:'皮膚黑色素瘤'},{c:'C44',n:'其他皮膚'},{c:'C50',n:'乳房'},{c:'C51',n:'外陰'},{c:'C52',n:'陰道'},{c:'C53',n:'子宮頸'},{c:'C54',n:'子宮體'},{c:'C55',n:'未明示部位子宮'},{c:'C56',n:'卵巢'},{c:'C57',n:'其他女性生殖器官'},{c:'C58',n:'胎盤'}]}
 };
 
 const MAX_AGE = {10:60, 20:50};
@@ -872,7 +886,8 @@ function tryLiveCalculate(){
   else { document.getElementById('results').classList.remove('has-data'); }
 }
 
-function buildBenefits(cov, annualAmt){
+function buildBenefits(cov, annualAmt, prodKey){
+  const P = PRODUCTS[prodKey || currentProduct];
   const covWan = cov;                          // 保額（萬）
   const light  = Math.round(cov*0.1);          // 初期/輕度 10%
   const spec   = Math.round(cov*0.5);          // 特定癌症(重度)額外 最高50%
@@ -880,7 +895,7 @@ function buildBenefits(cov, annualAmt){
   return [
     {name:'首次罹患癌症（重度）保險金',trigger:'等待期滿後首次確診重度癌症（首年：年繳保費×1.06倍）',amt:`${fmt(covWan)} 萬`,sub:'第2年起給付保額',hl:true},
     {name:'首次罹患癌症（初期‧輕度）保險金',trigger:'首次確診初期或輕度癌症｜給付一次為限',amt:`${fmt(light)} 萬`,sub:'保額 10%'},
-    {name:'首次罹患特定癌症（重度）保險金',trigger:'重度癌症且屬條款特定癌症（第2年起，逐年遞增）',amt:`${fmt(spec)} 萬`,sub:'額外，第6年起最高50%'},
+    {name:'首次罹患特定癌症（重度）保險金',trigger:`重度癌症且屬條款附表一「特定癌症」（第2年起逐年遞增）｜${P.gender}專屬 ${P.spec.length} 項`,amt:`${fmt(spec)} 萬`,sub:'額外，第6年起最高50%',spec:P.spec},
     {name:'特定傷病保險金',trigger:'第2保單年度起首次確診特定傷病之一',amt:`${fmt(illness)} 萬`,sub:'保額 10%'},
     {name:'特定手術保險金',trigger:'接受條款附表二所列特定手術',amt:'依手術表',sub:'附表二 · 按比例給付'},
     {name:'身故保險金',trigger:'保險期間內身故',amt:`${fmt(covWan)} 萬`,sub:'當年度保險金額'},
@@ -947,16 +962,19 @@ function calculate(opts){
   if(silent){ document.getElementById('hero-annual').textContent=fmt(annualAmt); }
   else { countUp(document.getElementById('hero-annual'), annualAmt); }
 
-  const _benefits=buildBenefits(cov, annualAmt);
+  const _benefits=buildBenefits(cov, annualAmt, currentProduct);
   const sbEl=document.getElementById('screen-benefits');
   sbEl.style.display='block';
   sbEl.innerHTML=`<div class="bc-head">${P.code} 給付保障 <span class="bc-badge">${_benefits.length} 項</span></div>`+
-    _benefits.map((b,i)=>`
+    _benefits.map((b,i)=>{
+      const specHTML = b.spec ? `<div class="bc-spec">${b.spec.map(s=>`<span class="sp"><span class="code">${s.c}</span>${s.n}</span>`).join('')}</div>` : '';
+      return `
       <div class="bc-item${b.hl?' hl':''}">
         <div class="bc-num">${i+1}</div>
-        <div class="bc-body"><div class="bc-name">${b.name}</div><div class="bc-trigger">${b.trigger}</div></div>
+        <div class="bc-body"><div class="bc-name">${b.name}</div><div class="bc-trigger">${b.trigger}</div>${specHTML}</div>
         <div class="bc-right"><div class="bc-amt">${b.amt}</div><div class="bc-sub">${b.sub}</div></div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
 
   _pr={y,m,d,age,cov,annualAmt,semi,quarter,monthly,total,endAge,selectedPeriod,rate,product:currentProduct};
 }
@@ -981,14 +999,17 @@ function printReport(){
   const today=new Date();
   const dateStr=`${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
   const monthlyAvg=Math.round(p.annualAmt/12);
-  const benefits=buildBenefits(p.cov, p.annualAmt);
+  const benefits=buildBenefits(p.cov, p.annualAmt, p.product);
 
-  const benefitHTML=benefits.map((b,i)=>`
+  const benefitHTML=benefits.map((b,i)=>{
+    const specHTML = b.spec ? `<div class="pa-spec">${b.spec.map(s=>`<span class="sp"><b>${s.c}</b> ${s.n}</span>`).join('')}</div>` : '';
+    return `
     <div class="pa-benefit-item${b.hl?' highlight':''}">
       <div class="pa-benefit-num">${i+1}</div>
-      <div class="pa-benefit-body"><div class="pa-benefit-name">${b.name}</div><div class="pa-benefit-trigger">${b.trigger}</div></div>
+      <div class="pa-benefit-body"><div class="pa-benefit-name">${b.name}</div><div class="pa-benefit-trigger">${b.trigger}</div>${specHTML}</div>
       <div class="pa-benefit-right"><div class="pa-benefit-amt">${b.amt}</div><div class="pa-benefit-amt-sub">${b.sub}</div></div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   const pa=document.getElementById('print-area');
   pa.style.setProperty('--pa-brand',P.theme.brand);
