@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>富邦 CLZ 男 / CLX 女 防癌定期險保費試算</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#F8FAFF;
+  --surface:#FFFFFF;
+  --border:rgba(30,41,59,0.08);
+  --border-hover:rgba(30,41,59,0.18);
+  --tx-main:#1E1B2E;
+  --tx-sub:#4B5468;
+  --tx-muted:#9AA3B5;
+
+  /* 預設 = CLZ 男 (藍) */
+  --brand-dark:#1E3A8A;
+  --brand:#1D4ED8;
+  --brand-light:#60A5FA;
+  --brand-bg:#EFF6FF;
+
+  --green:#059669;
+  --red:#E11D48;
+
+  --shadow-sm:0 2px 4px rgba(30,41,59,0.04);
+  --shadow-md:0 4px 16px rgba(30,41,59,0.08),0 2px 4px rgba(30,41,59,0.04);
+  --shadow-lg:0 12px 36px rgba(30,41,59,0.14),0 4px 12px rgba(30,41,59,0.06);
+}
+/* ── CLZ 男 · 藍 ── */
+body[data-product="clz"]{
+  --bg:#F6F9FF;
+  --brand-dark:#1E3A8A; --brand:#1D4ED8; --brand-light:#60A5FA; --brand-bg:#EFF6FF;
+  --shadow-md:0 4px 16px rgba(29,78,216,0.08),0 2px 4px rgba(29,78,216,0.04);
+  --shadow-lg:0 12px 36px rgba(29,78,216,0.14),0 4px 12px rgba(29,78,216,0.06);
+}
+/* ── CLX 女 · 玫瑰 ── */
+body[data-product="clx"]{
+  --bg:#FFF8FA;
+  --brand-dark:#9F1239; --brand:#E11D48; --brand-light:#FB7185; --brand-bg:#FFF1F3;
+  --shadow-md:0 4px 16px rgba(225,29,72,0.08),0 2px 4px rgba(225,29,72,0.04);
+  --shadow-lg:0 12px 36px rgba(225,29,72,0.14),0 4px 12px rgba(225,29,72,0.06);
+}
+html{font-size:15px;background:var(--bg);transition:background .4s ease;}
+body{
+  font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Noto Sans TC',sans-serif;
+  color:var(--tx-main);min-height:100vh;overflow-x:hidden;background:var(--bg);
+  -webkit-font-smoothing:antialiased;transition:background .4s ease;
+}
+
+/* ── Decorative BG ── */
+body::before{
+  content:'';position:fixed;top:-200px;right:-200px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--brand-light) 20%,transparent) 0%,transparent 70%);
+  pointer-events:none;z-index:0;transition:background .4s ease;
+}
+body::after{
+  content:'';position:fixed;bottom:-200px;left:-200px;
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--brand) 10%,transparent) 0%,transparent 70%);
+  pointer-events:none;z-index:0;transition:background .4s ease;
+}
+
+.page{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:64px 20px 100px;}
+
+/* ── Product Switcher ── */
+.prod-switch{
+  display:flex;gap:6px;padding:6px;margin-bottom:24px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;box-shadow:var(--shadow-md);position:relative;
+}
+.ps-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:12px 8px;border-radius:13px;cursor:pointer;
+  transition:all .3s cubic-bezier(0.4,0,0.2,1);
+  font-weight:700;color:var(--tx-sub);border:none;background:transparent;
+}
+.ps-btn .ps-code{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;letter-spacing:-.02em;}
+.ps-btn .ps-name{font-size:11px;font-weight:600;color:var(--tx-muted);}
+.ps-btn.on{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-dark));box-shadow:var(--shadow-md);}
+.ps-btn.on .ps-name{color:rgba(255,255,255,0.85);}
+.ps-btn:not(.on):hover{background:var(--brand-bg);}
+
+/* ── Header ── */
+header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:32px;}
+.hero-title{
+  font-family:'Montserrat',sans-serif;
+  font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:1;
+  background:linear-gradient(to right,var(--brand-dark),var(--brand));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  margin-bottom:4px;
+}
+.subtitle{font-size:12px;font-weight:500;color:var(--tx-muted);margin-top:6px;line-height:1.5;}
+.badge{
+  margin-top:6px;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.05em;
+  background:var(--brand-bg);color:var(--brand-dark);
+  border:1px solid color-mix(in srgb,var(--brand) 15%,transparent);white-space:nowrap;
+}
+
+/* ── Cards ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:24px;padding:32px;
+  box-shadow:var(--shadow-md);
+}
+.card+.card,.card+.results{margin-top:16px;}
+.section-label{
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tx-muted);margin-bottom:20px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── Insured Badge (性別由商品決定) ── */
+.insured-chip{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:24px;
+  padding:10px 16px;border-radius:12px;font-size:14px;font-weight:700;
+  background:var(--brand-bg);color:var(--brand-dark);
+  border:1px solid color-mix(in srgb,var(--brand) 15%,transparent);
+}
+.insured-chip .ic-icon{font-size:20px;line-height:1;}
+
+/* ── Date Inputs ── */
+.date-row{display:flex;gap:12px;margin-bottom:8px;}
+.date-row input,.date-row select{
+  background:color-mix(in srgb,var(--brand-bg) 60%,#fff);border:1px solid var(--border);border-radius:14px;
+  color:var(--tx-main);font-size:15px;font-weight:500;padding:14px 16px;
+  outline:none;transition:all .2s;appearance:none;-webkit-appearance:none;width:100%;
+}
+.date-row input:focus,.date-row select:focus{
+  border-color:var(--brand-light);background:#fff;
+  box-shadow:0 0 0 4px var(--brand-bg);
+}
+.date-row input::placeholder{color:var(--tx-muted);font-weight:400;}
+.date-row input::-webkit-inner-spin-button{display:none;}
+.yr{flex:1.5}
+#age-tag{
+  display:none;align-items:center;gap:8px;margin-top:12px;margin-bottom:28px;
+  font-size:14px;font-weight:600;color:var(--brand);padding:8px 14px;
+  background:var(--brand-bg);border-radius:10px;width:fit-content;
+  border:1px solid color-mix(in srgb,var(--brand) 15%,transparent);
+}
+#age-tag.on{display:flex;animation:fadeIn .3s ease;}
+
+/* ── Period Selector ── */
+.period-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.p-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  padding:16px 10px;border:2px solid var(--border);border-radius:16px;
+  cursor:pointer;transition:all .25s cubic-bezier(0.4,0,0.2,1);background:color-mix(in srgb,var(--brand-bg) 40%,#fff);
+  font-size:16px;font-weight:700;color:var(--tx-sub);position:relative;overflow:hidden;
+}
+.p-btn input{display:none;}
+.p-btn .p-sub{font-size:11px;font-weight:600;color:var(--tx-muted);letter-spacing:.03em;}
+.p-btn:hover{background:var(--surface);border-color:var(--border-hover);}
+.p-btn.sel{border-color:var(--brand);background:var(--brand-bg);color:var(--brand);box-shadow:var(--shadow-md);}
+.p-btn.sel .p-sub{color:var(--brand);}
+.p-btn.disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.p-lock{font-size:10px;position:absolute;top:6px;right:8px;color:var(--tx-muted);}
+
+/* ── Coverage ── */
+.coverage-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;}
+.coverage-input-wrap{display:flex;align-items:baseline;gap:4px;border-bottom:2px solid var(--border);transition:border-color .2s;}
+.coverage-input-wrap:focus-within{border-color:var(--brand);}
+.coverage-input{
+  background:transparent;border:none;outline:none;
+  font-size:42px;font-weight:900;letter-spacing:-.04em;color:var(--brand-dark);
+  width:100px;text-align:center;font-family:'Montserrat',sans-serif;
+}
+.coverage-input::-webkit-inner-spin-button{display:none;}
+input[type=range]{
+  width:100%;height:8px;appearance:none;-webkit-appearance:none;
+  border-radius:999px;outline:none;cursor:pointer;
+  background:linear-gradient(to right,var(--brand) 0%,var(--brand) var(--pct,20%),color-mix(in srgb,var(--brand-light) 35%,#fff) var(--pct,20%));
+}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;
+  width:28px;height:28px;border-radius:50%;background:#fff;cursor:grab;
+  border:1px solid color-mix(in srgb,var(--brand) 10%,transparent);
+  box-shadow:0 2px 8px color-mix(in srgb,var(--brand) 20%,transparent),0 0 0 4px var(--surface),0 0 0 6px var(--brand-bg);
+  transition:transform .2s,box-shadow .2s;
+}
+input[type=range]::-webkit-slider-thumb:active{
+  cursor:grabbing;transform:scale(1.1);
+  box-shadow:0 4px 16px color-mix(in srgb,var(--brand) 30%,transparent),0 0 0 4px var(--surface),0 0 0 8px var(--brand-bg);
+}
+.slider-ticks{display:flex;justify-content:space-between;margin-top:12px;padding:0 4px;}
+.slider-tick{font-size:12px;color:var(--tx-muted);font-weight:600;}
+
+#err{display:none;margin-top:16px;font-size:14px;font-weight:600;color:var(--red);text-align:center;background:#FFF1F2;padding:10px;border-radius:10px;}
+#err.on{display:block;animation:shake .4s ease;}
+
+/* ── Results ── */
+.results{display:none;}
+.results.on{display:block;animation:fadeUp .5s cubic-bezier(0.4,0,0.2,1) forwards;}
+
+/* ── Hero ── */
+.hero{
+  background:var(--surface);border-radius:24px;padding:32px;margin-bottom:16px;
+  box-shadow:var(--shadow-lg);position:relative;overflow:hidden;
+  border:1px solid var(--border);
+}
+.hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,var(--brand-light),var(--brand),var(--brand-dark));
+}
+.hero-who{font-size:13px;font-weight:700;color:var(--tx-sub);margin-bottom:4px;}
+.hero-label{font-size:12px;font-weight:700;color:var(--tx-muted);margin:20px 0 4px;}
+.hero-big{
+  font-size:48px;font-weight:900;letter-spacing:-.04em;line-height:1.1;
+  background:linear-gradient(to right,var(--brand-dark),var(--brand));
+  -webkit-background-clip:text;color:transparent;margin-bottom:8px;
+}
+.hero-big .cur{font-size:24px;font-weight:700;margin-right:4px;color:var(--brand);}
+.hero-period-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;
+  margin-bottom:24px;background:var(--brand-bg);color:var(--brand);
+  border:1px solid color-mix(in srgb,var(--brand) 15%,transparent);
+}
+
+/* ── Freq Grid ── */
+.freq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:0;}
+.freq-card{
+  background:color-mix(in srgb,var(--brand-bg) 60%,#fff);border:1px solid var(--border);border-radius:14px;
+  padding:12px 8px;text-align:center;
+}
+.freq-card .fc-label{font-size:11px;font-weight:700;color:var(--tx-muted);margin-bottom:6px;letter-spacing:.03em;}
+.freq-card .fc-val{font-size:16px;font-weight:800;color:var(--brand-dark);font-family:'Montserrat',sans-serif;}
+.freq-card .fc-unit{font-size:10px;font-weight:600;color:var(--tx-muted);margin-top:2px;}
+.freq-card.highlight{
+  background:linear-gradient(135deg,var(--brand-bg),color-mix(in srgb,var(--brand-light) 20%,#fff));
+  border-color:color-mix(in srgb,var(--brand) 15%,transparent);
+}
+.freq-card.highlight .fc-val{color:var(--brand);}
+
+/* ── Summary Rows ── */
+.summary-box{background:color-mix(in srgb,var(--brand-bg) 60%,#fff);border-radius:16px;padding:20px;margin-top:8px;}
+.s-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:14px;}
+.s-row+.s-row{border-top:1px solid var(--border);}
+.s-label{color:var(--tx-sub);font-weight:600;}
+.s-val{font-weight:800;color:var(--tx-main);}
+.s-row.total{border-top:2px dashed color-mix(in srgb,var(--brand) 20%,transparent) !important;margin-top:4px;padding-top:16px;}
+.s-row.total .s-label{font-size:15px;font-weight:800;color:var(--tx-main);}
+.s-row.total .s-val{font-size:22px;color:var(--brand-dark);}
+
+/* ── Rate Info Card ── */
+.rate-info-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:24px;box-shadow:var(--shadow-sm);margin-top:16px;
+}
+.ri-head{font-size:13px;font-weight:800;color:var(--tx-main);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.ri-head .ri-badge{
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;
+  background:var(--brand-bg);color:var(--brand);
+}
+.ri-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.ri-item{background:color-mix(in srgb,var(--brand-bg) 60%,#fff);border-radius:10px;padding:10px 11px;}
+.ri-item .ri-label{font-size:10px;font-weight:700;color:var(--tx-muted);margin-bottom:3px;white-space:nowrap;}
+.ri-item .ri-val{font-size:15px;font-weight:800;color:var(--tx-main);font-family:'Montserrat',sans-serif;}
+
+/* ── Screen Benefits ── */
+.benefits-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:24px;box-shadow:var(--shadow-sm);margin-top:16px;
+}
+.bc-head{font-size:13px;font-weight:800;color:var(--tx-main);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.bc-head .bc-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--brand-bg);color:var(--brand);}
+.bc-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.bc-item:last-child{border-bottom:none;padding-bottom:0;}
+.bc-item:first-child{padding-top:0;}
+.bc-num{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--brand),var(--brand-light));
+  color:#fff;font-size:12px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.bc-item.hl{background:var(--brand-bg);border-radius:12px;padding:14px;margin:0 -6px;border-bottom:none;}
+.bc-item.hl+.bc-item{border-top:1px solid var(--border);}
+.bc-item.hl .bc-num{background:linear-gradient(135deg,var(--brand-dark),var(--brand));}
+.bc-body{flex:1;min-width:0;}
+.bc-name{font-size:14px;font-weight:800;color:var(--tx-main);margin-bottom:3px;}
+.bc-trigger{font-size:12px;font-weight:500;color:var(--tx-sub);line-height:1.5;}
+.bc-right{text-align:right;flex-shrink:0;}
+.bc-amt{
+  font-family:'Montserrat',sans-serif;
+  font-size:20px;font-weight:900;letter-spacing:-.02em;line-height:1;
+  background:linear-gradient(to right,var(--brand-dark),var(--brand));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+}
+.bc-sub{font-size:11px;font-weight:600;color:var(--tx-muted);margin-top:3px;}
+
+/* ── Empty State ── */
+.empty-state{
+  background:var(--surface);border:1px dashed color-mix(in srgb,var(--brand) 18%,transparent);
+  border-radius:24px;padding:48px 28px;text-align:center;
+  box-shadow:var(--shadow-sm);
+}
+.es-icon{
+  width:56px;height:56px;border-radius:18px;
+  background:linear-gradient(135deg,var(--brand-bg),color-mix(in srgb,var(--brand-light) 20%,#fff));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;font-size:26px;
+  border:1px solid color-mix(in srgb,var(--brand) 15%,transparent);
+}
+.es-title{font-size:15px;font-weight:800;color:var(--tx-main);letter-spacing:-.01em;margin-bottom:6px;}
+.es-sub{font-size:12px;font-weight:500;color:var(--tx-muted);line-height:1.7;margin-bottom:22px;}
+.es-checklist{display:flex;flex-direction:column;gap:8px;max-width:240px;margin:0 auto;text-align:left;}
+.es-check{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:600;color:var(--tx-sub);
+  padding:8px 14px;border-radius:10px;
+  background:color-mix(in srgb,var(--brand-bg) 40%,#fff);border:1px solid var(--border);
+  transition:all .25s ease;
+}
+.es-check .es-dot{
+  width:16px;height:16px;border-radius:50%;
+  border:1.5px solid var(--tx-muted);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s ease;
+}
+.es-check.done{background:var(--brand-bg);border-color:color-mix(in srgb,var(--brand) 15%,transparent);color:var(--brand-dark);}
+.es-check.done .es-dot{background:var(--brand);border-color:var(--brand);}
+.es-check.done .es-dot::after{
+  content:'';width:6px;height:3px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;
+  transform:rotate(-45deg) translate(0.5px,-1px);
+}
+.empty-state{display:none;}
+.results:not(.has-data) .empty-state{display:block;}
+.results:not(.has-data) .hero,
+.results:not(.has-data) .rate-info-card,
+.results:not(.has-data) #screen-benefits,
+.results:not(.has-data) .disc,
+.results:not(.has-data) .print-btn{display:none;}
+
+/* ── Disclaimer ── */
+.disc{margin-top:20px;font-size:12px;line-height:1.9;color:var(--tx-muted);font-weight:500;}
+
+/* ── Print Button ── */
+.print-btn{
+  width:100%;padding:16px;margin-top:16px;background:transparent;
+  border:2px solid var(--border);border-radius:16px;
+  color:var(--tx-sub);font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.print-btn:hover{background:var(--brand-bg);color:var(--brand);border-color:color-mix(in srgb,var(--brand) 15%,transparent);}
+
+/* ── Watermark ── */
+.ks-watermark{
+  position:fixed;bottom:24px;right:24px;z-index:99;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 16px 8px 12px;border-radius:99px;
+  background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.9);
+  box-shadow:var(--shadow-md);
+  font-size:12px;font-weight:700;color:var(--tx-sub);opacity:.85;
+}
+.ks-dot{width:8px;height:8px;border-radius:50%;background:var(--brand);}
+@media print{.ks-watermark{display:none!important;}}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+
+/* ── Print Styles ── */
+@page{size:A4;margin:6mm 6mm;}
+@media print{
+  body,html{background:#fff!important;margin:0;padding:0;}
+  body::before,body::after{display:none!important;}
+  .page,.results,.card,.hero,.rate-info-card,.ks-watermark,.prod-switch{display:none!important;}
+  #print-area{display:block!important;width:100%;padding:0;min-height:unset;}
+}
+
+/* ── Print Area ── */
+#print-area{
+  display:none;
+  font-family:'Noto Sans TC','Helvetica Neue',Arial,sans-serif;
+  color:#1E1B2E;width:210mm;min-height:297mm;margin:0 auto;
+  padding:8mm 10mm;box-sizing:border-box;background:#fff;
+}
+.pa-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6mm;padding-bottom:4mm;border-bottom:2px solid var(--pa-brand,#1D4ED8);}
+.pa-logo-wrap{display:flex;align-items:flex-end;gap:12px;}
+.pa-logo-mark{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--pa-brand-dark,#1E3A8A);flex-shrink:0;}
+.pa-title{display:flex;flex-direction:column;justify-content:flex-end;}
+.pa-title h1{font-size:14px;font-weight:800;color:#1E1B2E;letter-spacing:-.01em;margin-bottom:2px;}
+.pa-title p{font-size:10px;color:#9AA3B5;font-weight:500;}
+.pa-date{text-align:right;font-size:10.5px;color:#4B5468;font-weight:600;}
+.pa-date span{display:block;font-size:12px;font-weight:800;color:#1E1B2E;margin-top:2px;}
+
+.pa-info-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:5mm;}
+.pa-info-box{background:var(--pa-brand-bg,#EFF6FF);border-radius:7px;padding:8px 11px;border:1px solid color-mix(in srgb,var(--pa-brand,#1D4ED8) 12%,transparent);}
+.pa-info-label{font-size:9.5px;font-weight:700;color:#9AA3B5;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;}
+.pa-info-val{font-size:15px;font-weight:800;color:#1E1B2E;}
+
+.pa-section-title{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--pa-brand,#1D4ED8);margin-bottom:3mm;display:flex;align-items:center;gap:8px;}
+.pa-section-title::after{content:'';flex:1;height:1px;background:color-mix(in srgb,var(--pa-brand,#1D4ED8) 15%,transparent);}
+
+.pa-premium-card{background:var(--pa-brand-bg,#EFF6FF);border-radius:8px;padding:8px 12px;margin-bottom:4mm;border:1px solid color-mix(in srgb,var(--pa-brand,#1D4ED8) 12%,transparent);}
+.pa-annual-label{font-size:9px;font-weight:700;color:var(--pa-brand,#1D4ED8);margin-bottom:2px;letter-spacing:.05em;text-transform:uppercase;}
+.pa-annual-num{font-size:22px;font-weight:800;color:var(--pa-brand-dark,#1E3A8A);letter-spacing:-.02em;line-height:1.1;font-family:'Montserrat',sans-serif;margin-bottom:4px;}
+.pa-annual-num .pa-cur{font-size:13px;font-weight:700;color:#9AA3B5;margin-right:2px;}
+.pa-monthly-tagline{font-size:10px;font-weight:600;color:var(--pa-brand-dark,#1E3A8A);padding:3px 0;display:inline-block;margin-bottom:5px;}
+.pa-freq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.pa-freq-box{background:#fff;border-radius:7px;padding:7px 9px;border:1px solid color-mix(in srgb,var(--pa-brand,#1D4ED8) 12%,transparent);text-align:center;}
+.pa-freq-label{font-size:9.5px;font-weight:700;color:#9AA3B5;margin-bottom:2px;letter-spacing:.03em;}
+.pa-freq-val{font-size:12px;font-weight:700;color:var(--pa-brand-dark,#1E3A8A);font-family:'Montserrat',sans-serif;}
+.pa-freq-unit{font-size:9.5px;color:#9AA3B5;font-weight:600;margin-top:1px;}
+
+.pa-benefits{display:flex;flex-direction:column;gap:5px;margin-bottom:4mm;}
+.pa-benefit-item{background:#fff;border:1px solid color-mix(in srgb,var(--pa-brand,#1D4ED8) 15%,transparent);border-radius:9px;padding:10px 14px;display:flex;align-items:center;gap:13px;}
+.pa-benefit-num{width:26px;height:26px;border-radius:50%;background:var(--pa-brand,#1D4ED8);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pa-benefit-body{flex:1;min-width:0;}
+.pa-benefit-name{font-size:13.5px;font-weight:800;color:#1E1B2E;margin-bottom:2px;letter-spacing:-.005em;}
+.pa-benefit-trigger{font-size:10px;color:#4B5468;font-weight:500;line-height:1.45;}
+.pa-benefit-right{text-align:right;flex-shrink:0;}
+.pa-benefit-amt{font-size:22px;font-weight:900;color:var(--pa-brand-dark,#1E3A8A);font-family:'Montserrat','Noto Sans TC',sans-serif;letter-spacing:-.03em;line-height:1;white-space:nowrap;}
+.pa-benefit-amt-sub{font-size:9.5px;color:var(--pa-brand,#1D4ED8);font-weight:600;margin-top:3px;white-space:nowrap;}
+.pa-benefit-item.highlight{background:var(--pa-brand-bg,#EFF6FF);border-color:color-mix(in srgb,var(--pa-brand,#1D4ED8) 25%,transparent);}
+.pa-benefit-item.highlight .pa-benefit-num{background:linear-gradient(135deg,var(--pa-brand-dark,#1E3A8A),var(--pa-brand,#1D4ED8));}
+
+.pa-notice{background:var(--pa-brand-bg,#EFF6FF);border-radius:7px;padding:8px 11px;margin-bottom:4mm;font-size:9.5px;color:#4B5468;font-weight:500;line-height:1.75;}
+.pa-notice strong{color:#1E1B2E;}
+.pa-footer{border-top:1px solid color-mix(in srgb,var(--pa-brand,#1D4ED8) 12%,transparent);padding-top:3mm;font-size:9px;color:#9AA3B5;line-height:1.75;font-weight:500;}
+
+/* ═══ RWD ═══ */
+@media (max-width: 480px){
+  html{font-size:14px;}
+  .page{padding:56px 16px 100px;max-width:100%;}
+  header{padding-bottom:20px;}
+  .badge{display:none;}
+  .hero-title{font-size:32px;}
+  .subtitle{font-size:11px;}
+  .card{padding:20px;border-radius:20px;}
+  .card+.card,.card+.results{margin-top:12px;}
+  .ps-btn .ps-code{font-size:16px;}
+  .date-row{gap:8px;}
+  .date-row input{font-size:14px;padding:12px;border-radius:12px;}
+  .period-grid{gap:8px;margin-bottom:20px;}
+  .p-btn{padding:14px 8px;border-radius:14px;min-height:56px;}
+  .coverage-input{font-size:36px;width:88px;}
+  .hero-big{font-size:36px;}
+  .hero-big .cur{font-size:20px;}
+  .freq-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .freq-card .fc-val{font-size:15px;}
+  .summary-box{padding:16px;}
+  .s-row.total .s-val{font-size:20px;}
+  .bc-amt{font-size:17px;}
+  .bc-name{font-size:13px;}
+  .bc-trigger{font-size:11px;}
+  .rate-info-card,.benefits-card{padding:18px;border-radius:16px;}
+  .ri-grid{grid-template-columns:1fr 1fr;}
+  .hero{padding:24px 20px;}
+  .ks-watermark{bottom:72px;right:16px;font-size:11px;}
+  body::before{width:300px;height:300px;top:-100px;right:-100px;}
+  body::after{width:250px;height:250px;bottom:-100px;left:-100px;}
+}
+@media (min-width: 481px) and (max-width: 1023px){
+  html{font-size:14.5px;}
+  .page{padding:64px 24px 80px;max-width:720px;}
+  .hero-title{font-size:40px;}
+  .card{padding:26px;}
+  .freq-grid{grid-template-columns:repeat(4,1fr);}
+  .hero-big{font-size:42px;}
+  .coverage-input{font-size:40px;}
+  .ri-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media (min-width: 1024px){
+  html{font-size:15px;}
+  .page{
+    max-width:1200px;display:grid;
+    grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr;
+    column-gap:28px;padding:64px 32px 60px;align-items:start;
+  }
+  .prod-switch{grid-column:1 / -1;grid-row:1;max-width:520px;margin:0 auto 8px;width:100%;}
+  header{grid-column:1 / -1;grid-row:2;padding-bottom:28px;}
+  .card:first-of-type{grid-column:1;grid-row:3;}
+  #err{grid-column:1;grid-row:4;margin-top:0;}
+  .results{grid-column:2;grid-row:3 / 5;display:block !important;position:sticky;top:28px;}
+  .hero{padding:28px;}
+  .hero-big{font-size:52px;}
+  .hero-big .cur{font-size:26px;}
+  .freq-grid{grid-template-columns:repeat(4,1fr);}
+  .ri-grid{grid-template-columns:repeat(4,1fr);}
+  .summary-box{padding:20px;}
+  .s-row.total .s-val{font-size:24px;}
+  .bc-amt{font-size:22px;}
+  .ks-watermark{bottom:28px;left:28px;right:auto;}
+  .hero-title{font-size:48px;}
+}
+
+.mo-input,.dy-input{
+  background:color-mix(in srgb,var(--brand-bg) 60%,#fff);border:1px solid var(--border);border-radius:14px;
+  color:var(--tx-main);font-size:15px;font-weight:500;padding:14px 16px;
+  outline:none;transition:all .2s;width:100%;text-align:center;font-family:'Montserrat',sans-serif;
+}
+.mo-input:focus,.dy-input:focus{border-color:var(--brand-light);background:#fff;box-shadow:0 0 0 4px var(--brand-bg);}
+.mo-input::placeholder,.dy-input::placeholder{color:var(--tx-muted);font-weight:400;}
+.mo-input{flex:1;}.dy-input{flex:1;}
+</style>
+
+<!-- Kevin Supply Hub Back Button -->
+<style>
+@keyframes ks-wiggle{0%,100%{transform:rotate(0deg) scale(1);}15%{transform:rotate(-6deg) scale(1.05);}30%{transform:rotate(5deg) scale(1.05);}45%{transform:rotate(-4deg) scale(1.02);}60%{transform:rotate(3deg) scale(1.02);}75%{transform:rotate(-2deg) scale(1);}}
+.ks-back{
+  position:fixed;top:12px;left:12px;z-index:9999;
+  display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;
+  background:rgba(255,255,255,0.88);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border:1px solid rgba(0,0,0,0.09);border-radius:99px;text-decoration:none;color:#111;
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;font-size:12px;font-weight:700;
+  box-shadow:0 2px 12px rgba(0,0,0,0.10);transition:transform 0.2s,box-shadow 0.2s;
+  white-space:nowrap;transform-origin:left center;
+}
+.ks-back:hover{transform:scale(1.3);box-shadow:0 6px 24px rgba(0,0,0,0.18);}
+.ks-back.wiggle{animation:ks-wiggle 0.6s ease;}
+.ks-back img{width:26px;height:26px;border-radius:50%;display:block;}
+@media print{.ks-back{display:none!important;}}
+</style>
+</head>
+<body data-product="clz">
+
+<a class="ks-back" id="ksBack" href="https://kevinyicheng.github.io/kevin-supply-hub/">
+  <img src="https://kevinyicheng.github.io/kevin-supply-hub/apple-touch-icon.png" alt="Kevin" />
+  返回Kevin Supply Hub
+</a>
+<script>
+(function(){
+  var btn=document.getElementById('ksBack');
+  function scheduleWiggle(){
+    var delay=4000+Math.random()*8000;
+    setTimeout(function(){
+      btn.classList.add('wiggle');
+      btn.addEventListener('animationend',function onEnd(){
+        btn.classList.remove('wiggle');btn.removeEventListener('animationend',onEnd);scheduleWiggle();
+      });
+    },delay);
+  }
+  scheduleWiggle();
+})();
+</script>
+<!-- End Back Button -->
+
+<div class="page">
+
+  <!-- Product Switcher -->
+  <div class="prod-switch">
+    <button class="ps-btn on" id="ps-clz" onclick="setProduct('clz')">
+      <span class="ps-code">CLZ</span>
+      <span class="ps-name">豪愛無憂 · 男性防癌</span>
+    </button>
+    <button class="ps-btn" id="ps-clx" onclick="setProduct('clx')">
+      <span class="ps-code">CLX</span>
+      <span class="ps-name">真馨相守 · 女性防癌</span>
+    </button>
+  </div>
+
+  <header>
+    <div>
+      <div class="hero-title" id="h-mark">CLZ</div>
+      <div class="subtitle" id="h-sub">豪愛無憂 防癌定期健康保險 · 男性 · 1150429 費率</div>
+    </div>
+    <div class="badge">保費試算</div>
+  </header>
+
+  <!-- Input Card -->
+  <div class="card">
+    <div class="section-label">保戶基本資料</div>
+
+    <div class="insured-chip" id="insured-chip">
+      <span class="ic-icon" id="ic-icon">👨🏻</span>
+      <span id="ic-text">本商品專屬 男性 被保險人</span>
+    </div>
+
+    <div class="date-row">
+      <input class="yr" type="text" id="by" placeholder="西元年 (e.g. 1990)" inputmode="numeric" maxlength="4" oninput="onYearInput(this)">
+      <input class="mo-input" type="text" id="bm" placeholder="月" inputmode="numeric" maxlength="2" oninput="onMonthInput(this)">
+      <input class="dy-input" type="text" id="bd" placeholder="日" inputmode="numeric" maxlength="2" oninput="onDayInput(this)">
+    </div>
+    <div id="age-tag"><span id="age-txt"></span></div>
+
+    <div class="section-label" style="margin-top:4px;">繳費年期</div>
+    <div class="period-grid" id="period-grid">
+      <label class="p-btn" id="pb-10" onclick="setPeriod(10)">
+        <input type="radio" name="period" value="10">
+        <span>10 年期</span>
+        <span class="p-sub">最高 60 歲投保</span>
+      </label>
+      <label class="p-btn" id="pb-20" onclick="setPeriod(20)">
+        <input type="radio" name="period" value="20">
+        <span>20 年期</span>
+        <span class="p-sub">最高 50 歲投保</span>
+      </label>
+    </div>
+
+    <div class="section-label">規劃保額</div>
+    <div class="coverage-top">
+      <div class="coverage-input-wrap">
+        <input type="number" class="coverage-input" id="cov-num" value="0" min="0" max="300" step="10"
+          oninput="syncSlider(this.value);tryLiveCalculate()">
+        <span style="font-size:18px;font-weight:700;color:var(--tx-sub);">萬元</span>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;font-weight:600;color:var(--tx-muted);margin-bottom:4px;">年繳保費預估</div>
+        <div id="preview-annual" style="font-size:20px;font-weight:800;color:var(--brand-dark);font-family:'Montserrat',sans-serif;">—</div>
+      </div>
+    </div>
+    <div style="margin-bottom:8px">
+      <input type="range" id="cov-slider" min="0" max="300" step="10" value="0" style="--pct:0%"
+        oninput="syncNum(this.value)">
+      <div class="slider-ticks">
+        <span class="slider-tick">50</span>
+        <span class="slider-tick">100</span>
+        <span class="slider-tick">200</span>
+        <span class="slider-tick">300萬</span>
+      </div>
+    </div>
+
+    <div id="err"></div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <!-- Empty State -->
+    <div class="empty-state" id="empty-state">
+      <div class="es-icon">📋</div>
+      <div class="es-title">即時試算保費</div>
+      <div class="es-sub">完成左方三項資料<br>結果將自動顯示於此</div>
+      <div class="es-checklist">
+        <div class="es-check" id="es-1"><span class="es-dot"></span>填寫出生年月日</div>
+        <div class="es-check" id="es-2"><span class="es-dot"></span>選擇繳費年期</div>
+        <div class="es-check" id="es-3"><span class="es-dot"></span>設定規劃保額</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-who" id="hero-who"></div>
+      <div class="hero-label">年繳保費</div>
+      <div class="hero-big"><span class="cur">$</span><span id="hero-annual">—</span></div>
+      <div id="hero-period-tag" class="hero-period-tag"></div>
+
+      <div style="font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--tx-muted);margin-bottom:12px;text-transform:uppercase;">各繳費頻率對照</div>
+      <div class="freq-grid">
+        <div class="freq-card highlight">
+          <div class="fc-label">年繳</div><div class="fc-val" id="f-annual">—</div><div class="fc-unit">元 / 年</div>
+        </div>
+        <div class="freq-card">
+          <div class="fc-label">半年繳</div><div class="fc-val" id="f-semi">—</div><div class="fc-unit">元 / 期</div>
+        </div>
+        <div class="freq-card">
+          <div class="fc-label">季繳</div><div class="fc-val" id="f-quarter">—</div><div class="fc-unit">元 / 期</div>
+        </div>
+        <div class="freq-card">
+          <div class="fc-label">月繳</div><div class="fc-val" id="f-month">—</div><div class="fc-unit">元 / 期</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Card -->
+    <div class="rate-info-card">
+      <div class="ri-head">保費明細<span class="ri-badge" id="ri-period-tag">—</span></div>
+      <div class="ri-grid">
+        <div class="ri-item"><div class="ri-label">費率 (元/萬元保額)</div><div class="ri-val" id="ri-rate">—</div></div>
+        <div class="ri-item"><div class="ri-label">投保年齡</div><div class="ri-val" id="ri-age">—</div></div>
+        <div class="ri-item"><div class="ri-label">規劃保額</div><div class="ri-val" id="ri-cov">—</div></div>
+        <div class="ri-item"><div class="ri-label">繳費年期</div><div class="ri-val" id="ri-period">—</div></div>
+      </div>
+      <div class="summary-box" style="margin-top:16px;">
+        <div class="s-row"><span class="s-label">年繳保費</span><span class="s-val" id="s-annual">—</span></div>
+        <div class="s-row"><span class="s-label">繳費期間結束年齡</span><span class="s-val" id="s-end-age">—</span></div>
+        <div class="s-row total"><span class="s-label">繳費期間總保費</span><span class="s-val" id="s-total">—</span></div>
+      </div>
+    </div>
+
+    <!-- Screen Benefits -->
+    <div id="screen-benefits" class="benefits-card" style="display:none;"></div>
+
+    <div class="disc" id="disc"></div>
+
+    <button class="print-btn" onclick="printReport()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      輸出 A4 建議書
+    </button>
+  </div>
+</div>
+
+<div class="ks-watermark"><div class="ks-dot"></div>Keri · <span id="wm-name">CLZ</span> 試算</div>
+
+<div id="print-area"></div>
+
+<script>
+/* ══════════════════════════════════════
+   費率表（元/每萬元保額，年繳）投保年齡 18–60
+   ══════════════════════════════════════ */
+// CLZ 豪愛無憂（男）— 1150429 起適用
+const CLZ = {
+  10:{18:420,19:430,20:439,21:450,22:461,23:472,24:483,25:494,26:504,27:515,28:526,29:537,30:548,31:562,32:576,33:590,34:604,35:618,36:632,37:646,38:660,39:674,40:688,41:705,42:721,43:738,44:755,45:772,46:788,47:805,48:822,49:838,50:855,51:888,52:922,53:955,54:988,55:1022,56:1055,57:1088,58:1121,59:1155,60:1188},
+  20:{18:222,19:228,20:233,21:239,22:246,23:252,24:258,25:265,26:271,27:277,28:283,29:290,30:296,31:306,32:315,33:325,34:334,35:344,36:354,37:363,38:373,39:382,40:392,41:412,42:433,43:453,44:473,45:494,46:514,47:534,48:554,49:575,50:595}
+};
+// CLX 真馨相守（女）— 115.02.10 起適用
+const CLX = {
+  10:{18:435,19:440,20:445,21:450,22:455,23:460,24:465,25:470,26:480,27:490,28:500,29:510,30:515,31:525,32:535,33:545,34:555,35:565,36:575,37:580,38:590,39:600,40:610,41:620,42:630,43:640,44:650,45:660,46:670,47:680,48:690,49:700,50:710,51:720,52:730,53:740,54:755,55:765,56:780,57:795,58:825,59:845,60:880},
+  20:{18:230,19:235,20:240,21:245,22:250,23:255,24:260,25:265,26:270,27:275,28:280,29:285,30:290,31:295,32:300,33:310,34:315,35:325,36:330,37:335,38:345,39:350,40:355,41:365,42:370,43:380,44:390,45:400,46:410,47:420,48:435,49:450,50:470}
+};
+
+const PRODUCTS = {
+  clz:{code:'CLZ',full:'豪愛無憂 防癌定期健康保險',gender:'男性',icon:'👨🏻',rateDate:'1150429',rates:CLZ,
+       theme:{brand:'#1D4ED8',dark:'#1E3A8A',bg:'#EFF6FF'}},
+  clx:{code:'CLX',full:'真馨相守 防癌定期健康保險',gender:'女性',icon:'👩🏻',rateDate:'115.02.10',rates:CLX,
+       theme:{brand:'#E11D48',dark:'#9F1239',bg:'#FFF1F3'}}
+};
+
+const MAX_AGE = {10:60, 20:50};
+const MIN_AGE = 18;
+const MATURE_AGE = 89; // 滿期：保險年齡屆滿 89 歲
+
+let currentProduct = 'clz';
+let selectedPeriod = null;
+let currentAge = null;
+let _pr = {};
+
+document.addEventListener("DOMContentLoaded", function(){ setProduct('clz'); });
+
+function fmt(n){return Math.round(n).toLocaleString('zh-TW');}
+
+function insAge(bDate, ref = new Date()){
+  const b = new Date(bDate);
+  let yr = ref.getFullYear() - b.getFullYear();
+  const bt = new Date(ref.getFullYear(), b.getMonth(), b.getDate());
+  const bn = new Date(ref.getFullYear()+1, b.getMonth(), b.getDate());
+  const bl = new Date(ref.getFullYear()-1, b.getMonth(), b.getDate());
+  let lo, hi;
+  if(ref >= bt){lo=bt; hi=bn;} else {yr--; lo=bl; hi=bt;}
+  return Math.floor(yr + (ref - lo)/(hi - lo) + 0.5);
+}
+
+function setProduct(p){
+  currentProduct = p;
+  const P = PRODUCTS[p];
+  document.body.setAttribute('data-product', p);
+  document.getElementById('ps-clz').className = 'ps-btn' + (p==='clz'?' on':'');
+  document.getElementById('ps-clx').className = 'ps-btn' + (p==='clx'?' on':'');
+  document.getElementById('h-mark').textContent = P.code;
+  document.getElementById('h-sub').textContent = `${P.full} · ${P.gender} · ${P.rateDate} 費率`;
+  document.getElementById('ic-icon').textContent = P.icon;
+  document.getElementById('ic-text').textContent = `本商品專屬 ${P.gender} 被保險人`;
+  document.getElementById('wm-name').textContent = P.code;
+  updateDisc();
+  updatePreview();
+  tryLiveCalculate();
+}
+
+function setPeriod(p){
+  const pb = document.getElementById(`pb-${p}`);
+  if(pb.classList.contains('disabled')) return;
+  selectedPeriod = p;
+  document.querySelector(`input[value="${p}"]`).checked = true;
+  [10,20].forEach(n => document.getElementById(`pb-${n}`).classList.remove('sel'));
+  pb.classList.add('sel');
+  clearResults();
+  updatePreview();
+  tryLiveCalculate();
+}
+
+function updatePeriodButtons(){
+  const age = currentAge;
+  [10,20].forEach(n => {
+    const el = document.getElementById(`pb-${n}`);
+    let lock = el.querySelector('.p-lock');
+    if(!lock){lock=document.createElement('span'); lock.className='p-lock'; el.appendChild(lock);}
+    if(age !== null && (age > MAX_AGE[n] || age < MIN_AGE)){
+      el.classList.add('disabled'); lock.textContent = '🔒';
+      if(selectedPeriod === n){selectedPeriod=null; el.classList.remove('sel');}
+    } else {
+      el.classList.remove('disabled'); lock.textContent = '';
+    }
+  });
+}
+
+function onMonthInput(el){
+  const v = el.value.replace(/[^0-9]/g,''); if(v!==el.value) el.value=v;
+  if(v===''){_triggerDateChange();return;}
+  const n=parseInt(v,10); if(n<1) return; if(n>12) el.value='12';
+  _triggerDateChange();
+}
+function onDayInput(el){
+  const v = el.value.replace(/[^0-9]/g,''); if(v!==el.value) el.value=v;
+  if(v===''){_triggerDateChange();return;}
+  const n=parseInt(v,10); if(n<1) return;
+  const y=+document.getElementById('by').value||2000, m=+document.getElementById('bm').value||1;
+  const maxD=new Date(y,m,0).getDate(); if(n>maxD) el.value=String(maxD);
+  _triggerDateChange();
+}
+function onYearInput(el){
+  const v=el.value; if(v.length!==4) return;
+  const n=parseInt(v,10);
+  if(!isNaN(n)&&n>=1900&&n<=2099){_triggerDateChange();}
+}
+
+function _triggerDateChange(){
+  clearResults();
+  const y=document.getElementById('by').value, m=document.getElementById('bm').value, d=document.getElementById('bd').value;
+  if(!y||!m||!d){document.getElementById('age-tag').className=''; currentAge=null; updatePeriodButtons(); return;}
+  const age=insAge(new Date(+y,+m-1,+d));
+  currentAge=age;
+  document.getElementById('age-txt').textContent = `投保年齡 ${age} 歲`;
+  document.getElementById('age-tag').className='on';
+  updatePeriodButtons(); updatePreview(); tryLiveCalculate();
+}
+
+function updatePreview(){
+  const cov=+document.getElementById('cov-num').value, p=selectedPeriod;
+  if(!currentAge||!cov||!p){document.getElementById('preview-annual').textContent='—'; return;}
+  const rate=PRODUCTS[currentProduct].rates[p]?.[currentAge];
+  document.getElementById('preview-annual').textContent = rate ? fmt(rate*cov)+' 元' : '—';
+}
+
+function syncSlider(v){
+  const sl=document.getElementById('cov-slider');
+  const val=Math.min(Math.max(+v||0),300);
+  sl.value=val; sl.style.setProperty('--pct',(val/300*100).toFixed(2)+'%');
+  updatePreview(); tryLiveCalculate();
+}
+function syncNum(v){
+  const val=Math.min(Math.max(+v||0),300);
+  document.getElementById('cov-num').value=val;
+  document.getElementById('cov-slider').style.setProperty('--pct',(val/300*100).toFixed(2)+'%');
+  if(navigator.vibrate) navigator.vibrate(5);
+  updatePreview(); tryLiveCalculate();
+}
+
+function clearResults(){
+  document.getElementById('results').className='results';
+  document.getElementById('err').className='';
+  const sb=document.getElementById('screen-benefits'); if(sb) sb.style.display='none';
+  updateEmptyState();
+}
+
+let countTimers=[];
+function countUp(el,target,dur=800){
+  countTimers.forEach(clearInterval); countTimers=[];
+  const start=Date.now();
+  const t=setInterval(()=>{
+    const p=Math.min((Date.now()-start)/dur,1);
+    const ease=1-Math.pow(1-p,4);
+    el.textContent=fmt(Math.round(target*ease));
+    if(p>=1){clearInterval(t); el.textContent=fmt(target);}
+  },16);
+  countTimers.push(t);
+}
+
+function updateEmptyState(){
+  const y=document.getElementById('by').value, m=document.getElementById('bm').value, d=document.getElementById('bd').value;
+  const cov=+document.getElementById('cov-num').value;
+  document.getElementById('es-1')?.classList.toggle('done', !!(y&&m&&d));
+  document.getElementById('es-2')?.classList.toggle('done', !!selectedPeriod);
+  document.getElementById('es-3')?.classList.toggle('done', !!(cov>0));
+}
+
+function tryLiveCalculate(){
+  updateEmptyState();
+  const y=document.getElementById('by').value, m=document.getElementById('bm').value, d=document.getElementById('bd').value;
+  const cov=+document.getElementById('cov-num').value;
+  if(y&&m&&d&&selectedPeriod&&cov>0){ calculate({silent:true}); }
+  else { document.getElementById('results').classList.remove('has-data'); }
+}
+
+function buildBenefits(cov, annualAmt){
+  const covWan = cov;                          // 保額（萬）
+  const light  = Math.round(cov*0.1);          // 初期/輕度 10%
+  const spec   = Math.round(cov*0.5);          // 特定癌症(重度)額外 最高50%
+  const illness= Math.round(cov*0.1);          // 特定傷病 10%
+  return [
+    {name:'首次罹患癌症（重度）保險金',trigger:'等待期滿後首次確診重度癌症（首年：年繳保費×1.06倍）',amt:`${fmt(covWan)} 萬`,sub:'第2年起給付保額',hl:true},
+    {name:'首次罹患癌症（初期‧輕度）保險金',trigger:'首次確診初期或輕度癌症｜給付一次為限',amt:`${fmt(light)} 萬`,sub:'保額 10%'},
+    {name:'首次罹患特定癌症（重度）保險金',trigger:'重度癌症且屬條款特定癌症（第2年起，逐年遞增）',amt:`${fmt(spec)} 萬`,sub:'額外，第6年起最高50%'},
+    {name:'特定傷病保險金',trigger:'第2保單年度起首次確診特定傷病之一',amt:`${fmt(illness)} 萬`,sub:'保額 10%'},
+    {name:'特定手術保險金',trigger:'接受條款附表二所列特定手術',amt:'依手術表',sub:'附表二 · 按比例給付'},
+    {name:'身故保險金',trigger:'保險期間內身故',amt:`${fmt(covWan)} 萬`,sub:'當年度保險金額'},
+    {name:'滿期保險金',trigger:`保險年齡屆滿 ${MATURE_AGE} 歲仍生存`,amt:`${fmt(covWan)} 萬`,sub:'當年度保險金額'},
+    {name:'豁免保險費',trigger:'確診重度癌症，或意外致1~6級失能',amt:'豁免',sub:'後續各期保費'}
+  ];
+}
+
+function calculate(opts){
+  const silent = opts && opts.silent;
+  const P = PRODUCTS[currentProduct];
+  const y=document.getElementById('by').value, m=document.getElementById('bm').value, d=document.getElementById('bd').value;
+  const cov=parseFloat(document.getElementById('cov-num').value);
+
+  if(!y||!m||!d){(silent?null:showErr('請完整填寫出生年月日'));return;}
+  if(!selectedPeriod){(silent?null:showErr('請選擇繳費年期'));return;}
+  if(!cov||cov<=0){(silent?null:showErr('請輸入規劃保額'));return;}
+
+  const age=insAge(new Date(+y,+m-1,+d));
+  const maxAge=MAX_AGE[selectedPeriod];
+
+  if(age<MIN_AGE){(silent?null:showErr(`本商品投保年齡自 ${MIN_AGE} 歲起`));return;}
+  if(age>maxAge){(silent?null:showErr(`投保年齡 ${age} 歲超過 ${selectedPeriod} 年期上限（${maxAge} 歲）`));return;}
+  if(cov<50){(silent?null:showErr('本商品最低保額為 50 萬元'));return;}
+
+  const rate=P.rates[selectedPeriod]?.[age];
+  if(!rate){(silent?null:showErr(`年齡 ${age} 歲無對應費率，請確認資料`));return;}
+
+  const annualAmt=Math.round(rate*cov);
+  const semi=Math.round(annualAmt*0.52);
+  const quarter=Math.round(annualAmt*0.262);
+  const monthly=Math.round(annualAmt*0.088);
+  const total=annualAmt*selectedPeriod;
+  const endAge=age+selectedPeriod;
+  const gLabel=`${P.icon} ${P.gender}`;
+
+  document.getElementById('hero-who').innerHTML =
+    `<span style="display:inline-block;padding:4px 10px;background:var(--surface);border-radius:6px;border:1px solid var(--border);margin-right:8px;">${gLabel}</span>` +
+    `保險年齡 <strong style="color:var(--tx-main)">${age}</strong> 歲 · 規劃 <strong style="color:var(--tx-main)">${fmt(cov)}</strong> 萬元`;
+
+  document.getElementById('hero-period-tag').textContent = `繳費 ${selectedPeriod} 年 · 保障至 ${MATURE_AGE} 歲`;
+
+  document.getElementById('f-annual').textContent=fmt(annualAmt);
+  document.getElementById('f-semi').textContent=fmt(semi);
+  document.getElementById('f-quarter').textContent=fmt(quarter);
+  document.getElementById('f-month').textContent=fmt(monthly);
+
+  const periodLabel=`${selectedPeriod} 年期`;
+  document.getElementById('ri-period-tag').textContent=periodLabel;
+  document.getElementById('ri-rate').textContent=fmt(rate);
+  document.getElementById('ri-age').textContent=`${age} 歲`;
+  document.getElementById('ri-cov').textContent=`${fmt(cov)} 萬`;
+  document.getElementById('ri-period').textContent=periodLabel;
+
+  document.getElementById('s-annual').textContent=fmt(annualAmt)+' 元';
+  document.getElementById('s-end-age').textContent=`${endAge} 歲`;
+  document.getElementById('s-total').textContent=fmt(total)+' 元';
+
+  const r=document.getElementById('results');
+  r.style.display='block';
+  if(silent){ r.className='results on has-data'; }
+  else { requestAnimationFrame(()=>{ r.className='results on has-data'; r.scrollIntoView({behavior:'smooth',block:'start'}); }); }
+
+  if(silent){ document.getElementById('hero-annual').textContent=fmt(annualAmt); }
+  else { countUp(document.getElementById('hero-annual'), annualAmt); }
+
+  const _benefits=buildBenefits(cov, annualAmt);
+  const sbEl=document.getElementById('screen-benefits');
+  sbEl.style.display='block';
+  sbEl.innerHTML=`<div class="bc-head">${P.code} 給付保障 <span class="bc-badge">${_benefits.length} 項</span></div>`+
+    _benefits.map((b,i)=>`
+      <div class="bc-item${b.hl?' hl':''}">
+        <div class="bc-num">${i+1}</div>
+        <div class="bc-body"><div class="bc-name">${b.name}</div><div class="bc-trigger">${b.trigger}</div></div>
+        <div class="bc-right"><div class="bc-amt">${b.amt}</div><div class="bc-sub">${b.sub}</div></div>
+      </div>`).join('');
+
+  _pr={y,m,d,age,cov,annualAmt,semi,quarter,monthly,total,endAge,selectedPeriod,rate,product:currentProduct};
+}
+
+function updateDisc(){
+  const P=PRODUCTS[currentProduct];
+  document.getElementById('disc').innerHTML =
+    `※ 本試算以 ${P.code}（${P.full}）費率表為基礎，僅供提案參考，實際保費依富邦人壽核保結果為準。<br>`+
+    `※ 本商品為 <strong>${P.gender}專屬</strong> 防癌定期健康保險，保障至保險年齡 ${MATURE_AGE} 歲，繳費年期可選 10 / 20 年。<br>`+
+    `※ 投保保額 50 ～ 300 萬元（以萬元為單位）；同一被保險人保額型癌症險累計上限 500 萬。<br>`+
+    `※ 半年繳 ×0.52 ｜季繳 ×0.262 ｜月繳 ×0.088（以年繳為基準換算）。費率適用日期：${P.rateDate} 起。`;
+}
+
+function showErr(msg){
+  const el=document.getElementById('err');
+  el.textContent=msg; el.className='on'; el.style.display='block';
+}
+
+function printReport(){
+  if(!_pr.annualAmt){showErr('請先完成試算再輸出建議書');return;}
+  const p=_pr; const P=PRODUCTS[p.product];
+  const today=new Date();
+  const dateStr=`${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
+  const monthlyAvg=Math.round(p.annualAmt/12);
+  const benefits=buildBenefits(p.cov, p.annualAmt);
+
+  const benefitHTML=benefits.map((b,i)=>`
+    <div class="pa-benefit-item${b.hl?' highlight':''}">
+      <div class="pa-benefit-num">${i+1}</div>
+      <div class="pa-benefit-body"><div class="pa-benefit-name">${b.name}</div><div class="pa-benefit-trigger">${b.trigger}</div></div>
+      <div class="pa-benefit-right"><div class="pa-benefit-amt">${b.amt}</div><div class="pa-benefit-amt-sub">${b.sub}</div></div>
+    </div>`).join('');
+
+  const pa=document.getElementById('print-area');
+  pa.style.setProperty('--pa-brand',P.theme.brand);
+  pa.style.setProperty('--pa-brand-dark',P.theme.dark);
+  pa.style.setProperty('--pa-brand-bg',P.theme.bg);
+  pa.innerHTML=`
+    <div class="pa-header">
+      <div class="pa-logo-wrap">
+        <div class="pa-logo-mark">${P.code}</div>
+        <div class="pa-title"><h1>${P.full}</h1><p>富邦人壽 · ${P.gender}專屬 · 保障至 ${MATURE_AGE} 歲 · 繳費 ${p.selectedPeriod} 年</p></div>
+      </div>
+      <div class="pa-date">提案日期<span>${dateStr}</span></div>
+    </div>
+
+    <div class="pa-info-row">
+      <div class="pa-info-box"><div class="pa-info-label">被保人</div><div class="pa-info-val">${P.gender}</div></div>
+      <div class="pa-info-box"><div class="pa-info-label">出生日</div><div class="pa-info-val" style="font-size:13px">${p.y}/${p.m}/${p.d}</div></div>
+      <div class="pa-info-box"><div class="pa-info-label">保險年齡</div><div class="pa-info-val">${p.age} 歲</div></div>
+      <div class="pa-info-box"><div class="pa-info-label">規劃保額</div><div class="pa-info-val">${fmt(p.cov)} 萬</div></div>
+    </div>
+
+    <div class="pa-section-title">保費方案</div>
+    <div class="pa-premium-card">
+      <div class="pa-annual-label">年繳保費</div>
+      <div class="pa-annual-num"><span class="pa-cur">$</span>${fmt(p.annualAmt)}<span style="font-size:16px;font-weight:700;color:#4B5468;margin-left:4px">元</span></div>
+      <div class="pa-monthly-tagline">▸ 平均每月提撥 $${fmt(monthlyAvg)} 元，享有 ${fmt(p.cov)} 萬重度癌症保障</div>
+      <div class="pa-freq-grid">
+        <div class="pa-freq-box"><div class="pa-freq-label">半年繳</div><div class="pa-freq-val">${fmt(p.semi)}</div><div class="pa-freq-unit">元 / 期</div></div>
+        <div class="pa-freq-box"><div class="pa-freq-label">季繳</div><div class="pa-freq-val">${fmt(p.quarter)}</div><div class="pa-freq-unit">元 / 期</div></div>
+        <div class="pa-freq-box"><div class="pa-freq-label">月繳</div><div class="pa-freq-val">${fmt(p.monthly)}</div><div class="pa-freq-unit">元 / 期</div></div>
+      </div>
+    </div>
+
+    <div class="pa-section-title">${benefits.length} 大給付保障</div>
+    <div class="pa-benefits">${benefitHTML}</div>
+
+    <div class="pa-notice">
+      <strong>等待期：</strong>自契約生效（或復效）日起 90 天，等待期間內確診之癌症不予給付。<br>
+      <strong>投保規則：</strong>本商品為 ${P.gender}專屬，投保年齡 18～${MAX_AGE[p.selectedPeriod]} 歲（${p.selectedPeriod}年期）；保額 50～300 萬，保額型癌症險累計上限 500 萬。<br>
+      <strong>繳費年期：</strong>${p.selectedPeriod} 年期，繳費至 ${p.endAge} 歲，保障延續至保險年齡 ${MATURE_AGE} 歲。
+    </div>
+
+    <div class="pa-footer">
+      ※ 本建議書由系統依費率表試算產出（費率適用日期：${P.rateDate} 起），僅供提案參考，實際承保條件以富邦人壽核保結果及保單條款為準。<br>
+      ※ 保費換算：半年繳 ×0.52 ｜季繳 ×0.262 ｜月繳 ×0.088。平均每月 = 年繳 ÷ 12（實際月繳金額以月繳費率為準）。<br>
+      ※「首次罹患癌症（初期‧輕度）」給付保額 10%；「特定癌症（重度）」為額外給付，第2年起逐年遞增至第6年起最高 50%；「特定手術」依條款附表二比例給付。
+    </div>
+  `;
+  window.print();
+}
+</script>
+</body>
+</html>
