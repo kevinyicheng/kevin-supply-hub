@@ -119,6 +119,20 @@ def main() -> int:
         print("[fetch-fund-data] 全部基金抓取失敗，不寫檔", file=sys.stderr)
         return 1
 
+    # 數字沒變就不改寫檔案（updated_at 只在數據變動時更新），避免每日產生無意義 commit
+    if OUT_PATH.exists():
+        try:
+            old = json.loads(OUT_PATH.read_text(encoding="utf-8")).get("funds")
+            if old == funds:
+                print("[fetch-fund-data] 淨值/配息與上次相同，不改寫檔案")
+                for f in funds:
+                    po = (f"配息 {f['payout']} (除息 {f['payout_ex_date']})"
+                          if f["has_payout"] else "無配息")
+                    print(f"[fetch-fund-data] · {f['name']}：淨值 {f['nav']} ({f['nav_date']})  {po}")
+                return 0
+        except Exception:  # noqa: BLE001
+            pass  # 舊檔壞了就照常改寫
+
     data = {
         "updated_at": datetime.now(TPE).isoformat(timespec="seconds"),
         "source": "invest.fubonlife.com.tw",

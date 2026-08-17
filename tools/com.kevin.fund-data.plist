@@ -10,12 +10,13 @@
     <string>/bin/bash</string>
     <string>/Users/yichengsmbp2017/Desktop/Keri-Workspace/Ai工作區/kevin-supply-hub/tools/update-fund-data.sh</string>
   </array>
-  <!-- 每日 09:30 執行；若當下休眠，喚醒後由 launchd 補跑一次 -->
-  <key>StartCalendarInterval</key>
-  <dict>
-    <key>Hour</key><integer>9</integer>
-    <key>Minute</key><integer>30</integer>
-  </dict>
+  <!-- 網路狀態變化時觸發（連上網路 / 換網路 / 喚醒重連）。
+       腳本內以 .last-run-date 當日閘門，確保一天只實際執行一次。 -->
+  <key>WatchPaths</key>
+  <array>
+    <string>/etc/resolv.conf</string>
+    <string>/Library/Preferences/SystemConfiguration/NetworkInterfaces.plist</string>
+  </array>
   <key>StandardOutPath</key>
   <string>/Users/yichengsmbp2017/Desktop/Keri-Workspace/Ai工作區/kevin-supply-hub/tools/launchd.out.log</string>
   <key>StandardErrorPath</key>
