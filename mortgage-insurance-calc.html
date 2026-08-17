@@ -84,7 +84,13 @@ body{
   background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;
   box-shadow:0 6px 18px rgba(30,136,210,0.32);
 }
-.tab-icon{font-size:22px;line-height:1;width:26px;text-align:center;flex-shrink:0;}
+.tab-icon{line-height:0;width:26px;display:flex;justify-content:center;flex-shrink:0;}
+/* 線性 SVG 圖示：stroke 吃 currentColor，隨情境（白／品牌／灰）自動變色 */
+.ic{width:22px;height:22px;flex-shrink:0;stroke:currentColor;fill:none;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.side-brand .sb-icon .ic{width:24px;height:24px;stroke:#fff;}
+.placeholder .pi .ic{width:32px;height:32px;stroke:var(--brand);}
+.row-add .ic{width:14px;height:14px;stroke-width:2;vertical-align:middle;}
 
 /* ── Content ── */
 .content{
@@ -269,7 +275,8 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
 }
 .fx-note{
   background:var(--brand-bg);border:1px solid var(--brand-border);
-  border-radius:14px;padding:14px 16px;
+  border-left:3px solid var(--brand);
+  border-radius:4px 14px 14px 4px;padding:14px 16px;
   font-size:13px;color:var(--tx-sub);font-weight:600;
   margin-bottom:16px;line-height:1.7;
 }
@@ -281,7 +288,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
   border:1px dashed rgba(30,136,210,0.25)!important;box-shadow:var(--shadow-sm)!important;
 }
 .placeholder .pi{
-  width:64px;height:64px;border-radius:20px;font-size:30px;
+  width:64px;height:64px;border-radius:20px;
   background:linear-gradient(135deg,var(--brand-bg),#DBEDFC);
   border:1px solid var(--brand-border);
   display:flex;align-items:center;justify-content:center;
@@ -352,25 +359,61 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
+<!-- 線性圖示 sprite（各處以 <use> 引用，stroke 吃 currentColor）-->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-brand" viewBox="0 0 24 24">
+      <rect x="5" y="2.5" width="14" height="19" rx="2.5"/>
+      <rect x="8" y="5.5" width="8" height="3.5" rx="1"/>
+      <path d="M8.5 13h0M12 13h0M15.5 13h0M8.5 16.5h0M12 16.5h0M15.5 16.5h0"/>
+    </symbol>
+    <symbol id="i-home" viewBox="0 0 24 24">
+      <path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9.5 20v-6h5v6"/>
+    </symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24">
+      <ellipse cx="12" cy="6" rx="8" ry="3"/>
+      <path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/>
+      <path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path d="M12 3 5 6v5c0 4.5 3 7.6 7 9 4-1.4 7-4.5 7-9V6z"/>
+      <path d="M9.2 11.8l2 2 3.6-4.2"/>
+    </symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24">
+      <path d="M4 4v16h16"/><rect x="7.5" y="11" width="3" height="6"/>
+      <rect x="13.5" y="7" width="3" height="10"/>
+    </symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24">
+      <path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.2h0"/>
+    </symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24">
+      <path d="M16.5 4.5a2 2 0 0 1 3 3L8 19l-4 1 1-4z"/><path d="M14 7l3 3"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14"/><path d="M5 12h14"/>
+    </symbol>
+  </defs>
+</svg>
+
 <div class="app">
 
   <aside class="sidebar">
     <div class="side-brand">
-      <span class="sb-icon">🧮</span>
+      <span class="sb-icon"><svg class="ic"><use href="#i-brand"/></svg></span>
       <div class="sb-text">房貸 × 保單<small>試算系統</small></div>
     </div>
     <nav class="tab-nav">
       <button class="tab-btn active" id="btn-mortgage" onclick="switchTab('mortgage')">
-        <span class="tab-icon">🏠</span><span class="tab-label">房貸試算</span>
+        <span class="tab-icon"><svg class="ic"><use href="#i-home"/></svg></span><span class="tab-label">房貸試算</span>
       </button>
       <button class="tab-btn" id="btn-fund" onclick="switchTab('fund')">
-        <span class="tab-icon">💰</span><span class="tab-label">配息基金</span>
+        <span class="tab-icon"><svg class="ic"><use href="#i-coin"/></svg></span><span class="tab-label">配息基金</span>
       </button>
       <button class="tab-btn" id="btn-insurance" onclick="switchTab('insurance')">
-        <span class="tab-icon">🛡️</span><span class="tab-label">保單試算</span>
+        <span class="tab-icon"><svg class="ic"><use href="#i-shield"/></svg></span><span class="tab-label">保單試算</span>
       </button>
       <button class="tab-btn" id="btn-report" onclick="switchTab('report')">
-        <span class="tab-icon">📊</span><span class="tab-label">資產負債比</span>
+        <span class="tab-icon"><svg class="ic"><use href="#i-chart"/></svg></span><span class="tab-label">資產負債比</span>
       </button>
     </nav>
   </aside>
@@ -419,7 +462,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
     </div>
 
     <div id="m-placeholder" class="placeholder card">
-      <div class="pi">🏠</div>
+      <div class="pi"><svg class="ic"><use href="#i-home"/></svg></div>
       <p>輸入貸款條件後即時計算</p>
     </div>
 
@@ -466,7 +509,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
         </div>
         <div class="form-group">
           <label>假設匯率（台幣 / USD）</label>
-          <input type="number" id="f-fx-rate" value="32" min="1" step="0.1">
+          <input type="number" id="f-fx-rate" value="32" min="1" step="0.01">
           <span class="input-hint" id="f-fx-hint">載入即時匯率中…</span>
         </div>
       </div>
@@ -474,7 +517,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
     </div>
 
     <div id="f-placeholder" class="placeholder card">
-      <div class="pi">💰</div>
+      <div class="pi"><svg class="ic"><use href="#i-coin"/></svg></div>
       <p>設定投入條件後點擊「試算配息」</p>
     </div>
 
@@ -540,7 +583,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
           </div>
           <div class="form-group">
             <label>假設匯率（台幣 / 外幣）</label>
-            <input type="number" id="i-fx-rate" value="32" min="1" step="0.1"
+            <input type="number" id="i-fx-rate" value="32" min="1" step="0.01"
               oninput="updatePremiumDisplay()">
             <span class="input-hint" id="i-fx-hint">載入即時匯率中…</span>
           </div>
@@ -583,7 +626,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
     </div>
 
     <div id="i-placeholder" class="placeholder card">
-      <div class="pi">🛡️</div>
+      <div class="pi"><svg class="ic"><use href="#i-shield"/></svg></div>
       <p>設定保單條件後點擊「試算保單」</p>
     </div>
 
@@ -604,7 +647,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
   <!-- ═══════════════ TAB 3：綜合報表 ═══════════════ -->
   <div id="tab-report" class="tab-panel">
     <div id="r-placeholder" class="placeholder card">
-      <div class="pi">📊</div>
+      <div class="pi"><svg class="ic"><use href="#i-chart"/></svg></div>
       <p>請先完成「房貸試算」與「保單試算」<br>綜合報表將自動產生</p>
     </div>
 
@@ -1163,8 +1206,8 @@ function calcFund() {
   `;
 
   document.getElementById('f-fee-note').innerHTML = m
-    ? `📌 配息以每單位 <strong>${unitPayout} USD/月</strong>、匯率 <strong>1 USD = ${fxRate} TWD</strong> 估算；現金流 = 月配息 − 房貸月還款。點年度旁的 <strong>＋</strong> 可於該年度第 1 個月加碼${hasTopup?`（目前加碼合計 <strong>${fmt(totalTopup)}</strong> 元，以相同淨值/匯率假設）`:''}。配息非保證，實際依市場波動。`
-    : `📌 尚未計算房貸，僅顯示配息試算。至「房貸試算」計算後即可對比。`;
+    ? `配息以每單位 <strong>${unitPayout} USD/月</strong>、匯率 <strong>1 USD = ${fxRate} TWD</strong> 估算；現金流 = 月配息 − 房貸月還款。點年度旁的<strong>加碼鈕</strong>可於該年度第 1 個月加碼${hasTopup?`（目前加碼合計 <strong>${fmt(totalTopup)}</strong> 元，以相同淨值/匯率假設）`:''}。配息非保證，實際依市場波動。`
+    : `尚未計算房貸，僅顯示配息試算。至「房貸試算」計算後即可對比。`;
 
   // 年度對比表：月現金流 = 月配息 − 房貸月還款
   const thead = document.getElementById('f-thead');
@@ -1184,7 +1227,7 @@ function calcFund() {
       const row = `<tr class="${covered?'milestone-row':''}">
         <td class="td-year">
           <button type="button" class="row-add ${topup?'has-topup':''}" title="第 ${y.year} 年第 1 個月加碼"
-            onclick="toggleTopupEditor(${y.year})">${topup?'✎':'＋'}</button>
+            onclick="toggleTopupEditor(${y.year})"><svg class="ic"><use href="#${topup?'i-edit':'i-plus'}"/></svg></button>
           ${y.year}${y.allGrace?'<span class="badge badge-grace">寬限</span>':''}${topup?`<span class="badge badge-topup">加碼 ${fmt(topup)}</span>`:''}${covered?'<span class="badge badge-milestone">配息覆蓋</span>':''}
         </td>
         <td class="tc">${y.age} 歲</td>
@@ -1265,7 +1308,7 @@ function calcInsurance() {
     document.getElementById('i-placeholder').style.display = 'block';
     document.getElementById('i-results').style.display = 'none';
     document.getElementById('i-placeholder').innerHTML =
-      `<div class="pi">⚠️</div><p>投保年齡需在 ${prod.ageMin}～${prod.ageMax} 歲之間（目前：${issueAge || '未設定'}）</p>`;
+      `<div class="pi"><svg class="ic"><use href="#i-warn"/></svg></div><p>投保年齡需在 ${prod.ageMin}～${prod.ageMax} 歲之間（目前：${issueAge || '未設定'}）</p>`;
     return;
   }
 
@@ -1331,7 +1374,7 @@ function calcInsurance() {
   const fxNote = document.getElementById('i-fx-note');
   if (isForex) {
     fxNote.style.display = 'block';
-    fxNote.innerHTML = `📌 以下數值為外幣（${currency}）原值，台幣換算採假設匯率 <strong>1 ${currency} = ${fxRate} TWD</strong>，實際金額以匯率波動為準。`;
+    fxNote.innerHTML = `以下數值為外幣（${currency}）原值，台幣換算採假設匯率 <strong>1 ${currency} = ${fxRate} TWD</strong>，實際金額以匯率波動為準。`;
   } else {
     fxNote.style.display = 'none';
   }
@@ -1403,7 +1446,7 @@ function renderReport() {
   const fxNote = document.getElementById('r-fx-note');
   if (ins.isForex) {
     fxNote.style.display = 'block';
-    fxNote.innerHTML = `📌 保單數值以假設匯率 <strong>1 ${ins.prod.currency} = ${ins.fxRate} TWD</strong> 換算成台幣進行比較，實際金額以匯率波動為準。`;
+    fxNote.innerHTML = `保單數值以假設匯率 <strong>1 ${ins.prod.currency} = ${ins.fxRate} TWD</strong> 換算成台幣進行比較，實際金額以匯率波動為準。`;
   } else {
     fxNote.style.display = 'none';
   }
@@ -1474,7 +1517,7 @@ async function fetchUsdRate() {
   try {
     const res  = await fetch('https://open.er-api.com/v6/latest/USD');
     const json = await res.json();
-    const rate = Math.round(json.rates.TWD * 10) / 10;
+    const rate = Math.round(json.rates.TWD * 100) / 100;
     ['f-fx-rate', 'i-fx-rate'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = rate;
