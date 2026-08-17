@@ -195,6 +195,8 @@ input[type="number"]::-webkit-inner-spin-button{display:none;}
 .sc.orange{background:linear-gradient(135deg,#fff,var(--orange-bg));}
 .sc.orange .sc-value{color:var(--orange);}
 .sc.red .sc-value{color:var(--red);}
+.sc.brand{background:linear-gradient(135deg,var(--brand-bg),#DBEDFC);border-color:var(--brand-border);}
+.sc.brand .sc-value{color:var(--brand-dark);}
 
 /* ── View toggle ── */
 .view-toggle{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
@@ -322,6 +324,9 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
 @media(min-width:768px){
   .form-grid{grid-template-columns:repeat(3,1fr);}
   .summary-row{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));}
+  /* 房貸摘要卡片較少：依張數決定欄數並限制總寬置中，避免被拉寬顯得空 */
+  #m-summary{grid-template-columns:repeat(var(--mn,3),1fr);
+             max-width:calc(var(--mn,3) * 220px);margin-inline:auto;}
 }
 /* 手機/平板：側欄改為 App 式底部導航列 */
 @media(max-width:899px){
@@ -1052,11 +1057,11 @@ function renderMortgageSummary() {
     { key:'age',   label:'借款人年齡', val:d.age, fmtFn:v=>`${Math.round(v)} 歲`, sub:'貸款起始' },
     ...(hasGrace ? [{ key:'grace', label:'寬限期月息', val:d.gracePayment, fmtFn:fmt, sub:'元 / 月' }] : []),
     { key:'pay',   label:hasGrace?'寬限後月還款':'每月還款', val:d.normalPayment, fmtFn:fmt,
-      sub:hasGrace?'元 / 月':'元 / 月（本息攤還）' },
-    { key:'int',   label:'總利息支出', val:d.totalInterest, fmtFn:fmt, sub:'元', cls:'orange' },
-    { key:'total', label:'總還款金額', val:d.principal + d.totalInterest, fmtFn:fmt, sub:'元' },
+      sub:hasGrace?'元 / 月':'元 / 月（本息攤還）', cls:'brand' },
   ];
-  document.getElementById('m-summary').innerHTML = items.map(i => `
+  const el = document.getElementById('m-summary');
+  el.style.setProperty('--mn', items.length);  // 依卡片張數決定欄數與總寬（桌機置中）
+  el.innerHTML = items.map(i => `
     <div class="sc ${i.cls||''}">
       <div class="sc-label">${i.label}</div>
       <div class="sc-value" id="msc-${i.key}">${i.fmtFn(i.val)}</div>
