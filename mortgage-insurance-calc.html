@@ -209,6 +209,26 @@ input[type="number"]::-webkit-inner-spin-button{display:none;}
 .toggle-btn:hover{border-color:var(--border-hover);}
 .toggle-btn.active{background:var(--brand-bg);border-color:var(--brand);color:var(--brand-dark);}
 
+/* ── 自訂勾選（報表：差額是否計入基金）── */
+.report-controls{margin-bottom:14px;}
+.check-toggle{
+  display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;
+  padding:11px 16px;border:1.5px solid var(--border);border-radius:12px;background:#FAFCFF;
+  font-size:14px;font-weight:700;color:var(--tx-sub);transition:all .2s;
+}
+.check-toggle:hover{border-color:var(--border-hover);}
+.check-toggle.on{border-color:var(--brand);background:var(--brand-bg);color:var(--brand-dark);}
+.check-toggle input{position:absolute;opacity:0;width:0;height:0;pointer-events:none;}
+.check-toggle .box{
+  width:20px;height:20px;border-radius:6px;border:2px solid var(--border-hover);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;
+}
+.check-toggle .box svg{width:13px;height:13px;stroke:#fff;stroke-width:3;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .15s;}
+.check-toggle input:checked ~ .box{background:var(--brand);border-color:var(--brand);}
+.check-toggle input:checked ~ .box svg{opacity:1;}
+.cell-off{color:var(--tx-muted)!important;text-decoration:line-through;}
+
 /* ── Tables ── */
 .table-wrap{overflow-x:auto;overflow-y:auto;max-height:540px;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;font-size:16px;font-variant-numeric:tabular-nums;}
@@ -396,6 +416,9 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
     </symbol>
     <symbol id="i-plus" viewBox="0 0 24 24">
       <path d="M12 5v14"/><path d="M5 12h14"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="M5 12.5l4.5 4.5L19 7"/>
     </symbol>
   </defs>
 </svg>
@@ -659,6 +682,13 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
     <div id="r-results" style="display:none">
       <div id="r-fx-note" class="fx-note" style="display:none"></div>
       <div class="summary-row" id="r-summary"></div>
+      <div class="report-controls" id="r-controls" style="display:none">
+        <label class="check-toggle on" id="r-fund-label">
+          <input type="checkbox" id="r-include-fund" checked onchange="toggleReportFund()">
+          <span class="box"><svg><use href="#i-check"/></svg></span>
+          <span>貸款與現價差額計入配息基金</span>
+        </label>
+      </div>
       <div class="card card-flush">
         <div class="table-wrap">
           <table>
@@ -808,6 +838,7 @@ const state = {
   fundData: null,
   insuranceData: null,
   mortgageView: 'yearly',
+  reportIncludeFund: true,   // 資產負債比：差額是否計入配息基金
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -1447,6 +1478,12 @@ function renderReport() {
   const maxYears = Math.max(m.years, ins.records.length);
   let coverYear = null; // year where svTWD first >= mortgageBalance
 
+  // 差額是否計入基金：僅在有基金資料時提供勾選，否則隱藏
+  const hasFund     = !!state.fundData;
+  const includeFund = hasFund && state.reportIncludeFund;
+  const ctrl = document.getElementById('r-controls');
+  ctrl.style.display = hasFund ? 'block' : 'none';
+
   // FX note
   const fxNote = document.getElementById('r-fx-note');
   if (ins.isForex) {
@@ -1470,7 +1507,7 @@ function renderReport() {
         .filter(([ty]) => Number(ty) <= y)
         .reduce((s, [,v]) => s + v, 0)
     ) : null;
-    const diff  = svTWD != null ? svTWD + (fundInv ?? 0) - bal : null;
+    const diff  = svTWD != null ? svTWD + (includeFund ? (fundInv ?? 0) : 0) - bal : null;
     if (diff!=null && diff>=0 && !coverYear) coverYear = y;
     return {y, age, bal, svTWD, dbTWD, diff, fundInv};
   });
@@ -1484,7 +1521,7 @@ function renderReport() {
       <div class="sc-sub">借款人 ${m.age+m.years-1} 歲</div>
     </div>
     <div class="sc green">
-      <div class="sc-label">${state.fundData?'保單+基金超越房貸':'現金價值超越房貸'}</div>
+      <div class="sc-label">${includeFund?'保單+基金超越房貸':'現金價值超越房貸'}</div>
       <div class="sc-value">${coverYear?`第 ${coverYear} 年`:'超出範圍'}</div>
       <div class="sc-sub">${coverYear?`借款人 ${m.age+coverYear-1} 歲`:''}</div>
     </div>
@@ -1508,11 +1545,18 @@ function renderReport() {
       <td class="tc">${r.age} 歲</td>
       <td class="tg">−${fmt(r.bal)}</td>
       <td class="tr">${r.svTWD!=null?`+${fmt(r.svTWD)}`:'—'}</td>
-      <td class="tr">${r.fundInv!=null?`+${fmt(r.fundInv)}`:'—'}</td>
+      <td class="tr ${r.fundInv!=null && !includeFund ? 'cell-off' : ''}">${r.fundInv!=null?`+${fmt(r.fundInv)}`:'—'}</td>
       <td class="${r.diff!=null?(pos?'tr':'tg'):''}">${r.diff!=null?fmtSign(r.diff):'—'}</td>
       <td>${fmt(r.dbTWD)}</td>
     </tr>`;
   }).join('');
+}
+
+// 切換「貸款與現價差額」是否計入配息基金
+function toggleReportFund() {
+  state.reportIncludeFund = document.getElementById('r-include-fund').checked;
+  document.getElementById('r-fund-label').classList.toggle('on', state.reportIncludeFund);
+  renderReport();
 }
 
 // ══════════════════════════════════════════════════════════════════
