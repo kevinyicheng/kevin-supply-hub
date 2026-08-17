@@ -450,12 +450,12 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
         <div class="form-group">
           <label>假設淨值（USD / 單位）</label>
           <input type="number" id="f-netvalue" value="8.5" min="0.01" step="0.01">
-          <span class="input-hint"><a href="https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5" target="_blank" style="color:var(--brand);">查看最新淨值</a></span>
+          <span class="input-hint" id="f-netvalue-hint">載入最新淨值中… <a href="https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5" target="_blank" style="color:var(--brand);">查看來源</a></span>
         </div>
         <div class="form-group">
           <label>每單位月配息（USD）</label>
           <input type="number" id="f-payout" value="0.055" min="0.001" step="0.001">
-          <span class="input-hint">預設 0.055，可依實際調整</span>
+          <span class="input-hint" id="f-payout-hint">載入最新配息中…</span>
         </div>
         <div class="form-group">
           <label>假設匯率（台幣 / USD）</label>
@@ -1490,6 +1490,40 @@ async function fetchUsdRate() {
 }
 
 // ══════════════════════════════════════════════════════════════════
+//  最新基金淨值 / 配息（讀同源 fund-data.json，由排程每日更新）
+// ══════════════════════════════════════════════════════════════════
+async function fetchFundData() {
+  try {
+    const res  = await fetch('fund-data.json?t=' + Date.now());
+    const d    = await res.json();
+    const nvEl = document.getElementById('f-netvalue');
+    const poEl = document.getElementById('f-payout');
+    if (d.nav   && nvEl) nvEl.value = d.nav;
+    if (d.payout && poEl) poEl.value = d.payout;
+
+    const navDate = (d.nav_date || '').replace(/-/g, '/');
+    const nvHint  = document.getElementById('f-netvalue-hint');
+    if (nvHint) nvHint.innerHTML =
+      `最新淨值 <strong>${d.nav}</strong>（${navDate}，每日更新，可手動調整） ` +
+      `<a href="https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5" target="_blank" style="color:var(--brand);">查看來源</a>`;
+
+    const exDate = (d.payout_ex_date || '').replace(/-/g, '/');
+    const poHint = document.getElementById('f-payout-hint');
+    if (poHint) poHint.textContent =
+      `每單位配息 ${d.payout} USD（最近除息 ${exDate}，可依實際調整）`;
+
+    calcFund();
+  } catch {
+    const nvHint = document.getElementById('f-netvalue-hint');
+    if (nvHint) nvHint.innerHTML =
+      `淨值載入失敗，請手動輸入 ` +
+      `<a href="https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5" target="_blank" style="color:var(--brand);">查看最新淨值</a>`;
+    const poHint = document.getElementById('f-payout-hint');
+    if (poHint) poHint.textContent = '配息載入失敗，預設 0.055，可依實際調整';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
 //  Init
 // ══════════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
@@ -1498,6 +1532,7 @@ document.addEventListener('DOMContentLoaded', () => {
   calcMortgage();      // 預設計算
   calcInsurance();     // 預設計算
   fetchUsdRate();      // 撈即時 USD/TWD 匯率
+  fetchFundData();     // 撈最新淨值 / 配息
 
   // 房貸試算：任一欄位變動即時重算
   ['m-age','m-principal','m-rate','m-years','m-grace'].forEach(id => {

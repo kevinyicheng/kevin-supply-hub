@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.kevin.fund-data</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/yichengsmbp2017/Desktop/Keri-Workspace/Ai工作區/kevin-supply-hub/tools/update-fund-data.sh</string>
+  </array>
+  <!-- 每日 09:30 執行；若當下休眠，喚醒後由 launchd 補跑一次 -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>9</integer>
+    <key>Minute</key><integer>30</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>/Users/yichengsmbp2017/Desktop/Keri-Workspace/Ai工作區/kevin-supply-hub/tools/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/yichengsmbp2017/Desktop/Keri-Workspace/Ai工作區/kevin-supply-hub/tools/launchd.err.log</string>
+</dict>
+</plist>
