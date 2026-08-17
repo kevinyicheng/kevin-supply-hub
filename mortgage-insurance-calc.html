@@ -440,8 +440,15 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
   <!-- ═══════════════ TAB 2：配息基金（DSP5） ═══════════════ -->
   <div id="tab-fund" class="tab-panel">
     <div class="card">
-      <div class="section-title">配息基金條件設定（DSP5）</div>
+      <div class="section-title" id="f-section-title">配息基金條件設定</div>
       <div class="form-grid">
+        <div class="form-group">
+          <label>選擇基金</label>
+          <select id="f-fund" onchange="applyFundSelection()">
+            <option value="">載入中…</option>
+          </select>
+          <span class="input-hint">淨值／配息每日自動更新，可手動調整</span>
+        </div>
         <div class="form-group">
           <label>預計投入金額（台幣元）</label>
           <input type="text" inputmode="numeric" class="comma-input" id="f-investment" value="10,000,000">
@@ -1490,37 +1497,59 @@ async function fetchUsdRate() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  最新基金淨值 / 配息（讀同源 fund-data.json，由排程每日更新）
+//  最新基金淨值 / 配息（讀同源 fund-data.json，由排程每日更新，支援多檔）
 // ══════════════════════════════════════════════════════════════════
+let FUND_LIST = [];
+
 async function fetchFundData() {
   try {
     const res  = await fetch('fund-data.json?t=' + Date.now());
     const d    = await res.json();
-    const nvEl = document.getElementById('f-netvalue');
-    const poEl = document.getElementById('f-payout');
-    if (d.nav   && nvEl) nvEl.value = d.nav;
-    if (d.payout && poEl) poEl.value = d.payout;
+    FUND_LIST  = Array.isArray(d.funds) ? d.funds : [];
+    if (!FUND_LIST.length) throw new Error('empty');
 
-    const navDate = (d.nav_date || '').replace(/-/g, '/');
-    const nvHint  = document.getElementById('f-netvalue-hint');
-    if (nvHint) nvHint.innerHTML =
-      `最新淨值 <strong>${d.nav}</strong>（${navDate}，每日更新，可手動調整） ` +
-      `<a href="https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5" target="_blank" style="color:var(--brand);">查看來源</a>`;
-
-    const exDate = (d.payout_ex_date || '').replace(/-/g, '/');
-    const poHint = document.getElementById('f-payout-hint');
-    if (poHint) poHint.textContent =
-      `每單位配息 ${d.payout} USD（最近除息 ${exDate}，可依實際調整）`;
-
-    calcFund();
+    const sel = document.getElementById('f-fund');
+    sel.innerHTML = FUND_LIST.map((f, i) =>
+      `<option value="${i}">${f.name}</option>`).join('');
+    applyFundSelection();
   } catch {
     const nvHint = document.getElementById('f-netvalue-hint');
     if (nvHint) nvHint.innerHTML =
       `淨值載入失敗，請手動輸入 ` +
       `<a href="https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5" target="_blank" style="color:var(--brand);">查看最新淨值</a>`;
     const poHint = document.getElementById('f-payout-hint');
-    if (poHint) poHint.textContent = '配息載入失敗，預設 0.055，可依實際調整';
+    if (poHint) poHint.textContent = '配息載入失敗，請手動輸入';
   }
+}
+
+// 依下拉選單帶入該檔基金的淨值 / 配息與提示文字
+function applyFundSelection() {
+  const f = FUND_LIST[+document.getElementById('f-fund').value];
+  if (!f) return;
+
+  const title = document.getElementById('f-section-title');
+  if (title) title.textContent = `配息基金條件設定（${f.name}）`;
+
+  const nvEl = document.getElementById('f-netvalue');
+  if (nvEl && f.nav) nvEl.value = f.nav;
+  const navDate = (f.nav_date || '').replace(/-/g, '/');
+  const nvHint  = document.getElementById('f-netvalue-hint');
+  if (nvHint) nvHint.innerHTML =
+    `最新淨值 <strong>${f.nav}</strong>（${navDate}，每日更新，可手動調整） ` +
+    `<a href="${f.url}" target="_blank" style="color:var(--brand);">查看來源</a>`;
+
+  const poEl = document.getElementById('f-payout');
+  const poHint = document.getElementById('f-payout-hint');
+  if (f.has_payout) {
+    if (poEl) poEl.value = f.payout;
+    const exDate = (f.payout_ex_date || '').replace(/-/g, '/');
+    if (poHint) poHint.textContent =
+      `每單位配息 ${f.payout} USD（最近除息 ${exDate}，可依實際調整）`;
+  } else {
+    if (poHint) poHint.textContent = '此基金無配息記錄（累積型），請手動輸入或參考來源';
+  }
+
+  calcFund();
 }
 
 // ══════════════════════════════════════════════════════════════════
