@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Kevin Supply Hub</title>
   <meta name="description" content="Kevin 的小工具集散地・保單規劃 & 辦公效率" />
   <meta name="theme-color" content="#6366F1" />
@@ -703,6 +706,31 @@
         navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).catch(() => {});
       });
     }
+
+    // 每次進入 App 自動比對版本，有新版就自動刷新（免移除重設 web app）
+    (function autoRefresh(){
+      let baseline = null;                 // 目前這版頁面的內容指紋
+      async function fingerprint(){
+        try{
+          const r = await fetch("./?_=" + Date.now(), { cache: "no-store" });
+          const t = await r.text();
+          let h = 0;
+          for (let i = 0; i < t.length; i++){ h = (h * 31 + t.charCodeAt(i)) | 0; }
+          return h;
+        }catch(e){ return null; }          // 離線／失敗就不動作
+      }
+      async function check(){
+        const h = await fingerprint();
+        if (h === null) return;
+        if (baseline === null){ baseline = h; return; }   // 首次建立基準
+        if (h !== baseline){ location.reload(); }          // 有新版 → 自動刷新
+      }
+      check();                                            // 進頁面先記下當前版本
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") check();  // 每次切回 App 就比對
+      });
+      window.addEventListener("pageshow", (e) => { if (e.persisted) check(); }); // 從背景還原
+    })();
 
     // Install card toggle
     function toggleInstall() {
