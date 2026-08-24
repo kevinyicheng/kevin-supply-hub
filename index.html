@@ -749,6 +749,12 @@
       btn.setAttribute('aria-expanded', isOpen);
     }
 
+    // 已加入主畫面（全螢幕開啟）就不用再顯示教學
+    if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone){
+      const c = document.getElementById("installCard");
+      if (c) c.style.display = "none";
+    }
+
     // Password gate
     const PW_HASH = '0e4dd66217fc8d2e298b78c8cd9392870dcd065d0ff675d0edff5bcd227837e9';
     let _pendingUrl = '';
