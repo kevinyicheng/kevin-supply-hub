@@ -584,7 +584,7 @@ input[type=range]::-webkit-slider-thumb:active{
     </div>
 
     <div class="date-row">
-      <input class="yr" type="text" id="by" placeholder="西元年 (e.g. 1990)" inputmode="numeric" maxlength="4" oninput="onYearInput(this)">
+      <input class="yr" type="text" id="by" placeholder="民國年 (e.g. 79)" inputmode="numeric" maxlength="4" oninput="onYearInput(this)">
       <input class="mo-input" type="text" id="bm" placeholder="月" inputmode="numeric" maxlength="2" oninput="onMonthInput(this)">
       <input class="dy-input" type="text" id="bd" placeholder="日" inputmode="numeric" maxlength="2" oninput="onDayInput(this)">
     </div>
@@ -746,6 +746,14 @@ function fmt(n){return Math.round(n).toLocaleString('zh-TW');}
 function fmtWan(n){
   return Number(n).toLocaleString('zh-TW',{minimumFractionDigits:0,maximumFractionDigits:2});
 }
+// 出生年輸入為「民國年」，轉西元供日期/年齡計算；若手誤輸入西元(≥1000)則原樣採用
+function adYear(){
+  const raw=document.getElementById('by').value.trim();
+  if(raw==='') return '';
+  const n=parseInt(raw,10);
+  if(isNaN(n)) return '';
+  return String(n>=1000 ? n : n+1911);
+}
 
 function validBirthDate(y,m,d){
   const yy=Number(y), mm=Number(m), dd=Number(d);
@@ -823,19 +831,18 @@ function onDayInput(el){
   const v = el.value.replace(/[^0-9]/g,''); if(v!==el.value) el.value=v;
   if(v===''){_triggerDateChange();return;}
   const n=parseInt(v,10); if(n<1) return;
-  const y=+document.getElementById('by').value||2000, m=+document.getElementById('bm').value||1;
+  const y=+adYear()||2000, m=+document.getElementById('bm').value||1;
   const maxD=new Date(y,m,0).getDate(); if(n>maxD) el.value=String(maxD);
   _triggerDateChange();
 }
 function onYearInput(el){
-  const v=el.value; if(v.length!==4) return;
-  const n=parseInt(v,10);
-  if(!isNaN(n)&&n>=1900&&n<=2099){_triggerDateChange();}
+  const v=el.value.replace(/[^0-9]/g,''); if(v!==el.value) el.value=v;
+  _triggerDateChange();
 }
 
 function _triggerDateChange(){
   clearResults();
-  const y=document.getElementById('by').value, m=document.getElementById('bm').value, d=document.getElementById('bd').value;
+  const y=adYear(), m=document.getElementById('bm').value, d=document.getElementById('bd').value;
   if(!y||!m||!d){document.getElementById('age-tag').className=''; currentAge=null; updatePeriodButtons(); return;}
   const birth=validBirthDate(y,m,d);
   if(!birth){
@@ -931,7 +938,7 @@ function buildBenefits(cov, annualAmt, prodKey, payPeriod=selectedPeriod){
 function calculate(opts){
   const silent = opts && opts.silent;
   const P = PRODUCTS[currentProduct];
-  const y=document.getElementById('by').value, m=document.getElementById('bm').value, d=document.getElementById('bd').value;
+  const rocY=document.getElementById('by').value, y=adYear(), m=document.getElementById('bm').value, d=document.getElementById('bd').value;
   const cov=parseFloat(document.getElementById('cov-num').value);
 
   if(!y||!m||!d){(silent?null:showErr('請完整填寫出生年月日'));return;}
@@ -1004,7 +1011,7 @@ function calculate(opts){
       </div>`;
     }).join('');
 
-  _pr={y,m,d,age,cov,annualAmt,semi,quarter,monthly,total,endAge,selectedPeriod,rate,product:currentProduct};
+  _pr={rocY,y,m,d,age,cov,annualAmt,semi,quarter,monthly,total,endAge,selectedPeriod,rate,product:currentProduct};
 }
 
 function updateDisc(){
@@ -1056,7 +1063,7 @@ function printReport(){
 
     <div class="pa-info-row">
       <div class="pa-info-box"><div class="pa-info-label">被保人</div><div class="pa-info-val">${P.gender}</div></div>
-      <div class="pa-info-box"><div class="pa-info-label">出生日</div><div class="pa-info-val" style="font-size:13px">${p.y}/${p.m}/${p.d}</div></div>
+      <div class="pa-info-box"><div class="pa-info-label">出生日</div><div class="pa-info-val" style="font-size:13px">民國 ${p.rocY}/${p.m}/${p.d}</div></div>
       <div class="pa-info-box"><div class="pa-info-label">保險年齡</div><div class="pa-info-val">${p.age} 歲</div></div>
       <div class="pa-info-box"><div class="pa-info-label">規劃保額</div><div class="pa-info-val">${fmt(p.cov)} 萬</div></div>
     </div>
