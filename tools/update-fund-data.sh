@@ -4,7 +4,8 @@
 # 抓取成功且 fund-data.json 有變動時才 commit + push，避免空提交。
 set -euo pipefail
 
-REPO="/Users/yichengsmbp2017/Desktop/Keri-Workspace/Ai工作區/kevin-supply-hub"
+# REPO 由腳本自身位置推導 → 同一份腳本可在 MacBook / Mac mini 兩台通用
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
 LOG="$REPO/tools/update-fund-data.log"
 MARKER="$REPO/tools/.last-run-date"
 cd "$REPO"
