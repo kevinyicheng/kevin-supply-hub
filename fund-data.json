@@ -1,23 +1,23 @@
 {
-  "updated_at": "2026-08-17T14:32:13+08:00",
+  "updated_at": "2026-09-08T08:39:13+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
       "code": "TLZ64-DSP5",
       "name": "DSP5",
-      "nav": 8.7559,
-      "nav_date": "2026-08-14",
+      "nav": 8.5525,
+      "nav_date": "2026-09-04",
       "url": "https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5",
       "has_payout": true,
       "payout": 0.055,
-      "payout_ex_date": "2026-07-14",
-      "payout_pay_date": "2026-07-15"
+      "payout_ex_date": "2026-08-14",
+      "payout_pay_date": "2026-08-17"
     },
     {
       "code": "JFZN3-JFP11",
       "name": "JFP11",
-      "nav": 75.26,
-      "nav_date": "2026-08-14",
+      "nav": 74.9,
+      "nav_date": "2026-09-04",
       "url": "https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=JFZN3-JFP11",
       "has_payout": true,
       "payout": 0.692,
