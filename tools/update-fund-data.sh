@@ -18,6 +18,9 @@ if [ -f "$MARKER" ] && [ "$(cat "$MARKER")" = "$TODAY" ]; then
   exit 0
 fi
 
+# 先同步遠端，避免本機（尤其 Mac mini）落後於其他機器的 commit 導致 push 被拒
+git pull --rebase --autostash origin main >>"$LOG" 2>&1 || echo "$(ts) git pull 失敗，仍繼續本次更新" >>"$LOG"
+
 if ! /usr/bin/python3 tools/fetch-fund-data.py >>"$LOG" 2>&1; then
   # 抓取失敗（可能網路還沒真的通）→ 不標記，下次網路事件再重試
   echo "$(ts) 抓取失敗，略過本次更新（待下次網路事件重試）" >>"$LOG"
