@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-11T09:30:09+08:00",
+  "updated_at": "2026-09-12T09:30:09+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -20,9 +20,9 @@
       "nav_date": "2026-09-10",
       "url": "https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=JFZN3-JFP11",
       "has_payout": true,
-      "payout": 0.692,
-      "payout_ex_date": "2026-08-11",
-      "payout_pay_date": "2026-08-12"
+      "payout": 0.685,
+      "payout_ex_date": "2026-09-08",
+      "payout_pay_date": "2026-09-09"
     }
   ]
 }
