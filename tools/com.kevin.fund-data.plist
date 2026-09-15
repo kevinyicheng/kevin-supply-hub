@@ -10,12 +10,11 @@
     <string>/bin/bash</string>
     <string>/Users/yichengsoffice/kevin-supply-hub/tools/update-fund-data.sh</string>
   </array>
-  <!-- Mac mini 24/7 主機：每日 09:30 定時跑。腳本內以 .last-run-date 當日閘門防重跑。
-       安裝：cp 到 ~/Library/LaunchAgents/ 後 launchctl bootstrap gui/$(id -u) 該檔。 -->
+  <!-- Mac mini 24/7 主機：每日 11:00 定時跑。腳本內以 .last-run-date 當日閘門防重跑。 -->
   <key>StartCalendarInterval</key>
   <dict>
-    <key>Hour</key><integer>9</integer>
-    <key>Minute</key><integer>30</integer>
+    <key>Hour</key><integer>11</integer>
+    <key>Minute</key><integer>0</integer>
   </dict>
   <key>StandardOutPath</key>
   <string>/Users/yichengsoffice/kevin-supply-hub/tools/launchd.out.log</string>
