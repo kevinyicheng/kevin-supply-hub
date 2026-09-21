@@ -1038,23 +1038,19 @@ function onProductChange() {
 }
 
 function toggleCurrencyUI(prod) {
-  const selected = document.querySelector('input[name="i-cur"]:checked');
-  const cur = selected ? selected.value : prod.currency;
-  const isForex = cur !== 'TWD';
+  // 外幣/台幣兩種計價共用同一套輸入（保額一律以萬 USD 計，因 PFK 本質為美元保單）；
+  // 差別只在輸出：外幣以 USD 為主、台幣以換算後台幣為主。故永遠顯示 i-fx-group。
+  document.getElementById('i-fx-group').style.display  = 'block';
+  document.getElementById('i-twd-group').style.display = 'none';
 
-  document.getElementById('i-fx-group').style.display  = isForex  ? 'block' : 'none';
-  document.getElementById('i-twd-group').style.display = !isForex ? 'block' : 'none';
-
-  if (isForex) {
-    const fa = document.getElementById('i-face-amount');
-    fa.min   = prod.faceMin;
-    fa.max   = prod.faceMax;
-    fa.step  = prod.faceStep;
-    document.getElementById('i-face-unit-label').textContent = `萬 ${prod.currency}`;
-    document.getElementById('i-face-hint').textContent =
-      `可投保範圍：${prod.faceMin} ～ ${prod.faceMax} 萬 ${prod.currency}`;
-    updatePremiumDisplay();
-  }
+  const fa = document.getElementById('i-face-amount');
+  fa.min   = prod.faceMin;
+  fa.max   = prod.faceMax;
+  fa.step  = prod.faceStep;
+  document.getElementById('i-face-unit-label').textContent = `萬 ${prod.currency}`;
+  document.getElementById('i-face-hint').textContent =
+    `可投保範圍：${prod.faceMin} ～ ${prod.faceMax} 萬 ${prod.currency}`;
+  updatePremiumDisplay();
 }
 
 // 年繳保費 = floor(每萬費率 × 保額萬數 × 折扣)，與富邦系統一致（無條件捨去）
@@ -1135,6 +1131,9 @@ function updatePremiumDisplay() {
   const face   = quantizeFace(prod, parseFloat(document.getElementById('i-face-amount').value) || 0);
   const fxRate = parseFloat(document.getElementById('i-fx-rate').value) || 32;
   const box    = document.getElementById('i-computed-premium');
+  const curSel   = document.querySelector('input[name="i-cur"]:checked');
+  const currency = curSel ? curSel.value : prod.currency;
+  const isForex  = currency !== 'TWD';
 
   const entry = getRateEntry(prod, gender, age);
   if (!entry) {
@@ -1146,10 +1145,11 @@ function updatePremiumDisplay() {
   const annualPremium   = annualPremiumOf(prod, entry.rate, face);
   const totalPremium    = annualPremium * prod.payYears;
   const totalPremiumTWD = Math.round(totalPremium * fxRate);
+  const annualPremiumTWD= Math.round(annualPremium * fxRate);
   const discNote        = hasFaceDiscount(prod, face)
     ? `<span style="color:var(--green);font-weight:800;">已折 ${(prod.highFaceDiscount.pct*100)}%</span>` : '';
 
-  box.innerHTML = `
+  box.innerHTML = isForex ? `
     <div class="cp-item">
       <span class="cp-label">年繳保費（${prod.currency}）${discNote}</span>
       <span class="cp-val">${annualPremium.toLocaleString()}</span>
@@ -1168,6 +1168,26 @@ function updatePremiumDisplay() {
     <div class="cp-item">
       <span class="cp-label">台幣約值（匯率 ${fxRate}）</span>
       <span class="cp-val">${totalPremiumTWD.toLocaleString()} 元</span>
+    </div>
+  ` : `
+    <div class="cp-item">
+      <span class="cp-label">年繳保費（台幣）${discNote}</span>
+      <span class="cp-val">${annualPremiumTWD.toLocaleString()}</span>
+    </div>
+    <div class="cp-sep">×</div>
+    <div class="cp-item">
+      <span class="cp-label">繳費年期</span>
+      <span class="cp-val">${prod.payYears} 年</span>
+    </div>
+    <div class="cp-sep">=</div>
+    <div class="cp-item">
+      <span class="cp-label">總保費（台幣）</span>
+      <span class="cp-val">${totalPremiumTWD.toLocaleString()}</span>
+    </div>
+    <div class="cp-sep">≈</div>
+    <div class="cp-item">
+      <span class="cp-label">保額 ${face} 萬 USD ・匯率 ${fxRate}</span>
+      <span class="cp-val" style="font-size:15px;">USD ${annualPremium.toLocaleString()} / 年</span>
     </div>
   `;
 }
@@ -1502,10 +1522,9 @@ function calcInsurance() {
   const currency = curSel ? curSel.value : prod.currency;
   const isForex  = currency !== 'TWD';
 
-  const fxRate    = isForex ? (parseFloat(document.getElementById('i-fx-rate').value)||32) : 1;
-  const showYears = parseInt((isForex
-    ? document.getElementById('i-years')
-    : document.getElementById('i-years-twd')).value)||30;
+  // 兩種計價都用同一套輸入（i-fx-group）；台幣模式一樣需要真實匯率把 USD 換算成台幣
+  const fxRate    = parseFloat(document.getElementById('i-fx-rate').value)||32;
+  const showYears = parseInt(document.getElementById('i-years').value)||30;
 
   // 依性別/年齡查費率表；每萬數值 × 保額萬數
   const issueAge = parseInt(document.getElementById('i-age').value) || 0;
@@ -1540,13 +1559,14 @@ function calcInsurance() {
   const yr30            = records.find(r=>r.year===30);
   const totalPremiumFC  = premiumFC * prod.payYears;
   const totalPremiumTWD = totalPremiumFC * fxRate;
+  const premiumTWD      = Math.round(premiumFC * fxRate);
 
   state.insuranceData = {
     key, prod, currency, isForex, fxRate, faceInUnit,
     premiumFC, gender, issueAge, records, breakEven
   };
 
-  document.getElementById('i-summary').innerHTML = `
+  document.getElementById('i-summary').innerHTML = isForex ? `
     <div class="sc">
       <div class="sc-label">投保條件</div>
       <div class="sc-value">${gender} ${issueAge} 歲</div>
@@ -1557,11 +1577,11 @@ function calcInsurance() {
       <div class="sc-value">${fmt(premiumFC)}</div>
       <div class="sc-sub">${currency} × ${prod.payYears} 年</div>
     </div>
-    ${isForex?`<div class="sc">
+    <div class="sc">
       <div class="sc-label">總保費（台幣約值）</div>
       <div class="sc-value">${fmt(totalPremiumTWD)}</div>
       <div class="sc-sub">匯率 ${fxRate}</div>
-    </div>`:''}
+    </div>
     <div class="sc green">
       <div class="sc-label">回本年度</div>
       <div class="sc-value">${breakEven?`第 ${breakEven} 年`:'超出範圍'}</div>
@@ -1570,23 +1590,52 @@ function calcInsurance() {
     ${yr20?`<div class="sc">
       <div class="sc-label">20年解約金</div>
       <div class="sc-value">${fmt(yr20.svFC)}</div>
-      <div class="sc-sub">${currency}${isForex?' (≈'+fmt(yr20.svTWD)+' 元)':''}</div>
+      <div class="sc-sub">${currency} (≈${fmt(yr20.svTWD)} 元)</div>
     </div>`:''}
     ${yr30?`<div class="sc green">
       <div class="sc-label">30年解約金</div>
       <div class="sc-value">${fmt(yr30.svFC)}</div>
-      <div class="sc-sub">${currency}${isForex?' (≈'+fmt(yr30.svTWD)+' 元)':''}</div>
+      <div class="sc-sub">${currency} (≈${fmt(yr30.svTWD)} 元)</div>
+    </div>`:''}
+  ` : `
+    <div class="sc">
+      <div class="sc-label">投保條件</div>
+      <div class="sc-value">${gender} ${issueAge} 歲</div>
+      <div class="sc-sub">保額 ${faceInUnit} 萬 USD</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">年繳保費（台幣）</div>
+      <div class="sc-value">${fmt(premiumTWD)}</div>
+      <div class="sc-sub">台幣 × ${prod.payYears} 年</div>
+    </div>
+    <div class="sc">
+      <div class="sc-label">總保費（台幣）</div>
+      <div class="sc-value">${fmt(totalPremiumTWD)}</div>
+      <div class="sc-sub">匯率 ${fxRate}</div>
+    </div>
+    <div class="sc green">
+      <div class="sc-label">回本年度</div>
+      <div class="sc-value">${breakEven?`第 ${breakEven} 年`:'超出範圍'}</div>
+      <div class="sc-sub">解約金 ≥ 累計保費</div>
+    </div>
+    ${yr20?`<div class="sc">
+      <div class="sc-label">20年解約金（台幣）</div>
+      <div class="sc-value">${fmt(yr20.svTWD)}</div>
+      <div class="sc-sub">USD ${fmt(yr20.svFC)}</div>
+    </div>`:''}
+    ${yr30?`<div class="sc green">
+      <div class="sc-label">30年解約金（台幣）</div>
+      <div class="sc-value">${fmt(yr30.svTWD)}</div>
+      <div class="sc-sub">USD ${fmt(yr30.svFC)}</div>
     </div>`:''}
   `;
 
   // FX note
   const fxNote = document.getElementById('i-fx-note');
-  if (isForex) {
-    fxNote.style.display = 'block';
-    fxNote.innerHTML = `以下數值為外幣（${currency}）原值，台幣換算採假設匯率 <strong>1 ${currency} = ${fxRate} TWD</strong>，實際金額以匯率波動為準。`;
-  } else {
-    fxNote.style.display = 'none';
-  }
+  fxNote.style.display = 'block';
+  fxNote.innerHTML = isForex
+    ? `以下數值為外幣（${currency}）原值，台幣換算採假設匯率 <strong>1 ${prod.currency} = ${fxRate} TWD</strong>，實際金額以匯率波動為準。`
+    : `保單以美元計價，本表金額均按假設匯率 <strong>1 USD = ${fxRate} TWD</strong> 換算為台幣，實際金額以匯率波動為準。`;
 
   // Table header
   const thead = document.getElementById('i-thead');
@@ -1600,8 +1649,8 @@ function calcInsurance() {
       </tr>`
     : `<tr>
         <th>年度</th><th class="th-center">保險年齡</th>
-        <th>累計保費</th><th>保單現金價值</th>
-        <th>身故保額</th><th>報酬率</th>
+        <th>累計保費（台幣）</th><th>解約金（台幣）</th>
+        <th>身故保額（台幣）</th><th>報酬率</th>
       </tr>`;
 
   // Table body
@@ -1623,9 +1672,9 @@ function calcInsurance() {
       : `<tr class="${isBE?'milestone-row':''}">
           <td>${r.year}${isBE?'<span class="badge badge-milestone">回本</span>':''}</td>
           <td class="tc">${ageTd}</td>
-          <td>${fmt(r.cumPremiumFC)}</td>
-          <td class="${pos?'tg':''}">${fmt(r.svFC)}</td>
-          <td>${fmt(r.dbFC)}</td>
+          <td>${fmt(r.cumPremiumTWD)}</td>
+          <td class="${pos?'tg':''}">${fmt(r.svTWD)}</td>
+          <td>${fmt(r.dbTWD)}</td>
           <td class="${pos?'tg':'tr'}">${r.roi.toFixed(1)}%</td>
         </tr>`;
   }).join('');
