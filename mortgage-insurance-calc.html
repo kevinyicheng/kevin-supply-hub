@@ -760,7 +760,11 @@ const PRODUCTS = {
     faceStep: 0.1,
     ageMin: 0,
     ageMax: 78,
-    // 高保額折扣（保費規定）：主約保額 ≥ 20 萬 USD，主約應收保費折 1%
+    // 保費折扣（保費規定，經建議書 Excel 實測反推，全程金融機構轉帳為前提）：
+    //   ① 金融機構轉帳折扣：總應收保費 1%（所有保額都享）
+    //   ② 高保額折扣：保額 ≥ 20 萬 USD 再折 1%（合計上限 2%）
+    // 折後應收年繳 = round( floor(每萬費率 × 保額萬數) × (1 − 折扣率) )
+    transferDiscount: 0.01,
     highFaceDiscount: { minFace: 20, pct: 0.01 },
     note: '2年繳・外幣計價(USD)・分紅終身壽險・中分紅假設',
     // 費率與解約金/身故金逐年齡自 PFK-智富紅運建議書V2.7-1150630.xlsx 重算抽出（保額10萬USD基準，換算每萬）
@@ -1081,15 +1085,19 @@ function normalizeFaceInput(el) {
   el.value = f;
   updatePremiumDisplay();
 }
-function annualPremiumOf(prod, rate, face) {
-  let p = rate * face;
+// 折扣率：金融機構轉帳折扣（所有保額）＋ 高保額折扣（保額 ≥ minFace）
+function discountPctOf(prod, face) {
+  let pct = prod.transferDiscount || 0;
   const d = prod.highFaceDiscount;
-  if (d && face >= d.minFace) p *= (1 - d.pct);
-  return Math.floor(p);
+  if (d && face >= d.minFace) pct += d.pct;
+  return Math.round(pct * 1e6) / 1e6;   // 修浮點（0.01+0.01）
+}
+function annualPremiumOf(prod, rate, face) {
+  const standard = Math.floor(rate * face);                    // 表定年繳（無條件捨去）
+  return Math.round(standard * (1 - discountPctOf(prod, face))); // 折後應收（四捨五入，與富邦系統一致）
 }
 function hasFaceDiscount(prod, face) {
-  const d = prod.highFaceDiscount;
-  return !!(d && face >= d.minFace);
+  return discountPctOf(prod, face) > 0;
 }
 
 // 依「每年保費預算」反推最接近的保額（0.1 萬步進，夾在可投保範圍內）
@@ -1164,7 +1172,7 @@ function updatePremiumDisplay() {
   const totalPremiumTWD = Math.round(totalPremium * fxRate);
   const annualPremiumTWD= Math.round(annualPremium * fxRate);
   const discNote        = hasFaceDiscount(prod, face)
-    ? `<span style="color:var(--green);font-weight:800;">已折 ${(prod.highFaceDiscount.pct*100)}%</span>` : '';
+    ? `<span style="color:var(--green);font-weight:800;">已折 ${+(discountPctOf(prod,face)*100).toFixed(1)}%</span>` : '';
 
   box.innerHTML = isForex ? `
     <div class="cp-item">
