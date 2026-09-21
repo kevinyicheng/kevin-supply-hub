@@ -622,7 +622,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
             <span class="input-hint">同步自房貸試算</span>
           </div>
           <div class="form-group">
-            <label>每年保費預算（USD，選填）</label>
+            <label id="i-budget-label">每年保費預算（USD，選填）</label>
             <div style="display:flex;gap:8px;">
               <input type="number" id="i-budget" min="0" step="100" placeholder="例：50000"
                 style="flex:1;min-width:0;"
@@ -1050,6 +1050,17 @@ function toggleCurrencyUI(prod) {
   document.getElementById('i-face-unit-label').textContent = `萬 ${prod.currency}`;
   document.getElementById('i-face-hint').textContent =
     `可投保範圍：${prod.faceMin} ～ ${prod.faceMax} 萬 ${prod.currency}`;
+
+  // 預算反推：外幣模式用 USD 預算、台幣模式用台幣預算
+  const selCur  = document.querySelector('input[name="i-cur"]:checked');
+  const isForex = (selCur ? selCur.value : prod.currency) !== 'TWD';
+  const bl = document.getElementById('i-budget-label');
+  const bi = document.getElementById('i-budget');
+  if (bl) bl.textContent = isForex ? '每年保費預算（USD，選填）' : '每年保費預算（台幣，選填）';
+  if (bi) { bi.placeholder = isForex ? '例：50000' : '例：400000'; bi.step = isForex ? 100 : 1000; bi.value = ''; }
+  const bh = document.getElementById('i-budget-hint');
+  if (bh) bh.textContent = '輸入每年保費預算，自動帶入最接近的保額';
+
   updatePremiumDisplay();
 }
 
@@ -1107,16 +1118,22 @@ function applyBudgetFace() {
   const gender = document.getElementById('i-gender').value;
   const budget = parseFloat(document.getElementById('i-budget').value) || 0;
   const hint   = document.getElementById('i-budget-hint');
+  const curSel   = document.querySelector('input[name="i-cur"]:checked');
+  const isForex  = (curSel ? curSel.value : prod.currency) !== 'TWD';
+  const fxRate   = parseFloat(document.getElementById('i-fx-rate').value) || 32;
   const entry  = getRateEntry(prod, gender, age);
   if (!entry) { if (hint) hint.textContent = `投保年齡需在 ${prod.ageMin}～${prod.ageMax} 歲之間`; return; }
   if (budget <= 0) { if (hint) hint.textContent = '輸入每年保費預算，自動帶入最接近的保額'; return; }
 
-  const face = faceForBudget(prod, entry.rate, budget);
+  // 台幣模式：輸入的是台幣預算，先換算成 USD 預算再反推保額（保額本質為 USD）
+  const budgetUSD = isForex ? budget : budget / fxRate;
+  const face = faceForBudget(prod, entry.rate, budgetUSD);
   document.getElementById('i-face-amount').value = face;
   const prem = annualPremiumOf(prod, entry.rate, face);
-  if (hint) hint.textContent =
-    `已帶入保額 ${face} 萬 ${prod.currency}，年繳約 ${prem.toLocaleString()}（預算 ${budget.toLocaleString()}）` +
-    `${hasFaceDiscount(prod, face) ? '，含高保額折扣' : ''}`;
+  const discTail = hasFaceDiscount(prod, face) ? '，含高保額折扣' : '';
+  if (hint) hint.textContent = isForex
+    ? `已帶入保額 ${face} 萬 USD，年繳約 ${prem.toLocaleString()}（預算 ${budget.toLocaleString()}）${discTail}`
+    : `已帶入保額 ${face} 萬 USD，年繳約 台幣 ${Math.round(prem*fxRate).toLocaleString()}（預算 台幣 ${budget.toLocaleString()}）${discTail}`;
   updatePremiumDisplay();
 }
 
