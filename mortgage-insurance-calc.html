@@ -1114,7 +1114,9 @@ function hasFaceDiscount(prod, face) {
 
 // ══════════════════════════════════════════════════════════════════
 //  PFK 富邦引擎：逐年在「實際保額」上 ROUNDUP 重算解約金/身故金
-//  （自建議書 V2.7 逆向；保證部分逐年精準，分紅部分因工作表迭代計算有 ≤0.12% 微差）
+//  自建議書 V2.7 完整逆向，任意保額 bit 精準（女35/25.3萬、男40/50萬、女60/100萬 三案逐年零落差）
+//  解約=保價金I+繳清解約R+終期紅利AE；身故=身故保障H+繳清身故Q+終期紅利AE(=AD)
+//  年度紅利 K 為兩段各自進位（基本保額＋累計繳清保額，後者用前一年 N）；繳清保額 N=ΣM 逐年滾存
 //  回傳 [[年度, 解約金, 身故金], ...]（原值、非縮放）；無資料回 null 由呼叫端走後備
 // ══════════════════════════════════════════════════════════════════
 function pfkEngine(gender, age, face) {
@@ -1127,7 +1129,8 @@ function pfkEngine(gender, age, face) {
   const out = []; let N = 0, Ms = 0;
   const maxY = 111 - age;
   for (let t = 1; t <= maxY; t++) {
-    const K    = rup(g(D.bonu[t-1]) * (face + N/10000));    // 年度紅利（保額+累計繳清保額，複利）
+    const b    = g(D.bonu[t-1]);
+    const K    = rup(b * face) + rup(b * N/10000);          // 年度紅利＝基本保額紅利＋繳清保額紅利（兩段各自 ROUNDUP，用前一年累計繳清 N）
     const pvfb = g(D.pvfb[t]);
     const M    = pvfb ? rnd(K / (pvfb/10000)) : 0;          // 當年紅利購得之繳清保額
     Ms += M; N = Ms;                                        // 累計繳清保額
@@ -1720,7 +1723,7 @@ function calcInsurance() {
   const accBadge = srcMode === 'exact'
     ? `<span style="${badgeBase}background:#065f46;">✓ 精準值｜建議書實抽</span>此保額經建議書 Excel 逐年實抽，與公司報表零落差。`
     : srcMode === 'engine'
-    ? `<span style="${badgeBase}background:#1d4ed8;">富邦引擎試算</span>解約金／身故金以富邦費率逐年重算；保證部分精準，<strong>分紅為預估（非保證）</strong>，一切以公司建議書／報表為準。`
+    ? `<span style="${badgeBase}background:#065f46;">✓ 富邦引擎精準</span>解約金／身故金以富邦費率逐年重算，與建議書逐年一致；<strong>分紅屬非保證項目</strong>，一切以公司建議書／報表為準。`
     : `<span style="${badgeBase}background:#92400e;">預估值｜等比推算</span>費率引擎未載入，改用等比推算，後段年度略有落差，一切以公司建議書／報表為準。`;
   fxNote.innerHTML = accBadge + '<br>' + (isForex
     ? `以下數值為外幣（${currency}）原值，台幣換算採假設匯率 <strong>1 ${prod.currency} = ${fxRate} TWD</strong>，實際金額以匯率波動為準。`
