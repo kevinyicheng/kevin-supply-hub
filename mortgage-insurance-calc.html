@@ -742,6 +742,8 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
 
 </div>
 
+<!-- PFK 富邦引擎費率表（外部檔，隨 repo 部署）：任意保額逐年 ROUNDUP 重算解約金/身故金 -->
+<script src="pfk-engine-data.js"></script>
 <script>
 // ══════════════════════════════════════════════════════════════════
 //  商品資料庫
@@ -766,6 +768,7 @@ const PRODUCTS = {
     // 折後應收年繳 = round( floor(每萬費率 × 保額萬數) × (1 − 折扣率) )
     transferDiscount: 0.01,
     highFaceDiscount: { minFace: 20, pct: 0.01 },
+    engine: true,  // 啟用 pfkEngine 逐年重算解約金/身故金（需 pfk-engine-data.js）
     note: '2年繳・外幣計價(USD)・分紅終身壽險・中分紅假設',
     // 費率與解約金/身故金逐年齡自 PFK-智富紅運建議書V2.7-1150630.xlsx 重算抽出（保額10萬USD基準，換算每萬）
     // rates[性別][保險年齡] = { rate: 每萬保額表定年繳(USD), data: [[年度, 每萬解約金, 每萬身故金], ...] }
@@ -1106,6 +1109,35 @@ function annualPremiumOf(prod, rate, face) {
 }
 function hasFaceDiscount(prod, face) {
   return discountPctOf(prod, face) > 0;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PFK 富邦引擎：逐年在「實際保額」上 ROUNDUP 重算解約金/身故金
+//  （自建議書 V2.7 逆向；保證部分逐年精準，分紅部分因工作表迭代計算有 ≤0.12% 微差）
+//  回傳 [[年度, 解約金, 身故金], ...]（原值、非縮放）；無資料回 null 由呼叫端走後備
+// ══════════════════════════════════════════════════════════════════
+function pfkEngine(gender, age, face) {
+  if (typeof PFK_ENG === 'undefined') return null;
+  const D = PFK_ENG[(gender === '男' ? 'M' : 'F') + age];
+  if (!D) return null;
+  const rup = x => Math.ceil(Math.round(x * 1e6) / 1e6);   // Excel ROUNDUP(,0)
+  const rnd = x => Math.floor(x + 0.5);                     // Excel ROUND(,0)
+  const g = a => (a || 0);
+  const out = []; let N = 0, Ms = 0;
+  const maxY = 111 - age;
+  for (let t = 1; t <= maxY; t++) {
+    const K    = rup(g(D.bonu[t-1]) * (face + N/10000));    // 年度紅利（保額+累計繳清保額，複利）
+    const pvfb = g(D.pvfb[t]);
+    const M    = pvfb ? rnd(K / (pvfb/10000)) : 0;          // 當年紅利購得之繳清保額
+    Ms += M; N = Ms;                                        // 累計繳清保額
+    const I  = rup(g(D.cv[t-1])  * face);                   // 保單價值準備金
+    const H  = rup(g(D.die[t-1]) * face);                   // 基本身故保障
+    const AE = rup(face * g(D.bcv[t-1]));                   // 終期紅利（解約=身故）
+    const R  = rup((N/10000) * pvfb);                       // 繳清保額之解約值（pvfb0=pvfb）
+    const Q  = rup((N/10000) * g(D.die2[t-1]));             // 繳清保額之身故值
+    out.push([t, I + R + AE, H + Q + AE]);
+  }
+  return out;
 }
 
 // 依「每年保費預算」反推最接近的保額（0.1 萬步進，夾在可投保範圍內）
@@ -1575,15 +1607,20 @@ function calcInsurance() {
 
   const premiumFC = annualPremiumOf(prod, entry.rate, faceInUnit);
 
-  // 精準覆寫：若該 (性別|年齡|保額) 有建議書 Excel 實抽表，直接用原生值（零落差）；
-  // 否則用每萬值等比推算（預估，年後段會有個位~十位數落差）
+  // 解約金/身故金來源優先序：
+  //   ① 精準鎖定表 exact[性別|年齡|保額]：建議書 Excel 實抽，bit 零落差
+  //   ② 富邦引擎 pfkEngine：任意保額逐年 ROUNDUP 重算（保證部分精準、分紅 ≤0.12% 微差）
+  //   ③ 每萬值等比推算 entry.data：後備（引擎資料未載入時）
   const exactKey = `${gender}|${issueAge}|${faceInUnit}`;
   const exactTbl = (prod.exact && prod.exact[exactKey]) || null;
-  const srcData  = exactTbl || entry.data;
+  const engTbl   = (!exactTbl && prod.engine) ? pfkEngine(gender, issueAge, faceInUnit) : null;
+  const srcData  = exactTbl || engTbl || entry.data;
+  const srcMode  = exactTbl ? 'exact' : (engTbl ? 'engine' : 'scale');
+  const isAbs    = srcMode !== 'scale';   // 原值(不縮放)
 
   const records = srcData.slice(0, showYears).map(([y, sv, db]) => {
-    const svFC  = exactTbl ? sv : sv * faceInUnit;
-    const dbFC  = exactTbl ? db : db * faceInUnit;
+    const svFC  = isAbs ? sv : sv * faceInUnit;
+    const dbFC  = isAbs ? db : db * faceInUnit;
     const svTWD = svFC * fxRate;
     const dbTWD = dbFC * fxRate;
     const cumPremiumFC  = Math.min(y, prod.payYears) * premiumFC;
@@ -1602,7 +1639,7 @@ function calcInsurance() {
 
   state.insuranceData = {
     key, prod, currency, isForex, fxRate, faceInUnit,
-    premiumFC, gender, issueAge, records, breakEven, isExact: !!exactTbl
+    premiumFC, gender, issueAge, records, breakEven, srcMode
   };
 
   document.getElementById('i-summary').innerHTML = isForex ? `
@@ -1672,9 +1709,12 @@ function calcInsurance() {
   // FX note
   const fxNote = document.getElementById('i-fx-note');
   fxNote.style.display = 'block';
-  const accBadge = exactTbl
-    ? `<span style="display:inline-block;background:#065f46;color:#fff;font-weight:700;padding:2px 8px;border-radius:6px;font-size:.82em;margin-right:6px;">✓ 精準值｜建議書 Excel 實抽</span>解約金／身故金為此保額的原生試算值，與富邦建議書零落差。`
-    : `<span style="display:inline-block;background:#92400e;color:#fff;font-weight:700;padding:2px 8px;border-radius:6px;font-size:.82em;margin-right:6px;">預估值｜等比推算</span>解約金／身故金為每萬值等比推算，分紅逐年進位使後段年度有個位～十位數落差，正式數字以富邦建議書為準。`;
+  const badgeBase = 'display:inline-block;color:#fff;font-weight:700;padding:2px 8px;border-radius:6px;font-size:.82em;margin-right:6px;';
+  const accBadge = srcMode === 'exact'
+    ? `<span style="${badgeBase}background:#065f46;">✓ 精準值｜建議書實抽</span>此保額經建議書 Excel 逐年實抽，與公司報表零落差。`
+    : srcMode === 'engine'
+    ? `<span style="${badgeBase}background:#1d4ed8;">富邦引擎試算</span>解約金／身故金以富邦費率逐年重算；保證部分精準，<strong>分紅為預估（非保證）</strong>，一切以公司建議書／報表為準。`
+    : `<span style="${badgeBase}background:#92400e;">預估值｜等比推算</span>費率引擎未載入，改用等比推算，後段年度略有落差，一切以公司建議書／報表為準。`;
   fxNote.innerHTML = accBadge + '<br>' + (isForex
     ? `以下數值為外幣（${currency}）原值，台幣換算採假設匯率 <strong>1 ${prod.currency} = ${fxRate} TWD</strong>，實際金額以匯率波動為準。`
     : `保單以美元計價，本表金額均按假設匯率 <strong>1 USD = ${fxRate} TWD</strong> 換算為台幣，實際金額以匯率波動為準。`);
