@@ -610,12 +610,12 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
           <div class="form-group">
             <label>投保年齡（歲）</label>
             <input type="number" id="i-age" value="35" min="20" max="60" step="1"
-              oninput="updatePremiumDisplay()">
+              oninput="refreshInsurance()">
             <span class="input-hint" id="i-age-hint">自動同步自房貸試算，可修改</span>
           </div>
           <div class="form-group">
             <label>性別</label>
-            <select id="i-gender" onchange="updatePremiumDisplay()">
+            <select id="i-gender" onchange="refreshInsurance()">
               <option value="男" selected>男</option>
               <option value="女">女</option>
             </select>
@@ -626,6 +626,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
             <div style="display:flex;gap:8px;">
               <input type="number" id="i-budget" min="0" step="100" placeholder="例：50000"
                 style="flex:1;min-width:0;"
+                oninput="applyBudgetFace()"
                 onkeydown="if(event.key==='Enter')applyBudgetFace()">
               <button type="button" class="budget-btn" onclick="applyBudgetFace()">反推保額</button>
             </div>
@@ -634,18 +635,18 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
           <div class="form-group">
             <label>投保保額（<span id="i-face-unit-label">萬 USD</span>）</label>
             <input type="number" id="i-face-amount" value="10" min="2" max="200" step="0.1"
-              oninput="updatePremiumDisplay()" onchange="normalizeFaceInput(this)">
+              oninput="refreshInsurance()" onchange="normalizeFaceInput(this)">
             <span class="input-hint" id="i-face-hint">可投保範圍：2.0 ～ 200.0 萬 USD</span>
           </div>
           <div class="form-group">
             <label>假設匯率（台幣 / 外幣）</label>
             <input type="number" id="i-fx-rate" value="32" min="1" step="0.01"
-              oninput="updatePremiumDisplay()">
+              oninput="refreshInsurance()">
             <span class="input-hint" id="i-fx-hint">載入即時匯率中…</span>
           </div>
           <div class="form-group">
             <label>顯示年數</label>
-            <select id="i-years">
+            <select id="i-years" onchange="calcInsurance()">
               <option value="20">20 年</option>
               <option value="30" selected>30 年</option>
               <option value="40">40 年</option>
@@ -1094,7 +1095,7 @@ function normalizeFaceInput(el) {
   let f = quantizeFace(prod, parseFloat(el.value) || 0);
   f = Math.min(prod.faceMax, Math.max(prod.faceMin, f));
   el.value = f;
-  updatePremiumDisplay();
+  refreshInsurance();
 }
 // 折扣率：金融機構轉帳折扣（所有保額）＋ 高保額折扣（保額 ≥ minFace）
 function discountPctOf(prod, face) {
@@ -1182,7 +1183,13 @@ function applyBudgetFace() {
   if (hint) hint.textContent = isForex
     ? `已帶入保額 ${face} 萬 USD，年繳約 ${prem.toLocaleString()}（預算 ${budget.toLocaleString()}）${discTail}`
     : `已帶入保額 ${face} 萬 USD，年繳約 台幣 ${Math.round(prem*fxRate).toLocaleString()}（預算 台幣 ${budget.toLocaleString()}）${discTail}`;
+  refreshInsurance();
+}
+
+// 即時刷新：任一輸入欄變動 → 同步更新保費框與下方報表
+function refreshInsurance() {
   updatePremiumDisplay();
+  calcInsurance();
 }
 
 // 依性別/年齡/保額精算保費並顯示匯總
