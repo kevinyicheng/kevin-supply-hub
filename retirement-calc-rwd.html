@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<title>退休金準備試算</title>
+<meta name="description" content="設定退休後想要的被動收入，扣除勞保勞退，用 300 倍法則算出你需要準備的總額" />
+<meta name="theme-color" content="#6366F1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #F1F0F9;
+    --surface:   #FFFFFF;
+    --brand:     #6366F1;
+    --brand-dark:#4338CA;
+    --brand-bg:  #EEF0FF;
+    --amber:     #F59E0B;
+    --emerald:   #10B981;
+    --rose:      #E11D48;
+    --text:      #111111;
+    --text-sub:  #6B7280;
+    --text-muted:#9CA3AF;
+    --border:    rgba(0,0,0,0.08);
+    --shadow:    0 2px 16px rgba(99,102,241,0.08);
+    --shadow-hv: 0 8px 32px rgba(99,102,241,0.16);
+  }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 64px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 24px 24px;
+    text-align: center;
+  }
+  .eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--brand); margin-bottom: 8px;
+  }
+  header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.5rem, 5vw, 2.1rem);
+    font-weight: 900; letter-spacing: -0.02em; line-height: 1.15;
+  }
+  header h1 span { color: var(--brand); }
+  .tagline { margin-top: 8px; font-size: 0.875rem; color: var(--text-sub); }
+
+  /* ── Layout ── */
+  .wrapper { max-width: 720px; margin: 0 auto; padding: 40px 20px 0; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .step-badge {
+    flex-shrink: 0;
+    width: 30px; height: 30px; border-radius: 9px;
+    background: var(--brand-bg); color: var(--brand-dark);
+    font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .section-title { font-size: 1.05rem; font-weight: 900; color: var(--text); }
+  .section-sub { font-size: 0.8rem; color: var(--text-sub); font-weight: 400; margin-top: 2px; }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ── Input field ── */
+  .field { margin-bottom: 20px; }
+  .field:last-child { margin-bottom: 0; }
+  .field-label {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 8px;
+  }
+  .field-hint { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; }
+  .input-wrap {
+    display: flex; align-items: baseline; gap: 6px;
+    border: 1.5px solid var(--border); border-radius: 12px;
+    background: var(--bg); padding: 12px 16px;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .input-wrap:focus-within {
+    border-color: var(--brand); background: #fff;
+    box-shadow: 0 0 0 4px var(--brand-bg);
+  }
+  .input-wrap .cur { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); }
+  .input-wrap input {
+    flex: 1; width: 100%; border: none; background: transparent; outline: none;
+    font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+    font-size: 1.5rem; font-weight: 900; color: var(--brand-dark);
+    letter-spacing: -0.02em; text-align: right; min-width: 0;
+  }
+  .input-wrap input::placeholder { color: var(--text-muted); font-weight: 700; }
+  .input-wrap input::-webkit-inner-spin-button,
+  .input-wrap input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .input-wrap .unit { font-size: 0.85rem; font-weight: 700; color: var(--text-sub); }
+
+  /* Quick chips for section 1 */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+    font-size: 0.78rem; font-weight: 700;
+    padding: 7px 14px; border-radius: 99px;
+    border: 1.5px solid var(--border); background: #fff; color: var(--text-sub);
+    cursor: pointer; transition: all .15s;
+  }
+  .chip:hover { border-color: var(--brand); color: var(--brand); }
+  .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+  /* subtotal line inside section 2 */
+  .subtotal {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--border);
+  }
+  .subtotal-label { font-size: 0.85rem; font-weight: 700; color: var(--text-sub); }
+  .subtotal-val {
+    font-family: 'Montserrat', sans-serif; font-size: 1.35rem; font-weight: 900;
+    color: var(--brand-dark); letter-spacing: -0.02em;
+  }
+  .subtotal-val .cur { font-size: 0.85rem; margin-right: 3px; color: var(--brand); }
+
+  /* calc sub-card (勞保 / 勞退) */
+  .calc-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.95rem; font-weight: 900; color: var(--text); margin-bottom: 18px;
+  }
+  .calc-tag {
+    font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+    font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em;
+    padding: 4px 10px; border-radius: 8px; color: #fff;
+  }
+  .calc-tag.laobao { background: var(--brand); }
+  .calc-tag.laotui { background: var(--amber); }
+
+  .field-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; }
+
+  .formula-hint {
+    margin-top: 14px; font-size: 0.78rem; font-weight: 700; color: var(--text-sub);
+    background: var(--bg); border-radius: 9px; padding: 8px 12px; width: fit-content;
+    font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+  }
+
+  .official-note {
+    margin-top: 16px; padding: 12px 14px;
+    background: var(--brand-bg); border-radius: 10px;
+    font-size: 0.75rem; color: var(--brand-dark); line-height: 1.7;
+  }
+  .official-note a { color: var(--brand); font-weight: 700; text-decoration: none; }
+  .official-note a:hover { text-decoration: underline; }
+
+  /* ── Result hero (Section 3) ── */
+  .result-card {
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #4F46E5 0%, #6366F1 55%, #818CF8 100%);
+    border-radius: 22px; padding: 32px 28px;
+    box-shadow: 0 12px 40px rgba(99,102,241,0.35);
+    color: #fff;
+  }
+  .result-card::before {
+    content: ''; position: absolute; top: -60px; right: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+  }
+
+  .bridge { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; position: relative; }
+  .bridge-item {
+    background: rgba(255,255,255,0.14); border-radius: 14px; padding: 14px 16px;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  }
+  .bridge-item .bi-label { font-size: 0.72rem; font-weight: 700; opacity: 0.85; margin-bottom: 6px; }
+  .bridge-item .bi-val { font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 900; letter-spacing: -0.02em; }
+  .bridge-item .bi-val .cur { font-size: 0.72rem; margin-right: 2px; opacity: 0.85; }
+  .bridge-item.gap { grid-column: 1 / -1; background: rgba(255,255,255,0.22); }
+  .bridge-item.gap .bi-val { font-size: 1.5rem; }
+
+  .hero-label { font-size: 0.78rem; font-weight: 700; opacity: 0.9; margin-bottom: 6px; position: relative; }
+  .hero-big { position: relative; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .hero-big .cur { font-size: 1.2rem; font-weight: 700; opacity: 0.9; }
+  .hero-num {
+    font-family: 'Montserrat', sans-serif; font-weight: 900;
+    font-size: clamp(2.4rem, 11vw, 3.6rem); line-height: 1; letter-spacing: -0.03em;
+  }
+  .hero-unit { font-size: 1.1rem; font-weight: 700; opacity: 0.9; }
+  .hero-formula {
+    position: relative; margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.22);
+    font-size: 0.78rem; opacity: 0.9; line-height: 1.7;
+  }
+  .hero-formula b { font-weight: 900; }
+
+  .surplus-note {
+    position: relative; margin-top: 16px; padding: 12px 14px;
+    background: rgba(255,255,255,0.16); border-radius: 12px;
+    font-size: 0.8rem; font-weight: 700; line-height: 1.6; display: none;
+  }
+  .result-card.surplus .surplus-note { display: block; }
+  .result-card.surplus .bridge-item.gap { background: rgba(16,185,129,0.30); }
+
+  /* footer */
+  footer {
+    text-align: center; padding-top: 40px;
+    font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em;
+  }
+  footer span { color: var(--brand); }
+
+  .disclaimer {
+    margin-top: 24px; font-size: 0.72rem; color: var(--text-muted);
+    line-height: 1.8; text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    .wrapper { padding: 28px 16px 0; }
+    .card { padding: 20px; border-radius: 14px; }
+    .result-card { padding: 26px 20px; }
+    .bridge { grid-template-columns: 1fr; }
+    .bridge-item.gap { grid-column: auto; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="eyebrow">Retirement Planner</div>
+    <h1>退休金<span>準備試算</span></h1>
+    <p class="tagline">300 倍法則 · 算出你的自由門檻</p>
+  </header>
+
+  <div class="wrapper">
+
+    <!-- ── Section 1：想要的被動收入 ── -->
+    <section class="section">
+      <div class="section-header">
+        <div class="step-badge">1</div>
+        <div>
+          <div class="section-title">退休後想要的月被動收入</div>
+          <div class="section-sub">退休以後，你希望每個月有多少錢可用？</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="field">
+          <div class="field-label">
+            <span>每月想要的被動收入</span>
+            <span class="field-hint">含日常、旅遊、醫療</span>
+          </div>
+          <div class="input-wrap">
+            <span class="cur">NT$</span>
+            <input id="wantIncome" type="number" inputmode="numeric" min="0" step="1000" placeholder="60,000" />
+            <span class="unit">/ 月</span>
+          </div>
+          <div class="chips" id="wantChips">
+            <button class="chip" data-v="40000">4 萬</button>
+            <button class="chip" data-v="60000">6 萬</button>
+            <button class="chip" data-v="80000">8 萬</button>
+            <button class="chip" data-v="100000">10 萬</button>
+            <button class="chip" data-v="150000">15 萬</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Section 2：勞保 + 勞退 ── -->
+    <section class="section">
+      <div class="section-header">
+        <div class="step-badge">2</div>
+        <div>
+          <div class="section-title">勞保 + 勞退 試算</div>
+          <div class="section-sub">填入投保薪資與年資，自動帶出可領金額</div>
+        </div>
+      </div>
+
+      <!-- 勞保：月領 -->
+      <div class="card">
+        <div class="calc-title"><span class="calc-tag laobao">勞保</span>老年年金（月領）</div>
+        <div class="field-grid">
+          <div class="field" style="margin-bottom:0">
+            <div class="field-label">
+              <span>平均月投保薪資</span>
+              <span class="field-hint">上限 45,800</span>
+            </div>
+            <div class="input-wrap">
+              <span class="cur">NT$</span>
+              <input id="lbSalary" type="number" inputmode="numeric" min="0" step="100" placeholder="45,800" />
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <div class="field-label">
+              <span>投保年資</span>
+              <span class="field-hint">年</span>
+            </div>
+            <div class="input-wrap">
+              <input id="lbYears" type="number" inputmode="numeric" min="0" step="1" placeholder="30" style="text-align:right" />
+              <span class="unit">年</span>
+            </div>
+          </div>
+        </div>
+        <div class="formula-hint">投保薪資 × 年資 × 1.55%</div>
+        <div class="subtotal">
+          <span class="subtotal-label">勞保老年給付（月領）</span>
+          <span class="subtotal-val" id="laoBaoResult"><span class="cur">NT$</span>0</span>
+        </div>
+      </div>
+
+      <!-- 勞退：一次請領 -->
+      <div class="card" style="margin-top:16px">
+        <div class="calc-title"><span class="calc-tag laotui">勞退</span>一次請領金額</div>
+        <div class="field-grid">
+          <div class="field" style="margin-bottom:0">
+            <div class="field-label">
+              <span>月提繳工資</span>
+              <span class="field-hint">上限 150,000</span>
+            </div>
+            <div class="input-wrap">
+              <span class="cur">NT$</span>
+              <input id="ltSalary" type="number" inputmode="numeric" min="0" step="100" placeholder="45,800" />
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <div class="field-label">
+              <span>提繳年資</span>
+              <span class="field-hint">年</span>
+            </div>
+            <div class="input-wrap">
+              <input id="ltYears" type="number" inputmode="numeric" min="0" step="1" placeholder="30" style="text-align:right" />
+              <span class="unit">年</span>
+            </div>
+          </div>
+        </div>
+        <div class="formula-hint">投保薪資 × 年資 × 12 個月 × 6%</div>
+        <div class="subtotal">
+          <span class="subtotal-label">勞退一次請領金額</span>
+          <span class="subtotal-val" id="laoTuiResult"><span class="cur">NT$</span>0</span>
+        </div>
+      </div>
+
+      <div class="official-note">
+        💡 精算金額可用官方工具核對：
+        <a href="https://edesk.bli.gov.tw/aa/" target="_blank" rel="noopener">勞保局 e 化服務</a>
+        （勞保老年年金＋勞退金個人專戶試算）。
+      </div>
+    </section>
+
+    <!-- ── Section 3：需要總額 ── -->
+    <section class="section">
+      <div class="section-header">
+        <div class="step-badge">3</div>
+        <div>
+          <div class="section-title">你需要自行準備的總額</div>
+          <div class="section-sub">缺口 × 300 = 自由門檻</div>
+        </div>
+      </div>
+
+      <div class="result-card" id="resultCard">
+        <div class="bridge">
+          <div class="bridge-item">
+            <div class="bi-label">想要月收入</div>
+            <div class="bi-val"><span class="cur">NT$</span><span id="rWant">0</span></div>
+          </div>
+          <div class="bridge-item">
+            <div class="bi-label">勞保月給付</div>
+            <div class="bi-val"><span class="cur">NT$</span><span id="rLaoBao">0</span></div>
+          </div>
+          <div class="bridge-item gap">
+            <div class="bi-label">每月缺口（需被動收入補足）</div>
+            <div class="bi-val"><span class="cur">NT$</span><span id="rGap">0</span></div>
+          </div>
+        </div>
+
+        <div class="hero-label">你需要自行準備的退休總資產</div>
+        <div class="hero-big">
+          <span class="cur">NT$</span>
+          <span class="hero-num" id="rTotal">0</span>
+          <span class="hero-unit" id="rTotalWan"></span>
+        </div>
+
+        <div class="hero-formula">
+          每月缺口 <b id="fGap">0</b> × <b>300</b> ＝ 需要資產 <b id="fAssets">0</b> 元<br />
+          減 勞退一次請領 <b id="fLaoTui">0</b> 元 ＝ 最終需自行準備 <b id="fFinal">0</b> 元<br />
+          <span style="opacity:.72">（月缺口 ×300 相當於年缺口 25 倍，對應 4% 提領法則）</span>
+        </div>
+
+        <div class="surplus-note" id="surplusNote">
+          🎉 恭喜，勞保月給付 ＋ 勞退一次金已足以覆蓋你的退休需求，理論上不需再額外準備。
+        </div>
+      </div>
+
+      <p class="disclaimer">
+        本試算採「4% 法則」：退休資產每年提領 4%（月缺口 × 300），估算約可支應 30 年以上。<br />
+        勞保／勞退金額請以勞保局官方試算為準，本工具僅供規劃參考。
+      </p>
+    </section>
+
+    <footer>由 <span>Keri</span> 整理製作 · 2026</footer>
+
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const nf = n => Math.round(n).toLocaleString('en-US');
+
+    const wantIncome = $('wantIncome');
+    const lbSalary = $('lbSalary'), lbYears = $('lbYears');
+    const ltSalary = $('ltSalary'), ltYears = $('ltYears');
+
+    function val(el){ const v = parseFloat(el.value); return isNaN(v) || v < 0 ? 0 : v; }
+
+    function calc(){
+      const want = val(wantIncome);
+
+      // 勞保 老年年金（月領）= 投保薪資 × 年資 × 1.55%
+      const laoBaoMonthly = val(lbSalary) * val(lbYears) * 0.0155;
+      // 勞退 一次請領 = 投保薪資 × 年資 × 12 個月 × 6%
+      const laoTuiLump = val(ltSalary) * val(ltYears) * 12 * 0.06;
+
+      const gap    = Math.max(want - laoBaoMonthly, 0);   // 每月缺口
+      const assets = gap * 300;                            // 需要資產（4% 法則）
+      const final  = Math.max(assets - laoTuiLump, 0);     // 減勞退一次金後需自備
+
+      // Section 2 results
+      $('laoBaoResult').innerHTML = '<span class="cur">NT$</span>' + nf(laoBaoMonthly);
+      $('laoTuiResult').innerHTML = '<span class="cur">NT$</span>' + nf(laoTuiLump);
+
+      // Section 3 bridge
+      $('rWant').textContent   = nf(want);
+      $('rLaoBao').textContent = nf(laoBaoMonthly);
+      $('rGap').textContent    = nf(gap);
+
+      // hero
+      $('rTotal').textContent = nf(final);
+      $('rTotalWan').textContent = final >= 10000 ? '（約 ' + (final / 10000).toLocaleString('en-US', {maximumFractionDigits: 0}) + ' 萬）' : '';
+
+      // formula
+      $('fGap').textContent    = nf(gap);
+      $('fAssets').textContent = nf(assets);
+      $('fLaoTui').textContent = nf(laoTuiLump);
+      $('fFinal').textContent  = nf(final);
+
+      // surplus state：已足以覆蓋 / 完全免自備
+      $('resultCard').classList.toggle('surplus', want > 0 && final === 0);
+
+      // active chip sync
+      document.querySelectorAll('#wantChips .chip').forEach(c => {
+        c.classList.toggle('active', parseFloat(c.dataset.v) === want);
+      });
+    }
+
+    [wantIncome, lbSalary, lbYears, ltSalary, ltYears].forEach(el => el.addEventListener('input', calc));
+
+    document.querySelectorAll('#wantChips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        wantIncome.value = chip.dataset.v;
+        calc();
+      });
+    });
+
+    calc();
+  </script>
+
+</body>
+</html>
