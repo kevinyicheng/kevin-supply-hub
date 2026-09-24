@@ -216,6 +216,58 @@
   .result-card.surplus .surplus-note { display: block; }
   .result-card.surplus .bridge-item.gap { background: rgba(16,185,129,0.30); }
 
+  /* ── Explainer card (4% 觀念) ── */
+  .explain-card {
+    background: rgba(99,102,241,0.06);
+    border: 1px solid rgba(99,102,241,0.16);
+    border-radius: 16px; margin-bottom: 32px; overflow: hidden;
+  }
+  .explain-trigger {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    padding: 16px 18px; background: none; border: none; cursor: pointer;
+    text-align: left; color: inherit; transition: background .15s;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+  .explain-trigger:hover { background: rgba(99,102,241,0.04); }
+  .explain-emoji { font-size: 1.4rem; flex-shrink: 0; }
+  .explain-trigger-text { flex: 1; }
+  .explain-trigger-label {
+    font-family: 'Montserrat', sans-serif; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--brand); margin-bottom: 2px;
+  }
+  .explain-trigger-title { font-size: 0.92rem; font-weight: 900; color: var(--text); }
+  .explain-chevron {
+    width: 20px; height: 20px; color: var(--text-sub);
+    transition: transform .25s; flex-shrink: 0;
+  }
+  .explain-card.open .explain-chevron { transform: rotate(180deg); }
+
+  .explain-body { display: none; padding: 4px 18px 20px; }
+  .explain-card.open .explain-body { display: block; }
+
+  .explain-steps { display: flex; flex-direction: column; gap: 12px; padding-top: 6px; }
+  .explain-step {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .explain-step .es-emoji {
+    font-size: 1.6rem; flex-shrink: 0; width: 40px; text-align: center;
+  }
+  .explain-step .es-text { font-size: 0.88rem; color: var(--text); line-height: 1.6; }
+  .explain-step .es-text b { color: var(--brand-dark); font-weight: 900; }
+
+  .explain-takeaway {
+    margin-top: 14px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .takeaway-line {
+    display: flex; align-items: flex-start; gap: 8px;
+    background: var(--brand-bg); border-radius: 10px; padding: 11px 14px;
+    font-size: 0.85rem; font-weight: 700; color: var(--brand-dark); line-height: 1.6;
+  }
+  .takeaway-line .tl-mark { flex-shrink: 0; }
+  .takeaway-line b { font-weight: 900; }
+
   /* footer */
   footer {
     text-align: center; padding-top: 40px;
@@ -246,6 +298,48 @@
   </header>
 
   <div class="wrapper">
+
+    <!-- ── 4% 觀念說明卡（可收合） ── -->
+    <div class="explain-card" id="explainCard">
+      <button class="explain-trigger" onclick="toggleExplain()" aria-expanded="false" aria-controls="explainBody">
+        <span class="explain-emoji">🌳</span>
+        <div class="explain-trigger-text">
+          <div class="explain-trigger-label">The 4% Rule</div>
+          <div class="explain-trigger-title">為什麼是 300 倍？30 秒聽懂</div>
+        </div>
+        <svg class="explain-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      <div class="explain-body" id="explainBody">
+        <div class="explain-steps">
+          <div class="explain-step">
+            <span class="es-emoji">🌱</span>
+            <div class="es-text">你存的一大筆錢 ＝ <b>種下一棵大樹</b></div>
+          </div>
+          <div class="explain-step">
+            <span class="es-emoji">🍎</span>
+            <div class="es-text">樹每年會長出蘋果<br>（錢自己長出來的錢）</div>
+          </div>
+          <div class="explain-step">
+            <span class="es-emoji">😋</span>
+            <div class="es-text">你只<b>摘蘋果吃、不砍樹</b> → 樹還在，明年再長蘋果 → 蘋果吃不完</div>
+          </div>
+        </div>
+
+        <div class="explain-takeaway">
+          <div class="takeaway-line">
+            <span class="tl-mark">👉</span>
+            <span>每年只摘 <b>1/25 的蘋果（這就是 4%）</b>，樹才活得好</span>
+          </div>
+          <div class="takeaway-line">
+            <span class="tl-mark">👉</span>
+            <span>要種多大的樹？<b>「每個月想花的錢 × 300」</b>就對了</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ── Section 1：想要的被動收入 ── -->
     <section class="section">
@@ -414,6 +508,14 @@
   </div>
 
   <script>
+    // 4% 觀念卡收合
+    function toggleExplain() {
+      const card = document.getElementById('explainCard');
+      const btn  = card.querySelector('.explain-trigger');
+      const open = card.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    }
+
     const $ = id => document.getElementById(id);
     const nf = n => Math.round(n).toLocaleString('en-US');
 
