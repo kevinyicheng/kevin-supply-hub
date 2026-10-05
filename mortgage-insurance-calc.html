@@ -1916,7 +1916,7 @@ async function fetchFundData() {
 
     const sel = document.getElementById('f-fund');
     sel.innerHTML = FUND_LIST.map((f, i) =>
-      `<option value="${i}">${f.name_zh || f.name}</option>`).join('');
+      `<option value="${i}">${f.name_zh ? f.name + '　' + f.name_zh : f.name}</option>`).join('');
     applyFundSelection();
   } catch {
     const nvHint = document.getElementById('f-netvalue-hint');
