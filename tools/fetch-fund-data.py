@@ -25,9 +25,9 @@ from pathlib import Path
 
 # ── 基金清單（唯一來源，前端下拉依此自動生成）────────────────
 FUNDS = [
-    {"label": "TLZ64-DSP5",  "name": "DSP5"},
-    {"label": "JFZN3-JFP11", "name": "JFP11"},
-    {"label": "SHZT9-MLE20", "name": "MLE20"},
+    {"label": "TLZ64-DSP5",  "name": "DSP5",  "name_zh": "安聯收益成長基金-AM穩定月收類股(美元)"},
+    {"label": "JFZN3-JFP11", "name": "JFP11", "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)"},
+    {"label": "SHZT9-MLE20", "name": "MLE20", "name_zh": "貝萊德全球智慧數據股票入息基金A6美元(穩定配息)"},
 ]
 
 BASE     = "https://invest.fubonlife.com.tw"
@@ -90,6 +90,7 @@ def build_fund(cfg: dict) -> dict:
     entry = {
         "code": label,
         "name": name,
+        "name_zh": cfg.get("name_zh", name),
         "nav": nav,
         "nav_date": nav_date,
         "url": f"{BASE}/w/wb/wb02.djhtm?a={label}",
