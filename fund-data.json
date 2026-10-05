@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-05T11:00:09+08:00",
+  "updated_at": "2026-10-05T16:25:32+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -23,6 +23,17 @@
       "payout": 0.685,
       "payout_ex_date": "2026-09-08",
       "payout_pay_date": "2026-09-09"
+    },
+    {
+      "code": "SHZT9-MLE20",
+      "name": "MLE20",
+      "nav": 9.91,
+      "nav_date": "2026-10-02",
+      "url": "https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=SHZT9-MLE20",
+      "has_payout": true,
+      "payout": 0.066,
+      "payout_ex_date": "2026-09-29",
+      "payout_pay_date": "2026-09-30"
     }
   ]
 }

@@ -27,6 +27,7 @@ from pathlib import Path
 FUNDS = [
     {"label": "TLZ64-DSP5",  "name": "DSP5"},
     {"label": "JFZN3-JFP11", "name": "JFP11"},
+    {"label": "SHZT9-MLE20", "name": "MLE20"},
 ]
 
 BASE     = "https://invest.fubonlife.com.tw"
