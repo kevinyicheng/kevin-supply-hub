@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-10-21T11:00:09+08:00",
+  "updated_at": "2026-10-21T14:48:53+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
       "code": "DSP5",
       "name": "DSP5",
       "name_zh": "安聯收益成長基金-AM穩定月收類股(美元)",
-      "nav": 8.2336,
-      "nav_date": "2026-10-19",
+      "nav": 8.2174,
+      "nav_date": "2026-10-20",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/25/DSP5",
       "has_payout": true,
       "payout": 0.06,
@@ -18,8 +18,8 @@
       "code": "JFP11",
       "name": "JFP11",
       "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)",
-      "nav": 72.31,
-      "nav_date": "2026-10-16",
+      "nav": 71.92,
+      "nav_date": "2026-10-20",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/25/JFP11",
       "has_payout": true,
       "payout": 0.609,
