@@ -15,10 +15,11 @@
 方案 A / B：由排程（launchd）每日執行，寫檔後 git commit + push，
 前端讀同源 JSON 並自動生成基金下拉選單。
 
-新增基金：在下方 FUNDS 加一行 {"code": "<代碼>", "name_zh": "顯示名稱"}。
-code 取自富邦基金頁網址最後一段，例：
-  https://invest.fubonlife.com.tw/funds/overview/WFUND/25/DSP5 → "DSP5"
-（即新 API 的 assetFbCode，也等於舊設定的 name 欄位。）
+新增基金：在下方 FUNDS 加一行 {"code": "<代碼>", "cat": "<分類序號>", "name_zh": "顯示名稱"}。
+code 與 cat 都取自富邦基金頁網址，例：
+  https://invest.fubonlife.com.tw/funds/overview/WFUND/25/DSP5 → cat="25", code="DSP5"
+  code 即新 API 的 assetFbCode；cat 是 WFUND 後的分類序號，逐檔不同（DSP5=25、JFP11=39、MLE20=27），
+  只影響前端「查看來源」連結，抓數據的 API 不吃它。
 
 只用 Python 標準函式庫（urllib），不需 pip 安裝。
 """
@@ -32,9 +33,9 @@ from pathlib import Path
 
 # ── 基金清單（唯一來源，前端下拉依此自動生成）────────────────
 FUNDS = [
-    {"code": "DSP5",  "name_zh": "安聯收益成長基金-AM穩定月收類股(美元)"},
-    {"code": "JFP11", "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)"},
-    {"code": "MLE20", "name_zh": "貝萊德全球智慧數據股票入息基金A6美元(穩定配息)"},
+    {"code": "DSP5",  "cat": "25", "name_zh": "安聯收益成長基金-AM穩定月收類股(美元)"},
+    {"code": "JFP11", "cat": "39", "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)"},
+    {"code": "MLE20", "cat": "27", "name_zh": "貝萊德全球智慧數據股票入息基金A6美元(穩定配息)"},
 ]
 
 BASE     = "https://invest.fubonlife.com.tw"
@@ -44,12 +45,12 @@ TPE      = timezone(timedelta(hours=8))
 OUT_PATH = Path(__file__).resolve().parent.parent / "fund-data.json"
 
 
-def fund_url(code: str) -> str:
-    """基金詳情頁（前端「查看來源」連結）。"""
-    return f"{BASE}/funds/overview/WFUND/25/{code}"
+def fund_url(code: str, cat: str = "25") -> str:
+    """基金詳情頁（前端「查看來源」連結）。cat = 富邦 WFUND 分類序號，逐檔不同。"""
+    return f"{BASE}/funds/overview/WFUND/{cat}/{code}"
 
 
-def _post(endpoint: str, payload: dict, code: str) -> dict:
+def _post(endpoint: str, payload: dict, referer: str) -> dict:
     """POST JSON 給同源 API，回傳解析後的 dict（含 data 陣列）。"""
     req = urllib.request.Request(
         f"{API}/{endpoint}",
@@ -59,7 +60,7 @@ def _post(endpoint: str, payload: dict, code: str) -> dict:
             "Content-Type": "application/json",
             "Accept": "application/json",
             "Origin": BASE,
-            "Referer": fund_url(code),
+            "Referer": referer,
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                           "AppleWebKit/537.36 (KHTML, like Gecko) "
                           "Chrome/124.0 Safari/537.36",
@@ -78,7 +79,7 @@ def _ymd(s: str) -> str:
     return s.strip().replace("/", "-")
 
 
-def fetch_nav(code: str) -> tuple[float, str]:
+def fetch_nav(code: str, referer: str) -> tuple[float, str]:
     """回傳 (最新淨值, 淨值日期 YYYY-MM-DD)。"""
     today = datetime.now(TPE).date()
     frm   = today - timedelta(days=45)
@@ -86,7 +87,7 @@ def fetch_nav(code: str) -> tuple[float, str]:
         "assetFbCode": code,
         "startDate": frm.isoformat(),
         "endDate": today.isoformat(),
-    }, code)
+    }, referer)
     data = obj.get("data") or []
     if not data:
         raise ValueError("NAV data 為空")
@@ -94,9 +95,9 @@ def fetch_nav(code: str) -> tuple[float, str]:
     return round(float(latest["nav"]), 4), _ymd(latest["date"])
 
 
-def fetch_payout(code: str):
+def fetch_payout(code: str, referer: str):
     """回傳 (每單位配息, 除息日, 發放日) 或 None（無有效配息記錄）。"""
-    obj = _post("getFundDividends", {"assetFbCode": code}, code)
+    obj = _post("getFundDividends", {"assetFbCode": code}, referer)
     data = obj.get("data") or []
     # 只取真正有配息（status=配息 且金額 > 0）的最新一筆
     valid = [d for d in data
@@ -111,16 +112,17 @@ def fetch_payout(code: str):
 
 def build_fund(cfg: dict) -> dict:
     code = cfg["code"]
-    nav, nav_date = fetch_nav(code)
+    url = fund_url(code, cfg.get("cat", "25"))
+    nav, nav_date = fetch_nav(code, url)
     entry = {
         "code": code,
         "name": code,
         "name_zh": cfg.get("name_zh", code),
         "nav": nav,
         "nav_date": nav_date,
-        "url": fund_url(code),
+        "url": url,
     }
-    payout = fetch_payout(code)
+    payout = fetch_payout(code, url)
     if payout:
         entry.update({
             "has_payout": True,
