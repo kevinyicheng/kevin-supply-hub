@@ -10,12 +10,13 @@
     <string>/bin/bash</string>
     <string>/Users/yichengsoffice/kevin-supply-hub/tools/update-fund-data.sh</string>
   </array>
-  <!-- Mac mini 24/7 主機：每日 16:00 定時跑。腳本內以 .last-run-date 當日閘門防重跑。 -->
+  <!-- Mac mini 24/7 主機：每日 16/18/20 時各跑一次。腳本以 .last-run-date 當日閘門：抓到夠新的值才鎖，偏舊（富邦當天未補齊）則等下個時段補齊。 -->
   <key>StartCalendarInterval</key>
-  <dict>
-    <key>Hour</key><integer>16</integer>
-    <key>Minute</key><integer>0</integer>
-  </dict>
+  <array>
+    <dict><key>Hour</key><integer>16</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>18</integer><key>Minute</key><integer>0</integer></dict>
+    <dict><key>Hour</key><integer>20</integer><key>Minute</key><integer>0</integer></dict>
+  </array>
   <key>StandardOutPath</key>
   <string>/Users/yichengsoffice/kevin-supply-hub/tools/launchd.out.log</string>
   <key>StandardErrorPath</key>

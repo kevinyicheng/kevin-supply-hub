@@ -13,7 +13,7 @@ cd "$REPO"
 ts() { date "+%Y-%m-%d %H:%M:%S"; }
 TODAY="$(date +%Y-%m-%d)"
 
-# 由「網路連上」事件觸發，一天可能被叫很多次 → 今日已成功執行過就跳過
+# launchd 每日多時段觸發（16/18/20 時）→ 今日已抓到「夠新」的值就跳過，否則同日稍後重試
 if [ -f "$MARKER" ] && [ "$(cat "$MARKER")" = "$TODAY" ]; then
   exit 0
 fi
@@ -22,13 +22,19 @@ fi
 git pull --rebase --autostash origin main >>"$LOG" 2>&1 || echo "$(ts) git pull 失敗，仍繼續本次更新" >>"$LOG"
 
 if ! /usr/bin/python3 tools/fetch-fund-data.py >>"$LOG" 2>&1; then
-  # 抓取失敗（可能網路還沒真的通）→ 不標記，下次網路事件再重試
-  echo "$(ts) 抓取失敗，略過本次更新（待下次網路事件重試）" >>"$LOG"
+  # 抓取失敗（可能網路還沒真的通）→ 不標記，下個時段再重試
+  echo "$(ts) 抓取失敗，略過本次更新（待下個時段重試）" >>"$LOG"
   exit 1
 fi
 
-# 當日抓取成功 → 標記今日已執行，避免重複觸發
-echo "$TODAY" >"$MARKER"
+# 境外基金 T 日淨值富邦是 T+1「下午」才補齊；排程太早會抓到舊值且把當天鎖死。
+# → 只有抓到「夠新」（最新 nav_date ≥ 昨天）才鎖當日；仍偏舊就不鎖，等 18/20 時段補齊。
+FRESH=$(/usr/bin/python3 -c "import json,datetime; d=json.load(open('fund-data.json')); latest=max(x['nav_date'] for x in d['funds']); yday=(datetime.date.today()-datetime.timedelta(days=1)).isoformat(); print('1' if latest>=yday else '0')")
+if [ "$FRESH" = "1" ]; then
+  echo "$TODAY" >"$MARKER"
+else
+  echo "$(ts) 最新淨值日期仍偏舊（富邦當天未補齊），不鎖當日，等下個時段重試" >>"$LOG"
+fi
 
 if git diff --quiet -- fund-data.json; then
   echo "$(ts) 淨值/配息無變動，不提交" >>"$LOG"
