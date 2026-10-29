@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>富邦 CLZ 男 / CLX 女 防癌定期險保費試算</title>
+<title>富邦防癌保費試算 · CLZ/CLX 定期 × CIA/CIB 終身（男/女）</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -43,6 +43,20 @@ body[data-product="clx"]{
   --shadow-md:0 4px 16px rgba(225,29,72,0.08),0 2px 4px rgba(225,29,72,0.04);
   --shadow-lg:0 12px 36px rgba(225,29,72,0.14),0 4px 12px rgba(225,29,72,0.06);
 }
+/* ── CIA 男 · 藍（終身，同 CLZ 色系）── */
+body[data-product="cia"]{
+  --bg:#F6F9FF;
+  --brand-dark:#1E3A8A; --brand:#1D4ED8; --brand-light:#60A5FA; --brand-bg:#EFF6FF;
+  --shadow-md:0 4px 16px rgba(29,78,216,0.08),0 2px 4px rgba(29,78,216,0.04);
+  --shadow-lg:0 12px 36px rgba(29,78,216,0.14),0 4px 12px rgba(29,78,216,0.06);
+}
+/* ── CIB 女 · 玫瑰（終身，同 CLX 色系）── */
+body[data-product="cib"]{
+  --bg:#FFF8FA;
+  --brand-dark:#9F1239; --brand:#E11D48; --brand-light:#FB7185; --brand-bg:#FFF1F3;
+  --shadow-md:0 4px 16px rgba(225,29,72,0.08),0 2px 4px rgba(225,29,72,0.04);
+  --shadow-lg:0 12px 36px rgba(225,29,72,0.14),0 4px 12px rgba(225,29,72,0.06);
+}
 html{font-size:15px;background:var(--bg);transition:background .4s ease;}
 body{
   font-family:'Montserrat',-apple-system,BlinkMacSystemFont,'Noto Sans TC',sans-serif;
@@ -68,12 +82,13 @@ body::after{
 
 /* ── Product Switcher ── */
 .prod-switch{
-  display:flex;gap:6px;padding:6px;margin-bottom:24px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:6px;margin-bottom:24px;
   background:var(--surface);border:1px solid var(--border);
   border-radius:18px;box-shadow:var(--shadow-md);position:relative;
 }
+@media(min-width:620px){.prod-switch{grid-template-columns:repeat(4,1fr);}}
 .ps-btn{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
   padding:12px 8px;border-radius:13px;cursor:pointer;
   transition:all .3s cubic-bezier(0.4,0,0.2,1);
   font-weight:700;color:var(--tx-sub);border:none;background:transparent;
@@ -484,7 +499,7 @@ input[type=range]::-webkit-slider-thumb:active{
     grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr;
     column-gap:28px;padding:64px 32px 60px;align-items:start;
   }
-  .prod-switch{grid-column:1 / -1;grid-row:1;max-width:520px;margin:0 auto 8px;width:100%;}
+  .prod-switch{grid-column:1 / -1;grid-row:1;max-width:720px;margin:0 auto 8px;width:100%;}
   header{grid-column:1 / -1;grid-row:2;padding-bottom:28px;}
   .card:first-of-type{grid-column:1;grid-row:3;}
   #err{grid-column:1;grid-row:4;margin-top:0;}
@@ -558,11 +573,19 @@ input[type=range]::-webkit-slider-thumb:active{
   <div class="prod-switch">
     <button class="ps-btn on" id="ps-clz" onclick="setProduct('clz')">
       <span class="ps-code">CLZ</span>
-      <span class="ps-name">豪愛無憂 · 男性防癌</span>
+      <span class="ps-name">豪愛無憂 · 男定期</span>
     </button>
     <button class="ps-btn" id="ps-clx" onclick="setProduct('clx')">
       <span class="ps-code">CLX</span>
-      <span class="ps-name">真馨相守 · 女性防癌</span>
+      <span class="ps-name">真馨相守 · 女定期</span>
+    </button>
+    <button class="ps-btn" id="ps-cia" onclick="setProduct('cia')">
+      <span class="ps-code">CIA</span>
+      <span class="ps-name">豪愛守護 · 男終身</span>
+    </button>
+    <button class="ps-btn" id="ps-cib" onclick="setProduct('cib')">
+      <span class="ps-code">CIB</span>
+      <span class="ps-name">真馨守護 · 女終身</span>
     </button>
   </div>
 
@@ -591,23 +614,12 @@ input[type=range]::-webkit-slider-thumb:active{
     <div id="age-tag"><span id="age-txt"></span></div>
 
     <div class="section-label" style="margin-top:4px;">繳費年期</div>
-    <div class="period-grid" id="period-grid">
-      <label class="p-btn" id="pb-10" onclick="setPeriod(10)">
-        <input type="radio" name="period" value="10">
-        <span>10 年期</span>
-        <span class="p-sub">最高 60 歲投保</span>
-      </label>
-      <label class="p-btn" id="pb-20" onclick="setPeriod(20)">
-        <input type="radio" name="period" value="20">
-        <span>20 年期</span>
-        <span class="p-sub">最高 50 歲投保</span>
-      </label>
-    </div>
+    <div class="period-grid" id="period-grid"><!-- 由 setProduct() 依商品動態產生 --></div>
 
     <div class="section-label">規劃保額</div>
     <div class="coverage-top">
       <div class="coverage-input-wrap">
-        <input type="number" class="coverage-input" id="cov-num" value="0" min="0" max="300" step="1"
+        <input type="number" class="coverage-input" id="cov-num" value="0" min="0" max="500" step="1"
           oninput="syncSlider(this.value);tryLiveCalculate()">
         <span style="font-size:18px;font-weight:700;color:var(--tx-sub);">萬元</span>
       </div>
@@ -617,14 +629,9 @@ input[type=range]::-webkit-slider-thumb:active{
       </div>
     </div>
     <div style="margin-bottom:8px">
-      <input type="range" id="cov-slider" min="0" max="300" step="10" value="0" style="--pct:0%"
+      <input type="range" id="cov-slider" min="0" max="500" step="10" value="0" style="--pct:0%"
         oninput="syncNum(this.value)">
-      <div class="slider-ticks">
-        <span class="slider-tick">0</span>
-        <span class="slider-tick">100</span>
-        <span class="slider-tick">200</span>
-        <span class="slider-tick">300萬</span>
-      </div>
+      <div class="slider-ticks" id="slider-ticks"><!-- 由 setProduct() 依商品動態產生 --></div>
     </div>
 
     <div id="err"></div>
@@ -707,33 +714,52 @@ input[type=range]::-webkit-slider-thumb:active{
 
 <script>
 /* ══════════════════════════════════════
-   費率表（元/每萬元保額，年繳）投保年齡 18–60
+   費率表（元/每萬元保額，年繳）
+   定期 CLZ/CLX：投保 18–60｜終身 CIA/CIB：投保 0–65
    ══════════════════════════════════════ */
-// CLZ 豪愛無憂（男）— 1150429 起適用
+// CLZ 豪愛無憂 防癌定期（男）— 1150429 起適用
 const CLZ = {
   10:{18:420,19:430,20:439,21:450,22:461,23:472,24:483,25:494,26:504,27:515,28:526,29:537,30:548,31:562,32:576,33:590,34:604,35:618,36:632,37:646,38:660,39:674,40:688,41:705,42:721,43:738,44:755,45:772,46:788,47:805,48:822,49:838,50:855,51:888,52:922,53:955,54:988,55:1022,56:1055,57:1088,58:1121,59:1155,60:1188},
   20:{18:222,19:228,20:233,21:239,22:246,23:252,24:258,25:265,26:271,27:277,28:283,29:290,30:296,31:306,32:315,33:325,34:334,35:344,36:354,37:363,38:373,39:382,40:392,41:412,42:433,43:453,44:473,45:494,46:514,47:534,48:554,49:575,50:595}
 };
-// CLX 真馨相守（女）— 115.02.10 起適用
+// CLX 真馨相守 防癌定期（女）— 115.02.10 起適用
 const CLX = {
   10:{18:435,19:440,20:445,21:450,22:455,23:460,24:465,25:470,26:480,27:490,28:500,29:510,30:515,31:525,32:535,33:545,34:555,35:565,36:575,37:580,38:590,39:600,40:610,41:620,42:630,43:640,44:650,45:660,46:670,47:680,48:690,49:700,50:710,51:720,52:730,53:740,54:755,55:765,56:780,57:795,58:825,59:845,60:880},
   20:{18:230,19:235,20:240,21:245,22:250,23:255,24:260,25:265,26:270,27:275,28:280,29:285,30:290,31:295,32:300,33:310,34:315,35:325,36:330,37:335,38:345,39:350,40:355,41:365,42:370,43:380,44:390,45:400,46:410,47:420,48:435,49:450,50:470}
 };
-
-const PRODUCTS = {
-  clz:{code:'CLZ',full:'豪愛無憂 防癌定期健康保險',gender:'男性',icon:'👨🏻',rateDate:'1150429',rates:CLZ,
-       theme:{brand:'#1D4ED8',dark:'#1E3A8A',bg:'#EFF6FF'},
-       // 條款附表一：特定癌症（重度）— 男性專屬 9 項
-       spec:[{c:'C18',n:'結腸'},{c:'C19',n:'直腸乙狀結腸連接處'},{c:'C20',n:'直腸'},{c:'C21',n:'肛門及肛門管'},{c:'C60',n:'陰莖'},{c:'C61',n:'攝護腺'},{c:'C62',n:'睪丸'},{c:'C63',n:'其他男性生殖器官'},{c:'C67',n:'膀胱'}]},
-  clx:{code:'CLX',full:'真馨相守 防癌定期健康保險',gender:'女性',icon:'👩🏻',rateDate:'115.02.10',rates:CLX,
-       theme:{brand:'#E11D48',dark:'#9F1239',bg:'#FFF1F3'},
-       // 條款附表一：特定癌症（重度）— 女性專屬 11 項
-       spec:[{c:'C43',n:'皮膚黑色素瘤'},{c:'C44',n:'其他皮膚'},{c:'C50',n:'乳房'},{c:'C51',n:'外陰'},{c:'C52',n:'陰道'},{c:'C53',n:'子宮頸'},{c:'C54',n:'子宮體'},{c:'C55',n:'未明示部位子宮'},{c:'C56',n:'卵巢'},{c:'C57',n:'其他女性生殖器官'},{c:'C58',n:'胎盤'}]}
+// CIA 豪愛守護 防癌終身（男）— 1151023 起適用
+const CIA = {
+  10:{0:320,1:325,2:335,3:340,4:350,5:355,6:365,7:370,8:375,9:385,10:390,11:395,12:400,13:405,14:410,15:415,16:420,17:425,18:430,19:435,20:445,21:455,22:465,23:475,24:485,25:500,26:510,27:520,28:530,29:545,30:555,31:570,32:585,33:600,34:610,35:625,36:640,37:655,38:665,39:680,40:695,41:715,42:730,43:745,44:765,45:780,46:795,47:815,48:830,49:845,50:865,51:900,52:935,53:965,54:998,55:1032,56:1065,57:1100,58:1135,59:1165,60:1200,61:1225,62:1250,63:1280,64:1305,65:1330},
+  20:{0:170,1:173,2:175,3:180,4:182,5:185,6:188,7:190,8:195,9:198,10:200,11:203,12:205,13:210,14:212,15:215,16:218,17:220,18:225,19:230,20:235,21:240,22:250,23:255,24:260,25:270,26:275,27:280,28:285,29:295,30:300,31:310,32:320,33:330,34:340,35:350,36:360,37:365,38:375,39:385,40:395,41:415,42:440,43:460,44:480,45:500,46:520,47:540,48:560,49:580,50:600,51:615,52:630,53:640,54:650,55:660},
+  30:{0:117,1:120,2:122,3:124,4:126,5:128,6:130,7:132,8:134,9:136,10:138,11:140,12:143,13:145,14:148,15:150,16:153,17:155,18:160,19:165,20:170,21:175,22:180,23:185,24:190,25:195,26:200,27:205,28:210,29:215,30:220,31:230,32:240,33:250,34:260,35:270,36:280,37:290,38:305,39:315,40:325,41:338,42:350,43:360,44:370,45:380}
+};
+// CIB 真馨守護 防癌終身（女）— 1151023 起適用
+const CIB = {
+  10:{0:290,1:300,2:305,3:310,4:320,5:325,6:335,7:340,8:345,9:355,10:365,11:375,12:380,13:390,14:395,15:405,16:415,17:420,18:435,19:442,20:450,21:455,22:460,23:465,24:470,25:475,26:485,27:495,28:505,29:516,30:521,31:531,32:541,33:551,34:561,35:571,36:581,37:586,38:596,39:606,40:617,41:627,42:637,43:647,44:657,45:667,46:677,47:687,48:697,49:707,50:718,51:730,52:740,53:750,54:765,55:775,56:790,57:805,58:835,59:855,60:890,61:925,62:960,63:1000,64:1045,65:1095},
+  20:{0:150,1:155,2:160,3:165,4:170,5:175,6:177,7:180,8:182,9:185,10:190,11:195,12:200,13:205,14:210,15:215,16:220,17:225,18:233,19:238,20:243,21:248,22:253,23:258,24:263,25:268,26:273,27:278,28:283,29:288,30:293,31:298,32:303,33:314,34:319,35:329,36:334,37:339,38:349,39:354,40:359,41:369,42:374,43:384,44:394,45:404,46:415,47:425,48:440,49:455,50:475,51:500,52:530,53:560,54:595,55:635},
+  30:{0:105,1:109,2:112,3:116,4:119,5:123,6:125,7:126,8:128,9:130,10:133,11:137,12:140,13:144,14:147,15:150,16:154,17:158,18:163,19:167,20:172,21:175,22:180,23:183,24:185,25:190,26:195,27:200,28:205,29:210,30:215,31:225,32:235,33:245,34:255,35:265,36:280,37:290,38:300,39:310,40:320,41:325,42:336,43:345,44:355,45:365}
 };
 
-const MAX_AGE = {10:60, 20:50};
-const MIN_AGE = 18;
-const MATURE_AGE = 89; // 滿期：保險年齡屆滿 89 歲
+// 特定癌症（重度）附表一：男性 9 項 / 女性 11 項（定期與終身共用同一清單）
+const SPEC_M=[{c:'C18',n:'結腸'},{c:'C19',n:'直腸乙狀結腸連接處'},{c:'C20',n:'直腸'},{c:'C21',n:'肛門及肛門管'},{c:'C60',n:'陰莖'},{c:'C61',n:'攝護腺'},{c:'C62',n:'睪丸'},{c:'C63',n:'其他男性生殖器官'},{c:'C67',n:'膀胱'}];
+const SPEC_F=[{c:'C43',n:'皮膚黑色素瘤'},{c:'C44',n:'其他皮膚'},{c:'C50',n:'乳房'},{c:'C51',n:'外陰'},{c:'C52',n:'陰道'},{c:'C53',n:'子宮頸'},{c:'C54',n:'子宮體'},{c:'C55',n:'未明示部位子宮'},{c:'C56',n:'卵巢'},{c:'C57',n:'其他女性生殖器官'},{c:'C58',n:'胎盤'}];
+const BLUE={brand:'#1D4ED8',dark:'#1E3A8A',bg:'#EFF6FF'};
+const ROSE={brand:'#E11D48',dark:'#9F1239',bg:'#FFF1F3'};
+
+const PRODUCTS = {
+  clz:{code:'CLZ',full:'豪愛無憂 防癌定期健康保險',gender:'男性',icon:'👨🏻',rateDate:'1150429',rates:CLZ,theme:BLUE,spec:SPEC_M,
+       kind:'定期',periods:[10,20],maxAge:{10:60,20:50},minAge:18,matureAge:89,matureLabel:'滿期',covMin:50,covMax:300,
+       waitText:'自契約生效日起持續有效 90 日，因意外傷害事故所致者不受限制'},
+  clx:{code:'CLX',full:'真馨相守 防癌定期健康保險',gender:'女性',icon:'👩🏻',rateDate:'115.02.10',rates:CLX,theme:ROSE,spec:SPEC_F,
+       kind:'定期',periods:[10,20],maxAge:{10:60,20:50},minAge:18,matureAge:89,matureLabel:'滿期',covMin:50,covMax:300,
+       waitText:'自契約生效日起持續有效 90 日，因意外傷害事故所致者不受限制'},
+  cia:{code:'CIA',full:'豪愛守護防癌終身健康保險',gender:'男性',icon:'👨🏻',rateDate:'1151023',rates:CIA,theme:BLUE,spec:SPEC_M,
+       kind:'終身',periods:[10,20,30],maxAge:{10:65,20:55,30:45},minAge:0,matureAge:95,matureLabel:'祝壽',covMin:50,covMax:500,
+       waitText:'自契約生效日起 30 日（癌症為 90 日），因意外傷害事故所致者不受限制'},
+  cib:{code:'CIB',full:'真馨守護防癌終身健康保險',gender:'女性',icon:'👩🏻',rateDate:'1151023',rates:CIB,theme:ROSE,spec:SPEC_F,
+       kind:'終身',periods:[10,20,30],maxAge:{10:65,20:55,30:45},minAge:0,matureAge:95,matureLabel:'祝壽',covMin:50,covMax:500,
+       waitText:'自契約生效日起 30 日（癌症為 90 日），因意外傷害事故所致者不受限制'}
+};
 
 let currentProduct = 'clz';
 let selectedPeriod = null;
@@ -778,28 +804,57 @@ function insAge(bDate, ref = new Date()){
   return attained+(ref>sixMonths?1:0);
 }
 
+function renderPeriods(P){
+  const grid=document.getElementById('period-grid');
+  grid.style.gridTemplateColumns=`repeat(${P.periods.length},1fr)`;
+  grid.innerHTML=P.periods.map(n=>`
+    <label class="p-btn" id="pb-${n}" onclick="setPeriod(${n})">
+      <input type="radio" name="period" value="${n}">
+      <span>${n} 年期</span>
+      <span class="p-sub">${P.minAge}～${P.maxAge[n]} 歲投保</span>
+    </label>`).join('');
+}
+
+function renderCovScale(P){
+  const num=document.getElementById('cov-num'), sl=document.getElementById('cov-slider');
+  num.max=P.covMax; sl.max=P.covMax;
+  const ticks = P.covMax>=500 ? [50,200,350,P.covMax] : [50,150,250,P.covMax];
+  document.getElementById('slider-ticks').innerHTML =
+    ticks.map((t,i)=>`<span class="slider-tick">${t}${i===ticks.length-1?'萬':''}</span>`).join('');
+}
+
 function setProduct(p){
   currentProduct = p;
   const P = PRODUCTS[p];
   document.body.setAttribute('data-product', p);
-  document.getElementById('ps-clz').className = 'ps-btn' + (p==='clz'?' on':'');
-  document.getElementById('ps-clx').className = 'ps-btn' + (p==='clx'?' on':'');
+  ['clz','clx','cia','cib'].forEach(k=>{
+    const b=document.getElementById('ps-'+k); if(b) b.className='ps-btn'+(k===p?' on':'');
+  });
   document.getElementById('h-mark').textContent = P.code;
   document.getElementById('h-sub').textContent = `${P.full} · ${P.gender} · ${P.rateDate} 費率`;
   document.getElementById('ic-icon').textContent = P.icon;
   document.getElementById('ic-text').textContent = `本商品專屬 ${P.gender} 被保險人`;
   document.getElementById('wm-name').textContent = P.code;
+  // 不同商品年期/保額上限不同：重建年期鈕與保額刻度，並清掉舊選擇
+  selectedPeriod = null;
+  renderPeriods(P);
+  renderCovScale(P);
+  // 保額若超過新商品上限則往下夾
+  const cov=+document.getElementById('cov-num').value;
+  if(cov>P.covMax) syncNum(P.covMax); else syncSlider(cov);
   updateDisc();
   updatePreview();
+  updatePeriodButtons();
   tryLiveCalculate();
 }
 
 function setPeriod(p){
+  const P = PRODUCTS[currentProduct];
   const pb = document.getElementById(`pb-${p}`);
-  if(pb.classList.contains('disabled')) return;
+  if(!pb || pb.classList.contains('disabled')) return;
   selectedPeriod = p;
   document.querySelector(`input[value="${p}"]`).checked = true;
-  [10,20].forEach(n => document.getElementById(`pb-${n}`).classList.remove('sel'));
+  P.periods.forEach(n => document.getElementById(`pb-${n}`).classList.remove('sel'));
   pb.classList.add('sel');
   clearResults();
   updatePreview();
@@ -807,12 +862,14 @@ function setPeriod(p){
 }
 
 function updatePeriodButtons(){
+  const P = PRODUCTS[currentProduct];
   const age = currentAge;
-  [10,20].forEach(n => {
+  P.periods.forEach(n => {
     const el = document.getElementById(`pb-${n}`);
+    if(!el) return;
     let lock = el.querySelector('.p-lock');
     if(!lock){lock=document.createElement('span'); lock.className='p-lock'; el.appendChild(lock);}
-    if(age !== null && (age > MAX_AGE[n] || age < MIN_AGE)){
+    if(age !== null && (age > P.maxAge[n] || age < P.minAge)){
       el.classList.add('disabled'); lock.textContent = '🔒';
       if(selectedPeriod === n){selectedPeriod=null; el.classList.remove('sel');}
     } else {
@@ -864,16 +921,19 @@ function updatePreview(){
 }
 
 function syncSlider(v){
+  const cap=PRODUCTS[currentProduct].covMax;
   const sl=document.getElementById('cov-slider');
-  const val=Math.min(Math.max(Math.round(+v||0),0),300);
+  const val=Math.min(Math.max(Math.round(+v||0),0),cap);
   document.getElementById('cov-num').value=val;
-  sl.value=val; sl.style.setProperty('--pct',(val/300*100).toFixed(2)+'%');
+  sl.value=val; sl.style.setProperty('--pct',(val/cap*100).toFixed(2)+'%');
   updatePreview(); tryLiveCalculate();
 }
 function syncNum(v){
-  const val=Math.min(Math.max(+v||0),300);
+  const cap=PRODUCTS[currentProduct].covMax;
+  const val=Math.min(Math.max(+v||0),cap);
   document.getElementById('cov-num').value=val;
-  document.getElementById('cov-slider').style.setProperty('--pct',(val/300*100).toFixed(2)+'%');
+  document.getElementById('cov-slider').value=val;
+  document.getElementById('cov-slider').style.setProperty('--pct',(val/cap*100).toFixed(2)+'%');
   if(navigator.vibrate) navigator.vibrate(5);
   updatePreview(); tryLiveCalculate();
 }
@@ -927,10 +987,10 @@ function buildBenefits(cov, annualAmt, prodKey, payPeriod=selectedPeriod){
     {name:'首次罹患癌症（重度）保險金',trigger:'等待期間屆滿後首次確診｜給付一次為限；曾領初期／輕度金時須扣除',amt:`第2年起 ${fmtWan(covWan)} 萬`,sub:`首年為 ${fmt(firstYear)} 元`,hl:true},
     {name:'首次罹患癌症（初期‧輕度）保險金',trigger:'等待期間屆滿後首次確診｜給付一次為限；若先或同時符合重度癌症則不另給付',amt:`第2年起 ${fmtWan(light)} 萬`,sub:`保額10%；首年為 ${fmt(firstYear)} 元`},
     {name:'首次罹患特定癌症（重度）保險金',trigger:`第2保單年度起，重度癌症且屬附表一｜第2至第6年起依序10%、20%、30%、40%、50%｜${P.gender}專屬 ${P.spec.length} 項`,amt:`${fmtWan(specMin)}～${fmtWan(specMax)} 萬`,sub:'額外給付一次',spec:P.spec},
-    {name:'特定傷病保險金',trigger:'第2保單年度起首次確診條款所列特定傷病之一｜給付一次為限',amt:`${fmtWan(illness)} 萬`,sub:'保額 10%'},
-    {name:'特定手術保險金',trigger:'因疾病或傷害實際接受附表二所列特定手術｜契約有效期間給付一次為限',amt:`${fmtWan(surgery)} 萬`,sub:'保額 2%'},
-    {name:'身故保險金',trigger:'年繳保險費總和×1.06－第13至17條應申領各項保險金累計總額',amt:'依身故年度',sub:'按實際繳費年度數計算'},
-    {name:'滿期保險金',trigger:`保險年齡屆滿 ${MATURE_AGE} 歲仍生存；依條款按當年度保險金額給付`,amt:`${fmt(maturity)} 元`,sub:'年繳保費總和×1.06，扣除已領'},
+    {name:'特定傷病保險金',trigger:'契約有效期間內經醫師診斷確定條款所列特定傷病之一（嚴重頭部創傷／嚴重第三度燒燙傷）｜給付一次為限',amt:`${fmtWan(illness)} 萬`,sub:'保額 10%'},
+    {name:'特定手術保險金',trigger:'等待期屆滿後因疾病或傷害實際接受附表二所列特定手術｜契約有效期間給付一次為限',amt:`${fmtWan(surgery)} 萬`,sub:'保額 2%'},
+    {name:'身故（喪葬費用）保險金',trigger:'契約有效期間內身故，按當年度保險金額給付（年繳保費總和×1.06，扣除已領各項保險金）',amt:'依身故年度',sub:P.kind==='終身'?'終身保障·不還本型':'按實際繳費年度數計算'},
+    {name:`${P.matureLabel}保險金`,trigger:`被保險人保險年齡屆滿 ${P.matureAge} 歲仍生存，按當年度保險金額給付後契約終止`,amt:`${fmt(maturity)} 元`,sub:'年繳保費總和×1.06，扣除已領'},
     {name:'豁免保險費',trigger:'繳費期間內確診重度癌症，或意外事故致1～6級失能',amt:'豁免',sub:'診斷確定日後續期保費'}
   ];
 }
@@ -948,12 +1008,12 @@ function calculate(opts){
   const birth=validBirthDate(y,m,d);
   if(!birth){(silent?null:showErr('出生年月日無效或晚於今天'));return;}
   const age=insAge(birth);
-  const maxAge=MAX_AGE[selectedPeriod];
+  const maxAge=P.maxAge[selectedPeriod];
 
-  if(age<MIN_AGE){(silent?null:showErr(`本商品投保年齡自 ${MIN_AGE} 歲起`));return;}
+  if(age<P.minAge){(silent?null:showErr(`本商品投保年齡自 ${P.minAge} 歲起`));return;}
   if(age>maxAge){(silent?null:showErr(`投保年齡 ${age} 歲超過 ${selectedPeriod} 年期上限（${maxAge} 歲）`));return;}
-  if(cov<50){(silent?null:showErr('本商品最低保額為 50 萬元'));return;}
-  if(cov>300){(silent?null:showErr('本商品最高保額為 300 萬元'));return;}
+  if(cov<P.covMin){(silent?null:showErr(`本商品最低保額為 ${P.covMin} 萬元`));return;}
+  if(cov>P.covMax){(silent?null:showErr(`本商品最高保額為 ${P.covMax} 萬元`));return;}
   if(!Number.isInteger(cov)){(silent?null:showErr('保額須以 1 萬元為單位'));return;}
 
   const rate=P.rates[selectedPeriod]?.[age];
@@ -971,7 +1031,7 @@ function calculate(opts){
     `<span style="display:inline-block;padding:4px 10px;background:var(--surface);border-radius:6px;border:1px solid var(--border);margin-right:8px;">${gLabel}</span>` +
     `保險年齡 <strong style="color:var(--tx-main)">${age}</strong> 歲 · 規劃 <strong style="color:var(--tx-main)">${fmt(cov)}</strong> 萬元`;
 
-  document.getElementById('hero-period-tag').textContent = `繳費 ${selectedPeriod} 年 · 保障至 ${MATURE_AGE} 歲`;
+  document.getElementById('hero-period-tag').textContent = `繳費 ${selectedPeriod} 年 · 保障至 ${P.matureAge} 歲（${P.kind}）`;
 
   document.getElementById('f-annual').textContent=fmt(annualAmt);
   document.getElementById('f-semi').textContent=fmt(semi);
@@ -1016,12 +1076,15 @@ function calculate(opts){
 
 function updateDisc(){
   const P=PRODUCTS[currentProduct];
+  const periodsTxt=P.periods.join(' / ');
+  const surrender = P.kind==='定期' ? '本保險無解約金。' : '';
   document.getElementById('disc').innerHTML =
     `※ 本試算以 ${P.code}（${P.full}）費率表為基礎，僅供提案參考，實際保費依富邦人壽核保結果為準。<br>`+
-    `※ 本商品為 <strong>${P.gender}專屬</strong> 防癌定期健康保險，保障至保險年齡 ${MATURE_AGE} 歲，繳費年期可選 10 / 20 年。<br>`+
-    `※ 投保保額 50 ～ 300 萬元（以萬元為單位）；同一被保險人保額型癌症險累計上限 500 萬。<br>`+
+    `※ 本商品為 <strong>${P.gender}專屬</strong> 防癌${P.kind}健康保險，保障至保險年齡 ${P.matureAge} 歲（${P.matureLabel}），繳費年期可選 ${periodsTxt} 年。<br>`+
+    `※ 投保年齡 ${P.minAge} 歲起；投保保額 ${P.covMin} ～ ${P.covMax} 萬元（以萬元為單位）；同一被保險人保額型癌症險累計上限 500 萬。<br>`+
+    `※ 等待期間：${P.waitText}。<br>`+
     `※ 半年繳 ×0.52 ｜季繳 ×0.262 ｜月繳 ×0.088（以年繳為基準換算）。費率適用日期：${P.rateDate} 起。<br>`+
-    `※ *預估總保費以全期年繳、未發生豁免或提前終止、未計健康折扣估算；本保險無解約金。完成條款約定健康檢查並送達報告，次一保單年度續期保費可享 1% 健康折扣。<br>`+
+    `※ *預估總保費以全期年繳、未發生豁免或提前終止、未計健康折扣估算；${surrender}完成條款約定健康檢查並送達報告，次一保單年度續期保費可享 1% 健康管理保險費折扣。<br>`+
     `※ 保險年齡依本次試算日計算，實際投保年齡及承保內容以要保日、核保結果與保單條款為準。`;
 }
 
@@ -1056,7 +1119,7 @@ function printReport(){
     <div class="pa-header">
       <div class="pa-logo-wrap">
         <div class="pa-logo-mark">${P.code}</div>
-        <div class="pa-title"><h1>${P.full}</h1><p>富邦人壽 · ${P.gender}專屬 · 保障至 ${MATURE_AGE} 歲 · 繳費 ${p.selectedPeriod} 年</p></div>
+        <div class="pa-title"><h1>${P.full}</h1><p>富邦人壽 · ${P.gender}專屬 · ${P.kind}防癌 · 保障至 ${P.matureAge} 歲 · 繳費 ${p.selectedPeriod} 年</p></div>
       </div>
       <div class="pa-date">提案日期<span>${dateStr}</span></div>
     </div>
@@ -1084,18 +1147,18 @@ function printReport(){
     <div class="pa-benefits">${benefitHTML}</div>
 
     <div class="pa-notice">
-      <strong>等待期間：</strong>自契約生效日起持續有效 90 日；復效後之認定依保單條款辦理。<br>
-      <strong>投保規則：</strong>本商品為 ${P.gender}專屬，投保年齡 18～${MAX_AGE[p.selectedPeriod]} 歲（${p.selectedPeriod}年期）；保額 50～300 萬，保額型癌症險累計上限 500 萬。<br>
-      <strong>繳費年期：</strong>${p.selectedPeriod} 年期，預計繳費期滿時保險年齡 ${p.endAge} 歲，保障延續至保險年齡 ${MATURE_AGE} 歲。<br>
-      <strong>重要提醒：</strong>本保險無解約金；符合條款健康檢查及送件條件者，次一保單年度續期保費可享 1% 健康折扣。
+      <strong>等待期間：</strong>${P.waitText}；復效後之認定依保單條款辦理。<br>
+      <strong>投保規則：</strong>本商品為 ${P.gender}專屬，投保年齡 ${P.minAge}～${P.maxAge[p.selectedPeriod]} 歲（${p.selectedPeriod}年期）；保額 ${P.covMin}～${P.covMax} 萬，保額型癌症險累計上限 500 萬。<br>
+      <strong>繳費年期：</strong>${p.selectedPeriod} 年期，預計繳費期滿時保險年齡 ${p.endAge} 歲，為${P.kind}保障，保障延續至保險年齡 ${P.matureAge} 歲（${P.matureLabel}）。<br>
+      <strong>重要提醒：</strong>${P.kind==='定期'?'本保險無解約金；':''}符合條款健康檢查及送件條件者，次一保單年度續期保費可享 1% 健康管理保險費折扣。
     </div>
 
     <div class="pa-footer">
       ※ 本建議書由系統依費率表試算產出（費率適用日期：${P.rateDate} 起），僅供提案參考，實際承保條件以富邦人壽核保結果及保單條款為準。<br>
       ※ 保費換算：半年繳 ×0.52 ｜季繳 ×0.262 ｜月繳 ×0.088。平均每月 = 年繳 ÷ 12（實際月繳金額以月繳費率為準）。<br>
-      ※ 首次罹患癌症（初期／輕度或重度）第1保單年度按年繳保險費總和×1.06給付，第2保單年度起分別依保額10%或100%給付。<br>
-      ※ 特定癌症（重度）為額外給付，第2至第6保單年度起依序為保額10%、20%、30%、40%、50%；特定手術按保額2%給付，契約有效期間以一次為限。<br>
-      ※ 身故／滿期保險金為年繳保險費總和×1.06，扣除第13至17條應申領之各項保險金累計總額後的餘額；詳細定義與限制以保單條款為準。
+      ※ 首次罹患癌症（初期／輕度）第1保單年度按年繳保險費總和×1.06給付，第2保單年度起依保額10%給付；重度癌症第2保單年度起按保額與年繳保費總和×1.06取較大值給付。<br>
+      ※ 特定癌症（重度）為額外給付，第2至第6保單年度起依序為保額10%、20%、30%、40%、50%；特定手術按保額2%、特定傷病按保額10%給付，契約有效期間各以一次為限。<br>
+      ※ 身故（喪葬費用）／${P.matureLabel}保險金按當年度保險金額給付（年繳保險費總和×1.06，扣除第13至17條應申領之各項保險金累計總額後之餘額）；詳細定義與限制以保單條款為準。
     </div>
   `;
   window.print();
