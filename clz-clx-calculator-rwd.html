@@ -977,22 +977,39 @@ function tryLiveCalculate(){
 
 function buildBenefits(cov, annualAmt, prodKey, payPeriod=selectedPeriod){
   const P = PRODUCTS[prodKey || currentProduct];
+  const life = P.kind==='終身';
   const covWan = cov;                          // 保額（萬）
-  const firstYear=Math.round(annualAmt*1.06);   // 第1保單年度癌症給付
+  const firstYear=Math.round(annualAmt*1.06);   // 第1保單年度癌症給付＝年繳保費總和×1.06
   const light=cov*0.1;                         // 初期/輕度 10%
   const specMin=cov*0.1, specMax=cov*0.5;      // 特定癌症 10%～50%
   const illness=cov*0.1;                       // 特定傷病 10%
   const surgery=cov*0.02;                      // 特定手術 2%
   const maturity=Math.round(annualAmt*payPeriod*1.06);
+  // 重度癌症第2年起：定期＝按保額給付；終身＝保額與年繳保費總和×1.06取較大值
+  const severeWan = life ? Math.max(covWan, firstYear/10000) : covWan;
+  const severeTrigger = life
+    ? '等待期間屆滿後首次確診｜第2年起按「保額」與「年繳保費總和×1.06」取較大值；曾領初期／輕度金須扣除｜給付一次為限'
+    : '等待期間屆滿後首次確診｜第2年起按保險金額（保額）給付；曾領初期／輕度金須扣除｜給付一次為限';
+  // 特定傷病：定期＝第2保單年度起；終身＝契約有效期間內
+  const illnessTrigger = life
+    ? '契約有效期間內經醫師診斷確定條款所列特定傷病之一（嚴重頭部創傷／嚴重第三度燒燙傷）｜給付一次為限'
+    : '第2保單年度起經醫師確診條款所列特定傷病之一（嚴重頭部創傷／嚴重第三度燒燙傷）｜給付一次為限';
+  // 特定手術：定期＝有效期間內；終身＝等待期屆滿後
+  const surgeryTrigger = life
+    ? '等待期屆滿後因疾病或傷害實際接受附表二所列特定手術｜契約有效期間給付一次為限'
+    : '契約有效期間內因疾病或傷害實際接受附表二所列特定手術｜契約有效期間給付一次為限';
+  const deathTrigger = life
+    ? '契約有效期間內身故，按當年度保險金額給付（未滿15足歲改退還所繳保險費）'
+    : '契約有效期間內身故，按當年度保險金額給付（年繳保費總和×1.06，扣除已領各項保險金）';
   return [
-    {name:'首次罹患癌症（重度）保險金',trigger:'等待期間屆滿後首次確診｜給付一次為限；曾領初期／輕度金時須扣除',amt:`第2年起 ${fmtWan(covWan)} 萬`,sub:`首年為 ${fmt(firstYear)} 元`,hl:true},
+    {name:'首次罹患癌症（重度）保險金',trigger:severeTrigger,amt:`第2年起 ${fmtWan(severeWan)} 萬`,sub:`首年為 ${fmt(firstYear)} 元`,hl:true},
     {name:'首次罹患癌症（初期‧輕度）保險金',trigger:'等待期間屆滿後首次確診｜給付一次為限；若先或同時符合重度癌症則不另給付',amt:`第2年起 ${fmtWan(light)} 萬`,sub:`保額10%；首年為 ${fmt(firstYear)} 元`},
     {name:'首次罹患特定癌症（重度）保險金',trigger:`第2保單年度起，重度癌症且屬附表一｜第2至第6年起依序10%、20%、30%、40%、50%｜${P.gender}專屬 ${P.spec.length} 項`,amt:`${fmtWan(specMin)}～${fmtWan(specMax)} 萬`,sub:'額外給付一次',spec:P.spec},
-    {name:'特定傷病保險金',trigger:'契約有效期間內經醫師診斷確定條款所列特定傷病之一（嚴重頭部創傷／嚴重第三度燒燙傷）｜給付一次為限',amt:`${fmtWan(illness)} 萬`,sub:'保額 10%'},
-    {name:'特定手術保險金',trigger:'等待期屆滿後因疾病或傷害實際接受附表二所列特定手術｜契約有效期間給付一次為限',amt:`${fmtWan(surgery)} 萬`,sub:'保額 2%'},
-    {name:'身故（喪葬費用）保險金',trigger:'契約有效期間內身故，按當年度保險金額給付（年繳保費總和×1.06，扣除已領各項保險金）',amt:'依身故年度',sub:P.kind==='終身'?'終身保障·不還本型':'按實際繳費年度數計算'},
+    {name:'特定傷病保險金',trigger:illnessTrigger,amt:`${fmtWan(illness)} 萬`,sub:'保額 10%'},
+    {name:'特定手術保險金',trigger:surgeryTrigger,amt:`${fmtWan(surgery)} 萬`,sub:'保額 2%'},
+    {name:'身故（喪葬費用）保險金',trigger:deathTrigger,amt:'依身故年度',sub:life?'終身保障·不還本型':'定期保障'},
     {name:`${P.matureLabel}保險金`,trigger:`被保險人保險年齡屆滿 ${P.matureAge} 歲仍生存，按當年度保險金額給付後契約終止`,amt:`${fmt(maturity)} 元`,sub:'年繳保費總和×1.06，扣除已領'},
-    {name:'豁免保險費',trigger:'繳費期間內確診重度癌症，或意外事故致1～6級失能',amt:'豁免',sub:'診斷確定日後續期保費'}
+    {name:'豁免保險費',trigger:'繳費期間（繳費中）確診重度癌症，或意外事故致1～6級失能',amt:'豁免',sub:'診斷確定日後續期保費'}
   ];
 }
 
@@ -1101,6 +1118,8 @@ function printReport(){
   const dateStr=`${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
   const monthlyAvg=Math.round(p.annualAmt/12);
   const benefits=buildBenefits(p.cov, p.annualAmt, p.product, p.selectedPeriod);
+  const sevY2 = P.kind==='終身' ? '按「保額」與「年繳保費總和×1.06」取較大值給付' : '按保險金額（保額）給付';
+  const sevTag = P.kind==='終身' ? '第2年起取保額與年繳×1.06較大值' : '第2年起給付保額';
 
   const benefitHTML=benefits.map((b,i)=>{
     const specHTML = b.spec ? `<div class="pa-spec">${b.spec.map(s=>`<span class="sp"><b>${s.c}</b> ${s.n}</span>`).join('')}</div>` : '';
@@ -1136,7 +1155,7 @@ function printReport(){
     <div class="pa-premium-card">
       <div class="pa-annual-label">年繳保費</div>
       <div class="pa-annual-num"><span class="pa-cur">$</span>${fmt(p.annualAmt)}<span style="font-size:16px;font-weight:700;color:#4B5468;margin-left:4px">元</span></div>
-      <div class="pa-monthly-tagline">▸ 平均每月提撥 $${fmt(monthlyAvg)} 元；重度癌症首年給付年繳保費×1.06，第2年起給付保額</div>
+      <div class="pa-monthly-tagline">▸ 平均每月提撥 $${fmt(monthlyAvg)} 元；重度癌症首年給付年繳保費×1.06，${sevTag}</div>
       <div class="pa-freq-grid">
         <div class="pa-freq-box"><div class="pa-freq-label">半年繳</div><div class="pa-freq-val">${fmt(p.semi)}</div><div class="pa-freq-unit">元 / 期</div></div>
         <div class="pa-freq-box"><div class="pa-freq-label">季繳</div><div class="pa-freq-val">${fmt(p.quarter)}</div><div class="pa-freq-unit">元 / 期</div></div>
@@ -1157,7 +1176,7 @@ function printReport(){
     <div class="pa-footer">
       ※ 本建議書由系統依費率表試算產出（費率適用日期：${P.rateDate} 起），僅供提案參考，實際承保條件以富邦人壽核保結果及保單條款為準。<br>
       ※ 保費換算：半年繳 ×0.52 ｜季繳 ×0.262 ｜月繳 ×0.088。平均每月 = 年繳 ÷ 12（實際月繳金額以月繳費率為準）。<br>
-      ※ 首次罹患癌症（初期／輕度）第1保單年度按年繳保險費總和×1.06給付，第2保單年度起依保額10%給付；重度癌症第2保單年度起按保額與年繳保費總和×1.06取較大值給付。<br>
+      ※ 首次罹患癌症（初期／輕度）第1保單年度按年繳保險費總和×1.06給付，第2保單年度起依保額10%給付；重度癌症第1保單年度按年繳保費總和×1.06、第2保單年度起${sevY2}。<br>
       ※ 特定癌症（重度）為額外給付，第2至第6保單年度起依序為保額10%、20%、30%、40%、50%；特定手術按保額2%、特定傷病按保額10%給付，契約有效期間各以一次為限。<br>
       ※ 身故（喪葬費用）／${P.matureLabel}保險金按當年度保險金額給付（年繳保險費總和×1.06，扣除第13至17條應申領之各項保險金累計總額後之餘額）；詳細定義與限制以保單條款為準。
     </div>
