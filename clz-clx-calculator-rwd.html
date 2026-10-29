@@ -1102,7 +1102,7 @@ function updateDisc(){
     `※ 投保年齡 ${P.minAge} 歲起；投保保額 ${P.covMin} ～ ${P.covMax} 萬元（以萬元為單位）；同一被保險人保額型癌症險累計上限 500 萬。<br>`+
     `※ 等待期間：${P.waitText}。<br>`+
     `※ 半年繳 ×0.52 ｜季繳 ×0.262 ｜月繳 ×0.088（以年繳為基準換算）。費率適用日期：${P.rateDate} 起。<br>`+
-    `※ *預估總保費以全期年繳、未發生豁免或提前終止、未計健康折扣估算；${surrender}完成條款約定健康檢查並送達報告，次一保單年度續期保費可享 1% 健康管理保險費折扣。<br>`+
+    `※ *預估總保費以全期年繳、未發生豁免或提前終止、未計健康折扣估算；${surrender}完成條款約定健康檢查並送達報告，次一保單年度續期保費可享 1% 健康管理保險費折扣（自保險年齡 18 歲後適用）。<br>`+
     `※ 保險年齡依本次試算日計算，實際投保年齡及承保內容以要保日、核保結果與保單條款為準。`;
 }
 
@@ -1170,7 +1170,7 @@ function printReport(){
       <strong>等待期間：</strong>${P.waitText}；復效後之認定依保單條款辦理。<br>
       <strong>投保規則：</strong>本商品為 ${P.gender}專屬，投保年齡 ${P.minAge}～${P.maxAge[p.selectedPeriod]} 歲（${p.selectedPeriod}年期）；保額 ${P.covMin}～${P.covMax} 萬，保額型癌症險累計上限 500 萬。<br>
       <strong>繳費年期：</strong>${p.selectedPeriod} 年期，預計繳費期滿時保險年齡 ${p.endAge} 歲，為${P.kind}保障，保障延續至保險年齡 ${P.matureAge} 歲（${P.matureLabel}）。<br>
-      <strong>重要提醒：</strong>${P.kind==='定期'?'本保險無解約金；':''}符合條款健康檢查及送件條件者，次一保單年度續期保費可享 1% 健康管理保險費折扣。
+      <strong>重要提醒：</strong>${P.kind==='定期'?'本保險無解約金；':''}符合條款健康檢查及送件條件者，次一保單年度續期保費可享 1% 健康管理保險費折扣（自保險年齡 18 歲後適用）。
     </div>
 
     <div class="pa-footer">
