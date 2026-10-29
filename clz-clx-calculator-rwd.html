@@ -745,18 +745,22 @@ const SPEC_M=[{c:'C18',n:'結腸'},{c:'C19',n:'直腸乙狀結腸連接處'},{c:
 const SPEC_F=[{c:'C43',n:'皮膚黑色素瘤'},{c:'C44',n:'其他皮膚'},{c:'C50',n:'乳房'},{c:'C51',n:'外陰'},{c:'C52',n:'陰道'},{c:'C53',n:'子宮頸'},{c:'C54',n:'子宮體'},{c:'C55',n:'未明示部位子宮'},{c:'C56',n:'卵巢'},{c:'C57',n:'其他女性生殖器官'},{c:'C58',n:'胎盤'}];
 const BLUE={brand:'#1D4ED8',dark:'#1E3A8A',bg:'#EFF6FF'};
 const ROSE={brand:'#E11D48',dark:'#9F1239',bg:'#FFF1F3'};
+// 特定傷病（條款第二條）— 每商品各不相同，不可共用
+const ILL_CLZ=['主動脈外科置換手術','嚴重肝硬化症'];                 // CLZ 男定期
+const ILL_CLX=['嚴重全身性紅斑性狼瘡腎病變','嚴重類風濕性關節炎'];   // CLX 女定期
+const ILL_LIFE=['嚴重頭部創傷','嚴重第三度燒燙傷'];                 // CIA/CIB 終身共用
 
 const PRODUCTS = {
-  clz:{code:'CLZ',full:'豪愛無憂 防癌定期健康保險',gender:'男性',icon:'👨🏻',rateDate:'1150429',rates:CLZ,theme:BLUE,spec:SPEC_M,
+  clz:{code:'CLZ',full:'豪愛無憂 防癌定期健康保險',gender:'男性',icon:'👨🏻',rateDate:'1150429',rates:CLZ,theme:BLUE,spec:SPEC_M,illness:ILL_CLZ,
        kind:'定期',periods:[10,20],maxAge:{10:60,20:50},minAge:18,matureAge:89,matureLabel:'滿期',covMin:50,covMax:300,
        waitText:'自契約生效日起持續有效 90 日，因意外傷害事故所致者不受限制'},
-  clx:{code:'CLX',full:'真馨相守 防癌定期健康保險',gender:'女性',icon:'👩🏻',rateDate:'115.02.10',rates:CLX,theme:ROSE,spec:SPEC_F,
+  clx:{code:'CLX',full:'真馨相守 防癌定期健康保險',gender:'女性',icon:'👩🏻',rateDate:'115.02.10',rates:CLX,theme:ROSE,spec:SPEC_F,illness:ILL_CLX,
        kind:'定期',periods:[10,20],maxAge:{10:60,20:50},minAge:18,matureAge:89,matureLabel:'滿期',covMin:50,covMax:300,
        waitText:'自契約生效日起持續有效 90 日，因意外傷害事故所致者不受限制'},
-  cia:{code:'CIA',full:'豪愛守護防癌終身健康保險',gender:'男性',icon:'👨🏻',rateDate:'1151023',rates:CIA,theme:BLUE,spec:SPEC_M,
+  cia:{code:'CIA',full:'豪愛守護防癌終身健康保險',gender:'男性',icon:'👨🏻',rateDate:'1151023',rates:CIA,theme:BLUE,spec:SPEC_M,illness:ILL_LIFE,
        kind:'終身',periods:[10,20,30],maxAge:{10:65,20:55,30:45},minAge:0,matureAge:95,matureLabel:'祝壽',covMin:50,covMax:500,
        waitText:'自契約生效日起 30 日（癌症為 90 日），因意外傷害事故所致者不受限制'},
-  cib:{code:'CIB',full:'真馨守護防癌終身健康保險',gender:'女性',icon:'👩🏻',rateDate:'1151023',rates:CIB,theme:ROSE,spec:SPEC_F,
+  cib:{code:'CIB',full:'真馨守護防癌終身健康保險',gender:'女性',icon:'👩🏻',rateDate:'1151023',rates:CIB,theme:ROSE,spec:SPEC_F,illness:ILL_LIFE,
        kind:'終身',periods:[10,20,30],maxAge:{10:65,20:55,30:45},minAge:0,matureAge:95,matureLabel:'祝壽',covMin:50,covMax:500,
        waitText:'自契約生效日起 30 日（癌症為 90 日），因意外傷害事故所致者不受限制'}
 };
@@ -995,10 +999,11 @@ function buildBenefits(cov, annualAmt, prodKey, payPeriod=selectedPeriod){
   const severeTrigger = life
     ? '等待期間屆滿後首次確診｜第2年起按「保額」與「年繳保費總和×1.06」取較大值；曾領初期／輕度金須扣除｜給付一次為限'
     : '等待期間屆滿後首次確診｜第2年起按保險金額（保額）給付；曾領初期／輕度金須扣除｜給付一次為限';
-  // 特定傷病：定期＝第2保單年度起；終身＝契約有效期間內
+  // 特定傷病：病項每商品不同（P.illness）；定期＝第2保單年度起、終身＝契約有效期間內
+  const illNames = P.illness.join('／');
   const illnessTrigger = life
-    ? '契約有效期間內經醫師診斷確定條款所列特定傷病之一（嚴重頭部創傷／嚴重第三度燒燙傷）｜給付一次為限'
-    : '第2保單年度起經醫師確診條款所列特定傷病之一（嚴重頭部創傷／嚴重第三度燒燙傷）｜給付一次為限';
+    ? `契約有效期間內經醫師診斷確定條款所列特定傷病之一（${illNames}）｜給付一次為限`
+    : `第2保單年度起經醫師確診條款所列特定傷病之一（${illNames}）｜給付一次為限`;
   // 特定手術：定期＝有效期間內；終身＝等待期屆滿後
   const surgeryTrigger = life
     ? '等待期屆滿後因疾病或傷害實際接受附表二所列特定手術｜契約有效期間給付一次為限'
