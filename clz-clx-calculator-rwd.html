@@ -202,7 +202,7 @@ input[type=range]::-webkit-slider-thumb:active{
   box-shadow:0 4px 16px color-mix(in srgb,var(--brand) 30%,transparent),0 0 0 4px var(--surface),0 0 0 8px var(--brand-bg);
 }
 .slider-ticks{display:flex;justify-content:space-between;margin-top:12px;padding:0 4px;}
-.slider-tick{font-size:12px;color:var(--tx-muted);font-weight:600;}
+.slider-tick{font-size:11px;color:var(--tx-muted);font-weight:600;white-space:nowrap;}
 
 #err{display:none;margin-top:16px;font-size:14px;font-weight:600;color:var(--red);text-align:center;background:#FFF1F2;padding:10px;border-radius:10px;}
 #err.on{display:block;animation:shake .4s ease;}
@@ -818,7 +818,8 @@ function renderPeriods(P){
 function renderCovScale(P){
   const num=document.getElementById('cov-num'), sl=document.getElementById('cov-slider');
   num.max=P.covMax; sl.max=P.covMax;
-  const ticks = P.covMax>=500 ? [50,200,350,P.covMax] : [50,150,250,P.covMax];
+  // 每 50 萬一個刻度：定期 50→300、終身 50→500
+  const ticks=[]; for(let t=50;t<=P.covMax;t+=50) ticks.push(t);
   document.getElementById('slider-ticks').innerHTML =
     ticks.map((t,i)=>`<span class="slider-tick">${t}${i===ticks.length-1?'萬':''}</span>`).join('');
 }
