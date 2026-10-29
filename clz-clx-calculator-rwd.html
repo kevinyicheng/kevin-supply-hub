@@ -817,9 +817,10 @@ function renderPeriods(P){
 
 function renderCovScale(P){
   const num=document.getElementById('cov-num'), sl=document.getElementById('cov-slider');
-  num.max=P.covMax; sl.max=P.covMax;
-  // 每 50 萬一個刻度：定期 50→300、終身 50→500
-  const ticks=[]; for(let t=50;t<=P.covMax;t+=50) ticks.push(t);
+  // 滑桿值域 = 最低保額 → 最高保額，刻度才會與實際值對齊
+  num.max=P.covMax; sl.min=P.covMin; sl.max=P.covMax;
+  // 每 50 萬一個刻度：定期 50→300、終身 50→500（刻度平均分佈＝值平均分佈）
+  const ticks=[]; for(let t=P.covMin;t<=P.covMax;t+=50) ticks.push(t);
   document.getElementById('slider-ticks').innerHTML =
     ticks.map((t,i)=>`<span class="slider-tick">${t}${i===ticks.length-1?'萬':''}</span>`).join('');
 }
@@ -921,12 +922,16 @@ function updatePreview(){
   document.getElementById('preview-annual').textContent = rate ? fmt(rate*cov)+' 元' : '—';
 }
 
+function covPct(val){
+  const P=PRODUCTS[currentProduct], lo=P.covMin, cap=P.covMax;
+  return cap>lo ? Math.min(Math.max((val-lo)/(cap-lo)*100,0),100) : 0;
+}
 function syncSlider(v){
   const cap=PRODUCTS[currentProduct].covMax;
   const sl=document.getElementById('cov-slider');
   const val=Math.min(Math.max(Math.round(+v||0),0),cap);
   document.getElementById('cov-num').value=val;
-  sl.value=val; sl.style.setProperty('--pct',(val/cap*100).toFixed(2)+'%');
+  sl.value=val; sl.style.setProperty('--pct',covPct(val).toFixed(2)+'%');
   updatePreview(); tryLiveCalculate();
 }
 function syncNum(v){
@@ -934,7 +939,7 @@ function syncNum(v){
   const val=Math.min(Math.max(+v||0),cap);
   document.getElementById('cov-num').value=val;
   document.getElementById('cov-slider').value=val;
-  document.getElementById('cov-slider').style.setProperty('--pct',(val/cap*100).toFixed(2)+'%');
+  document.getElementById('cov-slider').style.setProperty('--pct',covPct(val).toFixed(2)+'%');
   if(navigator.vibrate) navigator.vibrate(5);
   updatePreview(); tryLiveCalculate();
 }
