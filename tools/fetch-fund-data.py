@@ -36,6 +36,8 @@ FUNDS = [
     {"code": "DSP5",  "cat": "25", "name_zh": "安聯收益成長基金-AM穩定月收類股(美元)"},
     {"code": "JFP11", "cat": "39", "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)"},
     {"code": "MLE20", "cat": "27", "name_zh": "貝萊德全球智慧數據股票入息基金A6美元(穩定配息)"},
+    {"code": "SCP6",  "cat": "29", "name_zh": "施羅德環球基金系列-環球收益成長(美元)A-月配固定2"},
+    {"code": "ACE17", "cat": "40", "name_zh": "聯博-美國成長基金AP(總報酬月配)級別美元"},
 ]
 
 BASE     = "https://invest.fubonlife.com.tw"
