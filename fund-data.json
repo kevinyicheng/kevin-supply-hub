@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-30T15:29:33+08:00",
+  "updated_at": "2026-10-30T16:39:05+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -12,7 +12,8 @@
       "has_payout": true,
       "payout": 0.06,
       "payout_ex_date": "2026-10-14",
-      "payout_pay_date": "2026-10-15"
+      "payout_pay_date": "2026-10-15",
+      "annual_yield_gross": 8.69
     },
     {
       "code": "JFP11",
@@ -24,7 +25,8 @@
       "has_payout": true,
       "payout": 0.609,
       "payout_ex_date": "2026-10-07",
-      "payout_pay_date": "2026-10-08"
+      "payout_pay_date": "2026-10-08",
+      "annual_yield_gross": 10.1
     },
     {
       "code": "MLE20",
@@ -36,7 +38,8 @@
       "has_payout": true,
       "payout": 0.066,
       "payout_ex_date": "2026-09-29",
-      "payout_pay_date": "2026-09-30"
+      "payout_pay_date": "2026-09-30",
+      "annual_yield_gross": 7.93
     },
     {
       "code": "SCP6",
@@ -48,7 +51,8 @@
       "has_payout": true,
       "payout": 1.1759,
       "payout_ex_date": "2026-09-23",
-      "payout_pay_date": "2026-09-24"
+      "payout_pay_date": "2026-09-24",
+      "annual_yield_gross": 10.46
     },
     {
       "code": "ACE17",
@@ -60,7 +64,8 @@
       "has_payout": true,
       "payout": 0.8322,
       "payout_ex_date": "2026-09-29",
-      "payout_pay_date": "2026-09-30"
+      "payout_pay_date": "2026-09-30",
+      "annual_yield_gross": 13.89
     }
   ]
 }

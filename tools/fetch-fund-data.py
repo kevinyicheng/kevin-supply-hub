@@ -131,6 +131,8 @@ def build_fund(cfg: dict) -> dict:
             "payout": payout[0],
             "payout_ex_date": payout[1],
             "payout_pay_date": payout[2],
+            # 毛年配息率(%)=月配×12÷淨值。手續費級距由前端依投入金額套用，故此處只給毛值
+            "annual_yield_gross": round(payout[0] * 12 / nav * 100, 2) if nav else None,
         })
     else:
         entry["has_payout"] = False

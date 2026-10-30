@@ -557,6 +557,7 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
           <label>假設匯率（台幣 / USD）</label>
           <input type="number" id="f-fx-rate" value="32" min="1" step="0.01">
           <span class="input-hint" id="f-fx-hint">載入即時匯率中…</span>
+          <div style="margin-top:8px"><span class="badge badge-milestone" id="f-yield-badge" style="display:none"></span></div>
         </div>
       </div>
       <button class="btn-primary" onclick="calcFund()">試算配息</button>
@@ -1955,7 +1956,27 @@ function applyFundSelection() {
     if (poHint) poHint.textContent = '此基金無配息記錄（累積型），請手動輸入或參考來源';
   }
 
+  updateYieldBadge();
   calcFund();
+}
+
+// 扣手續費後「首年實拿」年配息率 badge：毛年配息率 × 級距折扣率（依投入金額）
+function updateYieldBadge() {
+  const badge     = document.getElementById('f-yield-badge');
+  if (!badge) return;
+  const netValue   = parseFloat(document.getElementById('f-netvalue').value) || 0;
+  const unitPayout = parseFloat(document.getElementById('f-payout').value)   || 0;
+  const investment = parseComma(document.getElementById('f-investment').value) || 0;
+  if (!netValue || !unitPayout) { badge.style.display = 'none'; return; }
+
+  const grossYield = unitPayout * 12 / netValue;                 // 毛年配息率（匯率相消）
+  const discount   = getFundDiscountRate(investment);            // 入帳比例 = 1 − 手續費率
+  const netYield   = grossYield * discount;
+  const feePct     = Math.round((1 - discount) * 100);
+
+  badge.textContent = `扣${feePct}%手續費後首年實拿 ${(netYield * 100).toFixed(1)}%`;
+  badge.title = `毛年配息率 ${(grossYield * 100).toFixed(1)}%　×　入帳 ${(discount * 100).toFixed(0)}%（投入 ${fmt(investment)} 元級距）。手續費僅稀釋首年，次年起回毛值。配息非保證。`;
+  badge.style.display = 'inline-block';
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1968,6 +1989,12 @@ document.addEventListener('DOMContentLoaded', () => {
   calcInsurance();     // 預設計算
   fetchUsdRate();      // 撈即時 USD/TWD 匯率
   fetchFundData();     // 撈最新淨值 / 配息
+
+  // 配息基金：淨值／配息／投入金額變動 → 即時更新年配息率 badge
+  ['f-netvalue','f-payout','f-investment'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateYieldBadge);
+  });
 
   // 房貸試算：任一欄位變動即時重算
   ['m-age','m-principal','m-rate','m-years','m-grace'].forEach(id => {
