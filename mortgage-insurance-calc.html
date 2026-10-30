@@ -279,11 +279,10 @@ tr.milestone-row{background:var(--green-bg);}
 .badge-milestone{background:var(--green-bg);color:var(--green);border:1px solid rgba(5,150,105,0.2);}
 .badge-fx{background:var(--brand-bg);color:var(--brand);}
 .badge-topup{background:var(--brand-bg);color:var(--brand-dark);border:1px solid var(--brand-border);}
-.yield-badge{
-  display:block;box-sizing:border-box;width:100%;margin-top:10px;
-  padding:10px 16px;border-radius:12px;text-align:center;
-  font-size:16px;font-weight:800;line-height:1.3;
-  background:var(--green-bg);color:var(--green);border:1px solid rgba(5,150,105,0.25);
+.result-box{
+  width:100%;box-sizing:border-box;padding:14px 16px;border-radius:14px;
+  border:1px solid rgba(5,150,105,0.25);background:var(--green-bg);
+  color:var(--green);font-size:20px;font-weight:800;line-height:1.4;
 }
 
 /* ── 年度加碼 ── */
@@ -553,7 +552,6 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
           <label>假設淨值（USD / 單位）</label>
           <input type="number" id="f-netvalue" value="8.5" min="0.01" step="0.01">
           <span class="input-hint" id="f-netvalue-hint">載入最新淨值中… <a href="https://invest.fubonlife.com.tw/w/wb/wb02.djhtm?a=TLZ64-DSP5" target="_blank" style="color:var(--brand);">查看來源</a></span>
-          <div id="f-yield-badge" class="yield-badge" style="display:none"></div>
         </div>
         <div class="form-group">
           <label>每單位月配息（USD）</label>
@@ -564,6 +562,11 @@ tr.topup-editor td{background:var(--brand-bg);padding:14px 16px;}
           <label>假設匯率（台幣 / USD）</label>
           <input type="number" id="f-fx-rate" value="32" min="1" step="0.01">
           <span class="input-hint" id="f-fx-hint">載入即時匯率中…</span>
+        </div>
+        <div class="form-group">
+          <label>年配息率約為（扣除手續費後）</label>
+          <div class="result-box" id="f-yield-box">—</div>
+          <span class="input-hint">毛配息率 × 入帳比例（手續費依投入級距），僅反映首年</span>
         </div>
       </div>
       <button class="btn-primary" onclick="calcFund()">試算配息</button>
@@ -1966,23 +1969,22 @@ function applyFundSelection() {
   calcFund();
 }
 
-// 扣手續費後「首年實拿」年配息率 badge：毛年配息率 × 級距折扣率（依投入金額）
+// 扣手續費後「首年實拿」年配息率：毛年配息率 × 級距折扣率（依投入金額）
 function updateYieldBadge() {
-  const badge     = document.getElementById('f-yield-badge');
-  if (!badge) return;
+  const box = document.getElementById('f-yield-box');
+  if (!box) return;
   const netValue   = parseFloat(document.getElementById('f-netvalue').value) || 0;
   const unitPayout = parseFloat(document.getElementById('f-payout').value)   || 0;
   const investment = parseComma(document.getElementById('f-investment').value) || 0;
-  if (!netValue || !unitPayout) { badge.style.display = 'none'; return; }
+  if (!netValue || !unitPayout) { box.textContent = '—'; box.title = ''; return; }
 
   const grossYield = unitPayout * 12 / netValue;                 // 毛年配息率（匯率相消）
   const discount   = getFundDiscountRate(investment);            // 入帳比例 = 1 − 手續費率
   const netYield   = grossYield * discount;
   const feePct     = Math.round((1 - discount) * 100);
 
-  badge.textContent = `年配息率約為 ${(netYield * 100).toFixed(1)}%（已扣除手續費）`;
-  badge.title = `毛年配息率 ${(grossYield * 100).toFixed(1)}%　×　入帳 ${(discount * 100).toFixed(0)}%（扣 ${feePct}% 手續費，投入 ${fmt(investment)} 元級距）。手續費僅稀釋首年，次年起回毛值。配息非保證。`;
-  badge.style.display = 'inline-block';
+  box.textContent = `${(netYield * 100).toFixed(2)}%`;
+  box.title = `毛年配息率 ${(grossYield * 100).toFixed(2)}%　×　入帳 ${(discount * 100).toFixed(0)}%（扣 ${feePct}% 手續費，投入 ${fmt(investment)} 元級距）。手續費僅稀釋首年，次年起回毛值。配息非保證。`;
 }
 
 // ══════════════════════════════════════════════════════════════════
