@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-31T16:00:11+08:00",
+  "updated_at": "2026-11-01T18:00:11+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -49,10 +49,10 @@
       "nav_date": "2026-10-29",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/29/SCP6",
       "has_payout": true,
-      "payout": 1.1759,
-      "payout_ex_date": "2026-09-23",
-      "payout_pay_date": "2026-09-24",
-      "annual_yield_gross": 10.46
+      "payout": 1.1335,
+      "payout_ex_date": "2026-10-28",
+      "payout_pay_date": "2026-10-29",
+      "annual_yield_gross": 10.08
     },
     {
       "code": "ACE17",
