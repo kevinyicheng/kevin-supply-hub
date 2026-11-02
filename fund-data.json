@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-02T14:08:23+08:00",
+  "updated_at": "2026-11-02T18:00:10+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -37,8 +37,8 @@
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/27/MLE20",
       "has_payout": true,
       "payout": 0.066,
-      "payout_ex_date": "2026-09-29",
-      "payout_pay_date": "2026-09-30",
+      "payout_ex_date": "2026-10-29",
+      "payout_pay_date": "2026-10-30",
       "annual_yield_gross": 7.99
     },
     {
@@ -63,8 +63,8 @@
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/40/ACE17",
       "has_payout": true,
       "payout": 0.8322,
-      "payout_ex_date": "2026-09-29",
-      "payout_pay_date": "2026-09-30",
+      "payout_ex_date": "2026-10-29",
+      "payout_pay_date": "2026-10-30",
       "annual_yield_gross": 14.39
     }
   ]
