@@ -516,6 +516,21 @@ input[type=range]::-webkit-slider-thumb:active{
 .ks-back img{width:26px;height:26px;border-radius:50%;display:block;}
 @media print{.ks-back{display:none!important;}}
 </style>
+
+<!-- 骨折表 TAB 切換 -->
+<style>
+#fracture-view{display:none;}
+#frac-iframe{width:100%;border:0;display:block;background:transparent;min-height:600px;}
+.page.frac-mode > header,
+.page.frac-mode > .card,
+.page.frac-mode > #err,
+.page.frac-mode > .results{display:none !important;}
+.page.frac-mode #fracture-view{display:block;animation:fadeUp .4s ease;}
+@media (min-width:1024px){
+  .page.frac-mode{display:block !important;}
+  .page.frac-mode .prod-switch{max-width:560px;margin:0 auto 16px;}
+}
+</style>
 </head>
 <body>
 
@@ -542,7 +557,7 @@ input[type=range]::-webkit-slider-thumb:active{
 
 <div class="page">
 
-  <!-- Gender Switcher（AJK 男女同費率，此處僅切換被保人標示與建議書） -->
+  <!-- Gender / View Switcher（男女同費率，僅切換被保人標示；第三顆切到骨折給付表） -->
   <div class="prod-switch">
     <button class="ps-btn on" id="ps-m" onclick="setGender('m')">
       <span class="ps-code">👨🏻 男性</span>
@@ -551,6 +566,10 @@ input[type=range]::-webkit-slider-thumb:active{
     <button class="ps-btn" id="ps-f" onclick="setGender('f')">
       <span class="ps-code">👩🏻 女性</span>
       <span class="ps-name">溢起馬拉松傷害</span>
+    </button>
+    <button class="ps-btn" id="ps-frac" onclick="showFracture()">
+      <span class="ps-code">🦴 骨折表</span>
+      <span class="ps-name">完全骨折給付比例</span>
     </button>
   </div>
 
@@ -684,6 +703,11 @@ input[type=range]::-webkit-slider-thumb:active{
       輸出 A4 建議書
     </button>
   </div>
+
+  <!-- 骨折給付比例表（TAB 切換顯示） -->
+  <div id="fracture-view">
+    <iframe id="frac-iframe" title="骨折給付比例表" src="ajk-fracture-table.html" scrolling="no" loading="lazy" onload="sizeFracture()"></iframe>
+  </div>
 </div>
 
 <div class="ks-watermark"><div class="ks-dot"></div>Keri · AJK 試算</div>
@@ -764,7 +788,29 @@ function insAge(bDate, ref = new Date()){
   return attained+(ref>sixMonths?1:0);
 }
 
+function showFracture(){
+  document.querySelector('.page').classList.add('frac-mode');
+  document.getElementById('ps-m').classList.remove('on');
+  document.getElementById('ps-f').classList.remove('on');
+  document.getElementById('ps-frac').classList.add('on');
+  sizeFracture();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function sizeFracture(){
+  const f=document.getElementById('frac-iframe');
+  if(!f) return;
+  try{
+    const h=f.contentWindow.document.documentElement.scrollHeight;
+    if(h>200) f.style.height=(h+8)+'px';
+  }catch(e){}
+}
+window.addEventListener('resize',function(){
+  if(document.querySelector('.page.frac-mode')) sizeFracture();
+});
+
 function setGender(g){
+  document.querySelector('.page').classList.remove('frac-mode');
+  document.getElementById('ps-frac').classList.remove('on');
   currentGender = g;
   const G = GENDER[g];
   document.getElementById('ps-m').className = 'ps-btn' + (g==='m'?' on':'');

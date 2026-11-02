@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>骨折給付比例表 · AJK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Noto+Sans+TC:wght@500;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gg:#2EA82E;    --gg-dark:#1C7A24;
+  /* 頭面部=藍 ｜ 上肢=紅 ｜ 軀幹骨盆=紫 ｜ 下肢=黃 */
+  --head:#2563EB;  --head-bg:#EEF4FF;  --head-bd:#A9C5FB;  --head-ink:#fff;
+  --arm:#E11D48;   --arm-bg:#FFF0F3;   --arm-bd:#F5A8BA;   --arm-ink:#fff;
+  --body:#7C3AED;  --body-bg:#F4EEFF;  --body-bd:#C9B2F6;  --body-ink:#fff;
+  --leg:#E6A700;   --leg-bg:#FEF7E0;   --leg-bd:#F3D879;   --leg-ink:#4A3600;
+  --ink:#334155;   --ink-soft:#64748B;
+}
+html,body{background:#FBFCFE;}
+body{
+  font-family:'Baloo 2','Noto Sans TC',sans-serif;
+  color:var(--ink);padding:40px 24px 64px;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;}
+
+/* ── Title ── */
+.title-block{text-align:center;margin-bottom:28px;}
+.title{
+  font-family:'Noto Sans TC',sans-serif;font-weight:900;
+  font-size:clamp(34px,6vw,56px);letter-spacing:.02em;line-height:1.05;
+}
+.title .t-frac{color:var(--gg);}
+.title .t-rest{color:var(--gg-dark);}
+.subtitle{
+  margin-top:10px;font-family:'Noto Sans TC',sans-serif;font-weight:700;
+  font-size:clamp(14px,2.2vw,19px);color:var(--gg-dark);
+}
+.subtitle small{font-weight:500;color:var(--ink-soft);font-size:.8em;}
+
+/* ── Stage grid ── */
+.stage{
+  display:grid;
+  grid-template-columns:1fr minmax(240px,300px) 1fr;
+  gap:22px;align-items:start;position:relative;
+}
+.col-left,.col-right{display:flex;flex-direction:column;gap:18px;}
+.col-figure{display:flex;justify-content:center;align-items:flex-start;position:relative;z-index:2;}
+
+/* ── 連結線（面板 → 身體部位） ── */
+.links{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible;}
+.links .ln{fill:none;stroke-width:.35;stroke-dasharray:1.3 1.1;stroke-linecap:round;stroke-linejoin:round;opacity:.85;}
+.links .dot{stroke:#fff;stroke-width:.3;stroke-opacity:.6;fill-opacity:.3;}
+@media (max-width:860px){.links{display:none;}}
+
+/* ── Panels ── */
+.panel{
+  position:relative;z-index:2;
+  background:#fff;border:2.5px solid var(--pc-bd);border-radius:22px;
+  padding:16px 18px 14px;box-shadow:0 8px 22px rgba(30,41,59,.07);
+}
+.panel-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+  font-family:'Noto Sans TC',sans-serif;font-weight:900;
+  font-size:21px;color:var(--pc-dark);
+}
+.panel-head .pnum{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:30px;height:30px;padding:0 7px;border-radius:9px;
+  background:var(--pc);color:var(--pc-ink);font-size:17px;font-weight:800;
+}
+.panel-head .chev{margin-left:auto;color:var(--pc-bd);font-size:18px;letter-spacing:-2px;}
+.row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 8px;border-radius:12px;
+}
+.row+.row{margin-top:3px;}
+.row:nth-child(even){background:var(--pc-bg);}
+.bone{
+  font-family:'Noto Sans TC',sans-serif;font-weight:700;font-size:16.5px;
+  color:#1F2937;line-height:1.25;flex:1;
+}
+.bone small{font-weight:500;font-size:12px;color:var(--ink-soft);}
+.pct{
+  flex-shrink:0;min-width:58px;text-align:center;
+  padding:5px 10px;border-radius:999px;
+  background:var(--pc);color:var(--pc-ink);font-weight:800;font-size:17px;
+  box-shadow:0 2px 6px color-mix(in srgb,var(--pc) 35%,transparent);
+}
+/* 全部 badge 一律實心（透明款無任何意義，已統一） */
+.pct.lo{background:var(--pc);color:var(--pc-ink);box-shadow:0 2px 6px color-mix(in srgb,var(--pc) 35%,transparent);border:none;}
+
+.p-head{--pc:var(--head);--pc-bg:var(--head-bg);--pc-bd:var(--head-bd);--pc-ink:var(--head-ink);--pc-dark:#1D4ED8;}
+.p-arm {--pc:var(--arm); --pc-bg:var(--arm-bg); --pc-bd:var(--arm-bd); --pc-ink:var(--arm-ink); --pc-dark:#BE123C;}
+.p-body{--pc:var(--body);--pc-bg:var(--body-bg);--pc-bd:var(--body-bd);--pc-ink:var(--body-ink);--pc-dark:#6D28D9;}
+.p-leg {--pc:var(--leg); --pc-bg:var(--leg-bg); --pc-bd:var(--leg-bd); --pc-ink:var(--leg-ink); --pc-dark:#8A6A00;}
+
+/* ── Figure ── */
+.figure-card{
+  background:transparent;padding:0;width:100%;box-shadow:none;
+  transform:translateX(-26px);
+}
+.skeleton{width:100%;height:auto;display:block;}
+
+/* ── Footnote ── */
+.note{
+  max-width:860px;margin:30px auto 0;padding:16px 20px;
+  background:#fff;border:1.5px solid #E2E8F0;border-radius:16px;
+  font-family:'Noto Sans TC',sans-serif;font-weight:500;
+  font-size:13.5px;line-height:1.85;color:var(--ink-soft);
+}
+.note b{color:var(--ink);font-weight:700;}
+.note .dot{color:var(--head);font-weight:900;margin-right:4px;}
+
+/* ── RWD ── */
+@media (max-width: 860px){
+  body{padding:28px 14px 48px;}
+  .stage{grid-template-columns:1fr;gap:16px;}
+  .col-figure{order:-1;position:static;max-width:300px;margin:0 auto;}
+  .col-left,.col-right{gap:16px;}
+}
+@media print{
+  body{background:#fff;padding:0;}
+  .panel,.figure-card,.note{box-shadow:none;}
+  .col-figure{position:static;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title-block">
+    <div class="title"><span class="t-frac">骨折</span><span class="t-rest">給付比例表</span></div>
+    <div class="subtitle">依身體部位由上至下大分類 <small>（資料來源：附表二 骨折別表）</small></div>
+  </div>
+
+  <div class="stage">
+
+    <!-- 連結線：面板 → 對應身體部位 -->
+    <svg class="links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <!-- 頭面部（藍）→ 頭蓋骨 -->
+      <polyline class="ln" style="stroke:#2563EB" points="33,9 43,9 48,10"/>
+      <circle class="dot" cx="48" cy="10" r="1.3" fill="#2563EB"/>
+      <!-- 上肢（紅）→ 手臂骨 -->
+      <polyline class="ln" style="stroke:#E11D48" points="33,46 39,38 42,31"/>
+      <circle class="dot" cx="42" cy="31" r="1.3" fill="#E11D48"/>
+      <!-- 軀幹與骨盆（紫）→ 鎖骨 -->
+      <polyline class="ln" style="stroke:#7C3AED" points="67,25 57,22 51,21"/>
+      <circle class="dot" cx="51" cy="21" r="1.3" fill="#7C3AED"/>
+      <!-- 下肢（黃）→ 大腿骨 -->
+      <polyline class="ln" style="stroke:#E6A700" points="67,51 58,48 54,45"/>
+      <circle class="dot" cx="54" cy="45" r="1.3" fill="#E6A700"/>
+    </svg>
+
+    <!-- 左欄：頭面部 + 上肢 -->
+    <div class="col-left">
+      <div class="panel p-head">
+        <div class="panel-head"><span class="pnum">1</span>頭面部<span class="chev">»»</span></div>
+        <div class="row"><span class="bone">頭蓋骨</span><span class="pct">60%</span></div>
+        <div class="row"><span class="bone">鼻骨、眶骨 <small>（含顴骨）</small></span><span class="pct lo">12%</span></div>
+        <div class="row"><span class="bone">下顎 <small>（齒槽醫療除外）</small></span><span class="pct">20%</span></div>
+      </div>
+
+      <div class="panel p-arm">
+        <div class="panel-head"><span class="pnum">2</span>上肢<span class="chev">»»</span></div>
+        <div class="row"><span class="bone">臂骨</span><span class="pct">40%</span></div>
+        <div class="row"><span class="bone">橈骨或尺骨</span><span class="pct">30%</span></div>
+        <div class="row"><span class="bone">橈骨與尺骨</span><span class="pct">40%</span></div>
+        <div class="row"><span class="bone">腕骨 <small>（一手或雙手）</small></span><span class="pct">40%</span></div>
+        <div class="row"><span class="bone">掌骨</span><span class="pct lo">12%</span></div>
+        <div class="row"><span class="bone">指骨</span><span class="pct lo">3%</span></div>
+      </div>
+    </div>
+
+    <!-- 中欄：可愛半透明骨骼 -->
+    <div class="col-figure">
+      <div class="figure-card">
+        <picture><source srcset="ajk-skeleton.webp" type="image/webp"><img class="skeleton" src="ajk-skeleton.png" alt="骨折示意人偶（綠色半透明）" /></picture>
+      </div>
+    </div>
+
+    <!-- 右欄：軀幹與骨盆 + 下肢 -->
+    <div class="col-right">
+      <div class="panel p-body">
+        <div class="panel-head"><span class="pnum">3</span>軀幹與骨盆<span class="chev">»»</span></div>
+        <div class="row"><span class="bone">鎖骨</span><span class="pct">30%</span></div>
+        <div class="row"><span class="bone">肩胛骨</span><span class="pct">35%</span></div>
+        <div class="row"><span class="bone">肋骨</span><span class="pct">20%</span></div>
+        <div class="row"><span class="bone">椎骨 <small>（包括胸椎、腰椎及尾骨）</small></span><span class="pct">40%</span></div>
+        <div class="row"><span class="bone">骨盤 <small>（包括腸骨、恥骨、坐骨、薦骨）</small></span><span class="pct">40%</span></div>
+      </div>
+
+      <div class="panel p-leg">
+        <div class="panel-head"><span class="pnum">4</span>下肢<span class="chev">»»</span></div>
+        <div class="row"><span class="bone">大腿骨頸</span><span class="pct">80%</span></div>
+        <div class="row"><span class="bone">股骨</span><span class="pct">60%</span></div>
+        <div class="row"><span class="bone">膝蓋骨</span><span class="pct">30%</span></div>
+        <div class="row"><span class="bone">脛骨或腓骨</span><span class="pct">40%</span></div>
+        <div class="row"><span class="bone">脛骨及腓骨</span><span class="pct">60%</span></div>
+        <div class="row"><span class="bone">踝骨 <small>（一足或雙足）</small></span><span class="pct">40%</span></div>
+        <div class="row"><span class="bone">蹠骨</span><span class="pct lo">12%</span></div>
+        <div class="row"><span class="bone">趾骨</span><span class="pct lo">3%</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <div><span class="dot">※</span><b>以上比例僅適用「完全骨折」。</b>不完全骨折按完全骨折的 <b>½</b> 給付；骨骼龜裂按 <b>¼</b> 給付。</div>
+    <div><span class="dot">※</span>同一意外傷害事故僅給付一次；若致成二項以上骨折，<b>僅就給付金額最高的一項</b>給付意外傷害骨折保險金。</div>
+    <div><span class="dot">※</span>意外傷害骨折保險金 ＝ <b>保險金額 × 上列給付比例</b>。資料來源：富邦人壽溢起馬拉松傷害保險（AJK）條款附表二骨折別表（1151001 起適用），實際以保單條款為準。</div>
+  </div>
+
+</div>
+</body>
+</html>
