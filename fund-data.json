@@ -1,71 +1,71 @@
 {
-  "updated_at": "2026-11-05T16:00:07+08:00",
+  "updated_at": "2026-11-06T16:00:11+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
       "code": "DSP5",
       "name": "DSP5",
       "name_zh": "安聯收益成長基金-AM穩定月收類股(美元)",
-      "nav": 8.2324,
-      "nav_date": "2026-11-04",
+      "nav": 8.1492,
+      "nav_date": "2026-11-05",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/25/DSP5",
       "has_payout": true,
       "payout": 0.06,
       "payout_ex_date": "2026-10-14",
       "payout_pay_date": "2026-10-15",
-      "annual_yield_gross": 8.75
+      "annual_yield_gross": 8.84
     },
     {
       "code": "JFP11",
       "name": "JFP11",
       "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)",
-      "nav": 72.18,
-      "nav_date": "2026-11-04",
+      "nav": 71.9,
+      "nav_date": "2026-11-05",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/39/JFP11",
       "has_payout": true,
       "payout": 0.609,
       "payout_ex_date": "2026-10-07",
       "payout_pay_date": "2026-10-08",
-      "annual_yield_gross": 10.12
+      "annual_yield_gross": 10.16
     },
     {
       "code": "MLE20",
       "name": "MLE20",
       "name_zh": "貝萊德全球智慧數據股票入息基金A6美元(穩定配息)",
-      "nav": 9.93,
-      "nav_date": "2026-11-04",
+      "nav": 9.84,
+      "nav_date": "2026-11-05",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/27/MLE20",
       "has_payout": true,
       "payout": 0.066,
       "payout_ex_date": "2026-10-29",
       "payout_pay_date": "2026-10-30",
-      "annual_yield_gross": 7.98
+      "annual_yield_gross": 8.05
     },
     {
       "code": "SCP6",
       "name": "SCP6",
       "name_zh": "施羅德環球基金系列-環球收益成長(美元)A-月配固定2",
-      "nav": 134.3068,
-      "nav_date": "2026-11-04",
+      "nav": 134.6433,
+      "nav_date": "2026-11-05",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/29/SCP6",
       "has_payout": true,
       "payout": 1.1335,
       "payout_ex_date": "2026-10-28",
       "payout_pay_date": "2026-10-29",
-      "annual_yield_gross": 10.13
+      "annual_yield_gross": 10.1
     },
     {
       "code": "ACE17",
       "name": "ACE17",
       "name_zh": "聯博-美國成長基金AP(總報酬月配)級別美元",
-      "nav": 70.66,
-      "nav_date": "2026-11-04",
+      "nav": 67.07,
+      "nav_date": "2026-11-05",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/40/ACE17",
       "has_payout": true,
       "payout": 0.8322,
       "payout_ex_date": "2026-10-29",
       "payout_pay_date": "2026-10-30",
-      "annual_yield_gross": 14.13
+      "annual_yield_gross": 14.89
     }
   ]
 }
