@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-08T16:00:13+08:00",
+  "updated_at": "2026-11-09T16:00:10+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -19,14 +19,14 @@
       "code": "JFP11",
       "name": "JFP11",
       "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)",
-      "nav": 71.9,
-      "nav_date": "2026-11-05",
+      "nav": 71.15,
+      "nav_date": "2026-11-06",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/39/JFP11",
       "has_payout": true,
       "payout": 0.609,
       "payout_ex_date": "2026-10-07",
       "payout_pay_date": "2026-10-08",
-      "annual_yield_gross": 10.16
+      "annual_yield_gross": 10.27
     },
     {
       "code": "MLE20",
@@ -45,14 +45,14 @@
       "code": "SCP6",
       "name": "SCP6",
       "name_zh": "施羅德環球基金系列-環球收益成長(美元)A-月配固定2",
-      "nav": 134.6433,
-      "nav_date": "2026-11-05",
+      "nav": 131.6231,
+      "nav_date": "2026-11-06",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/29/SCP6",
       "has_payout": true,
       "payout": 1.1335,
       "payout_ex_date": "2026-10-28",
       "payout_pay_date": "2026-10-29",
-      "annual_yield_gross": 10.1
+      "annual_yield_gross": 10.33
     },
     {
       "code": "ACE17",
