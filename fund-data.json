@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-11T16:00:10+08:00",
+  "updated_at": "2026-11-12T16:00:12+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -19,53 +19,53 @@
       "code": "JFP11",
       "name": "JFP11",
       "name_zh": "摩根多重收益基金(美元對沖)-A股(穩定月配)",
-      "nav": 71.15,
-      "nav_date": "2026-11-10",
+      "nav": 71.36,
+      "nav_date": "2026-11-11",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/39/JFP11",
       "has_payout": true,
-      "payout": 0.609,
-      "payout_ex_date": "2026-10-07",
-      "payout_pay_date": "2026-10-08",
-      "annual_yield_gross": 10.27
+      "payout": 0.597,
+      "payout_ex_date": "2026-11-09",
+      "payout_pay_date": "2026-11-10",
+      "annual_yield_gross": 10.04
     },
     {
       "code": "MLE20",
       "name": "MLE20",
       "name_zh": "貝萊德全球智慧數據股票入息基金A6美元(穩定配息)",
-      "nav": 9.71,
-      "nav_date": "2026-11-10",
+      "nav": 9.77,
+      "nav_date": "2026-11-11",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/27/MLE20",
       "has_payout": true,
       "payout": 0.066,
       "payout_ex_date": "2026-10-29",
       "payout_pay_date": "2026-10-30",
-      "annual_yield_gross": 8.16
+      "annual_yield_gross": 8.11
     },
     {
       "code": "SCP6",
       "name": "SCP6",
       "name_zh": "施羅德環球基金系列-環球收益成長(美元)A-月配固定2",
-      "nav": 133.6701,
-      "nav_date": "2026-11-10",
+      "nav": 133.7917,
+      "nav_date": "2026-11-11",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/29/SCP6",
       "has_payout": true,
       "payout": 1.1335,
       "payout_ex_date": "2026-10-28",
       "payout_pay_date": "2026-10-29",
-      "annual_yield_gross": 10.18
+      "annual_yield_gross": 10.17
     },
     {
       "code": "ACE17",
       "name": "ACE17",
       "name_zh": "聯博-美國成長基金AP(總報酬月配)級別美元",
-      "nav": 69.14,
-      "nav_date": "2026-11-10",
+      "nav": 70.15,
+      "nav_date": "2026-11-11",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/40/ACE17",
       "has_payout": true,
       "payout": 0.8322,
       "payout_ex_date": "2026-10-29",
       "payout_pay_date": "2026-10-30",
-      "annual_yield_gross": 14.44
+      "annual_yield_gross": 14.24
     }
   ]
 }
