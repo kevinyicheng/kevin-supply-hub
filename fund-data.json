@@ -1,19 +1,19 @@
 {
-  "updated_at": "2026-11-14T16:00:10+08:00",
+  "updated_at": "2026-11-15T16:00:10+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
       "code": "DSP5",
       "name": "DSP5",
       "name_zh": "安聯收益成長基金-AM穩定月收類股(美元)",
-      "nav": 8.1653,
-      "nav_date": "2026-11-12",
+      "nav": 8.1367,
+      "nav_date": "2026-11-13",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/25/DSP5",
       "has_payout": true,
       "payout": 0.06,
       "payout_ex_date": "2026-10-14",
       "payout_pay_date": "2026-10-15",
-      "annual_yield_gross": 8.82
+      "annual_yield_gross": 8.85
     },
     {
       "code": "JFP11",
