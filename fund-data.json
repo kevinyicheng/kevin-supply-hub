@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-16T16:00:11+08:00",
+  "updated_at": "2026-11-16T18:00:10+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -11,8 +11,8 @@
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/25/DSP5",
       "has_payout": true,
       "payout": 0.06,
-      "payout_ex_date": "2026-10-14",
-      "payout_pay_date": "2026-10-15",
+      "payout_ex_date": "2026-11-13",
+      "payout_pay_date": "2026-11-16",
       "annual_yield_gross": 8.85
     },
     {
