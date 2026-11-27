@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-26T16:00:10+08:00",
+  "updated_at": "2026-11-27T16:00:10+08:00",
   "source": "invest.fubonlife.com.tw",
   "funds": [
     {
@@ -32,27 +32,27 @@
       "code": "MLE20",
       "name": "MLE20",
       "name_zh": "貝萊德全球智慧數據股票入息基金A6美元(穩定配息)",
-      "nav": 9.35,
-      "nav_date": "2026-11-25",
+      "nav": 9.47,
+      "nav_date": "2026-11-26",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/27/MLE20",
       "has_payout": true,
       "payout": 0.066,
       "payout_ex_date": "2026-10-29",
       "payout_pay_date": "2026-10-30",
-      "annual_yield_gross": 8.47
+      "annual_yield_gross": 8.36
     },
     {
       "code": "SCP6",
       "name": "SCP6",
       "name_zh": "施羅德環球基金系列-環球收益成長(美元)A-月配固定2",
-      "nav": 125.6752,
-      "nav_date": "2026-11-25",
+      "nav": 127.182,
+      "nav_date": "2026-11-26",
       "url": "https://invest.fubonlife.com.tw/funds/overview/WFUND/29/SCP6",
       "has_payout": true,
       "payout": 1.0845,
       "payout_ex_date": "2026-11-18",
       "payout_pay_date": "2026-11-19",
-      "annual_yield_gross": 10.36
+      "annual_yield_gross": 10.23
     },
     {
       "code": "ACE17",
